@@ -4751,6 +4751,250 @@ input[type=number] {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   WORKFLOW — connect the steps with a horizontal line + glowing numbers
+───────────────────────────────────────────────────────────────────────────── */
+.section-how .how-grid {
+  position: relative;
+}
+@media (min-width: 900px) {
+  .section-how .how-grid::before {
+    content: '';
+    position: absolute;
+    top: 46px; /* vertical center of the step-num badge */
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--c-primary-mid) 0 6px,
+      transparent 6px 12px
+    );
+    z-index: 0;
+    pointer-events: none;
+  }
+}
+.section-how .how-step {
+  position: relative;
+  z-index: 1;
+}
+.section-how .how-step-num {
+  width: 44px;
+  height: 44px;
+  font-size: 1.1rem;
+  box-shadow:
+    0 8px 20px rgba(79,70,229,.32),
+    0 0 0 6px rgba(79,70,229,.08);
+  transition: transform .2s, box-shadow .2s;
+}
+.section-how .how-step:hover .how-step-num {
+  transform: scale(1.08);
+  box-shadow:
+    0 12px 28px rgba(79,70,229,.4),
+    0 0 0 8px rgba(79,70,229,.1);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TESTIMONIALS — quote ornament + subtle hover tilt + color wash
+───────────────────────────────────────────────────────────────────────────── */
+.testimonial-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform .25s cubic-bezier(.4,0,.2,1), box-shadow .22s, border-color .22s;
+}
+.testimonial-card::after {
+  content: '\201C'; /* left double quotation mark */
+  position: absolute;
+  top: 10px;
+  right: 22px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 6.5rem;
+  line-height: 1;
+  font-weight: 900;
+  pointer-events: none;
+  color: var(--c-primary-soft);
+  z-index: 0;
+  transition: transform .25s, color .25s;
+}
+.testimonials-grid > .testimonial-card:nth-child(3n+2)::after { color: var(--c-cyan-soft); }
+.testimonials-grid > .testimonial-card:nth-child(3n+3)::after { color: var(--c-pink-soft); }
+
+.testimonial-card:hover {
+  transform: translateY(-5px) rotate(-.4deg);
+}
+.testimonial-card:hover::after {
+  transform: scale(1.1) rotate(-6deg);
+}
+.testimonial-card > * { position: relative; z-index: 1; }
+
+/* Subtle colored glow on hover that matches the quote tint */
+.testimonials-grid > .testimonial-card:hover { box-shadow: 0 30px 60px -20px rgba(79,70,229,.3), var(--shadow-md); }
+.testimonials-grid > .testimonial-card:nth-child(3n+2):hover { box-shadow: 0 30px 60px -20px rgba(6,182,212,.3),  var(--shadow-md); }
+.testimonials-grid > .testimonial-card:nth-child(3n+3):hover { box-shadow: 0 30px 60px -20px rgba(236,72,153,.3), var(--shadow-md); }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SECTION ATMOSPHERE — subtle blobs behind key sections for depth
+───────────────────────────────────────────────────────────────────────────── */
+.section-testimonials {
+  position: relative;
+  overflow: hidden;
+}
+.section-testimonials::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(167,139,250,.18), transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+.section-testimonials::after {
+  content: '';
+  position: absolute;
+  bottom: -20%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(249,168,212,.18), transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+.section-testimonials > .container { position: relative; z-index: 1; }
+
+.section-overview {
+  position: relative;
+  overflow: hidden;
+}
+.section-overview::before {
+  content: '';
+  position: absolute;
+  top: -15%;
+  right: -15%;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(103,232,249,.18), transparent 70%);
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+}
+.section-overview > .container { position: relative; z-index: 1; }
+
+.section-how {
+  position: relative;
+  overflow: hidden;
+}
+.section-how::before {
+  content: '';
+  position: absolute;
+  bottom: -20%;
+  left: 35%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(110,231,183,.18), transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+.section-how > .container { position: relative; z-index: 1; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   OVERVIEW — make feature grid feel interactive with hover gradient wash
+───────────────────────────────────────────────────────────────────────────── */
+.overview-item {
+  position: relative;
+  isolation: isolate;
+}
+.overview-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 0%, currentColor 120%);
+  opacity: 0;
+  transition: opacity .22s;
+  pointer-events: none;
+  z-index: -1;
+  border-radius: inherit;
+}
+.overview-item:hover::before { opacity: .06; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CREATOR CARDS (catalog) — status chip strip + richer hover
+───────────────────────────────────────────────────────────────────────────── */
+.blogger-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: .64rem;
+  font-weight: 700;
+  border-radius: var(--r-full);
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  line-height: 1.5;
+}
+.status-chip .dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-chip.status-top {
+  background: var(--c-amber-soft);
+  color: var(--c-amber);
+}
+.status-chip.status-top .dot { background: var(--c-amber); box-shadow: 0 0 0 2px rgba(217,119,6,.15); }
+.status-chip.status-fast {
+  background: var(--c-mint-soft);
+  color: var(--c-mint);
+}
+.status-chip.status-fast .dot { background: var(--c-mint); box-shadow: 0 0 0 2px rgba(16,185,129,.15); }
+.status-chip.status-rising {
+  background: var(--c-cyan-soft);
+  color: var(--c-cyan);
+}
+.status-chip.status-rising .dot { background: var(--c-cyan); box-shadow: 0 0 0 2px rgba(6,182,212,.15); }
+
+/* Creator card — premium top accent strip that reveals on hover */
+.blogger-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--c-gradient);
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: opacity .2s, transform .3s cubic-bezier(.4,0,.2,1);
+}
+.blogger-card:hover::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TYPOGRAPHY BUMP on landing section headers (.section-hdr h2 lives on landing)
+───────────────────────────────────────────────────────────────────────────── */
+.section-creators .section-hdr h2,
+.section-testimonials .section-hdr h2,
+.section-how .section-hdr h2,
+.section-overview .section-hdr h2 {
+  font-size: clamp(1.7rem, 3.2vw, 2.4rem);
+  letter-spacing: -.8px;
+  line-height: 1.15;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    AUTOMATIC COLOR CYCLING — applies across all marketing feature grids and
    resource grids without any HTML changes. Gives every page visual variety
    by default.
