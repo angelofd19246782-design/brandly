@@ -8,64 +8,101 @@
 </head>
 <body>
 
-<nav class="navbar">
-  <div class="container">
-    <a href="/" class="navbar-brand">Brandly</a>
-    <div id="navbarNav" style="display:flex;align-items:center;gap:6px;flex:1"></div>
-  </div>
-</nav>
+<div class="auth-split">
 
-<div class="auth-page">
-  <div class="auth-card" style="max-width:460px">
-    <div class="auth-logo">Brandly</div>
-    <h1>Create your account</h1>
-    <p class="subtitle">Join for free — no credit card required</p>
-
-    <div id="alertBox"></div>
-
-    <form id="registerForm">
-      <div style="margin-bottom:22px">
-        <label style="margin-bottom:10px">I want to join as a…</label>
-        <div class="role-select-group">
-          <div class="role-option">
-            <input type="radio" name="role" id="roleAdvertiser" value="advertiser" checked>
-            <label for="roleAdvertiser">
-              <span class="role-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 0-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></span>
-              Advertiser
-              <span class="role-sub">Find creators</span>
-            </label>
-          </div>
-          <div class="role-option">
-            <input type="radio" name="role" id="roleBlogger" value="blogger">
-            <label for="roleBlogger">
-              <span class="role-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg></span>
-              Creator
-              <span class="role-sub">Get discovered</span>
-            </label>
-          </div>
+  <!-- Brand panel -->
+  <div class="auth-brand-panel">
+    <div class="auth-brand-logo">Brandly</div>
+    <div class="auth-brand-tagline">Where brands meet their perfect creators.</div>
+    <div class="auth-brand-sub">Join thousands of advertisers and influencers already using Brandly to launch successful campaigns.</div>
+    <div class="auth-brand-props">
+      <div class="auth-brand-prop">
+        <div class="auth-brand-prop-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 0-2 2h-2"/></svg>
+        </div>
+        <div class="auth-brand-prop-text">
+          <strong>For Advertisers</strong>
+          <span>Browse creators, message them, and launch campaigns that convert.</span>
         </div>
       </div>
-
-      <div class="form-group">
-        <label for="display_name">Full name or brand name</label>
-        <input type="text" id="display_name" placeholder="Your name" required>
+      <div class="auth-brand-prop">
+        <div class="auth-brand-prop-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+        </div>
+        <div class="auth-brand-prop-text">
+          <strong>For Creators</strong>
+          <span>Build your profile, set your price, and get discovered by top brands.</span>
+        </div>
       </div>
-      <div class="form-group">
-        <label for="email">Email address</label>
-        <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
+      <div class="auth-brand-prop">
+        <div class="auth-brand-prop-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <div class="auth-brand-prop-text">
+          <strong>Free to join</strong>
+          <span>No credit card required. Start in under 60 seconds.</span>
+        </div>
       </div>
-      <div class="form-group" style="margin-bottom:24px">
-        <label for="password">Password <span class="label-hint">min. 6 characters</span></label>
-        <input type="password" id="password" placeholder="••••••••" required autocomplete="new-password">
-      </div>
-
-      <button type="submit" class="btn btn-primary" style="width:100%" id="submitBtn">Create Account</button>
-    </form>
-
-    <div class="auth-footer">
-      Already have an account? <a href="/login.html">Log in →</a>
     </div>
   </div>
+
+  <!-- Form panel -->
+  <div class="auth-form-panel">
+    <div class="auth-form-inner">
+      <a href="/" style="display:inline-flex;align-items:center;gap:6px;font-size:.82rem;color:var(--c-ink-4);text-decoration:none;margin-bottom:28px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        Back to home
+      </a>
+      <h1>Create your account</h1>
+      <p class="subtitle">Join for free — no credit card required</p>
+
+      <div id="alertBox"></div>
+
+      <form id="registerForm">
+        <div style="margin-bottom:22px">
+          <label style="margin-bottom:10px">I want to join as a…</label>
+          <div class="role-select-group">
+            <div class="role-option">
+              <input type="radio" name="role" id="roleAdvertiser" value="advertiser" checked>
+              <label for="roleAdvertiser">
+                <span class="role-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 0-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></span>
+                Advertiser
+                <span class="role-sub">Find creators</span>
+              </label>
+            </div>
+            <div class="role-option">
+              <input type="radio" name="role" id="roleBlogger" value="blogger">
+              <label for="roleBlogger">
+                <span class="role-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg></span>
+                Creator
+                <span class="role-sub">Get discovered</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="display_name">Full name or brand name</label>
+          <input type="text" id="display_name" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
+        </div>
+        <div class="form-group" style="margin-bottom:24px">
+          <label for="password">Password <span class="label-hint">min. 6 characters</span></label>
+          <input type="password" id="password" placeholder="••••••••" required autocomplete="new-password">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%" id="submitBtn">Create Account</button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="/login.html">Log in →</a>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script src="/js/app.js"></script>

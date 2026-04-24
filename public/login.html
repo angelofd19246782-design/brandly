@@ -8,37 +8,74 @@
 </head>
 <body>
 
-<nav class="navbar">
-  <div class="container">
-    <a href="/" class="navbar-brand">Brandly</a>
-    <div id="navbarNav" style="display:flex;align-items:center;gap:6px;flex:1"></div>
-  </div>
-</nav>
+<div class="auth-split">
 
-<div class="auth-page">
-  <div class="auth-card">
-    <div class="auth-logo">Brandly</div>
-    <h1>Welcome back</h1>
-    <p class="subtitle">Log in to your account to continue</p>
-
-    <div id="alertBox"></div>
-
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="email">Email address</label>
-        <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
+  <!-- Brand panel -->
+  <div class="auth-brand-panel">
+    <div class="auth-brand-logo">Brandly</div>
+    <div class="auth-brand-tagline">The influencer marketplace built for results.</div>
+    <div class="auth-brand-sub">Connect with authentic creators, launch campaigns, and grow your brand — all in one place.</div>
+    <div class="auth-brand-props">
+      <div class="auth-brand-prop">
+        <div class="auth-brand-prop-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
+        <div class="auth-brand-prop-text">
+          <strong>12,000+ verified creators</strong>
+          <span>Browse by niche, platform, country, and more.</span>
+        </div>
       </div>
-      <div class="form-group" style="margin-bottom:24px">
-        <label for="password">Password</label>
-        <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+      <div class="auth-brand-prop">
+        <div class="auth-brand-prop-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+        </div>
+        <div class="auth-brand-prop-text">
+          <strong>Direct messaging</strong>
+          <span>Chat with creators without leaving the platform.</span>
+        </div>
       </div>
-      <button type="submit" class="btn btn-primary" style="width:100%" id="submitBtn">Log In</button>
-    </form>
-
-    <div class="auth-footer">
-      Don't have an account? <a href="/register.html">Create one →</a>
+      <div class="auth-brand-prop">
+        <div class="auth-brand-prop-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="auth-brand-prop-text">
+          <strong>Verified reviews</strong>
+          <span>Make confident decisions backed by real advertiser ratings.</span>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Form panel -->
+  <div class="auth-form-panel">
+    <div class="auth-form-inner">
+      <a href="/" style="display:inline-flex;align-items:center;gap:6px;font-size:.82rem;color:var(--c-ink-4);text-decoration:none;margin-bottom:28px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        Back to home
+      </a>
+      <h1>Welcome back</h1>
+      <p class="subtitle">Log in to your account to continue</p>
+
+      <div id="alertBox"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
+        </div>
+        <div class="form-group" style="margin-bottom:24px">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%" id="submitBtn">Log In</button>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account? <a href="/register.html">Create one →</a>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script src="/js/app.js"></script>
@@ -57,7 +94,7 @@
         email:    document.getElementById('email').value,
         password: document.getElementById('password').value,
       });
-      if (redirectTo)           window.location.href = redirectTo;
+      if (redirectTo)                   window.location.href = redirectTo;
       else if (data.role === 'blogger') window.location.href = '/edit-profile.html';
       else if (data.role === 'admin')   window.location.href = '/admin.html';
       else                              window.location.href = '/catalog.html';
