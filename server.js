@@ -697,6 +697,7 @@ async function startServer() {
       console.log(`Admin login: admin@brandly.com / admin123`);
     });
   } catch (e) {
+    console.error('Database connection failed:', e.message);
     console.error('Failed to start server:', e.message);
     process.exit(1);
   }
