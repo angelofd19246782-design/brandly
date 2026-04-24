@@ -4567,6 +4567,190 @@ input[type=number] {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   CATALOG HERO BAND (replaces the plain page-hero on discovery)
+───────────────────────────────────────────────────────────────────────────── */
+.catalog-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-xl);
+  padding: 44px 44px 40px;
+  margin-bottom: 28px;
+  background:
+    radial-gradient(ellipse 60% 60% at 85% 15%, rgba(249,168,212,.35), transparent 60%),
+    radial-gradient(ellipse 50% 60% at 10% 85%, rgba(103,232,249,.3), transparent 60%),
+    linear-gradient(135deg, #ede9fe 0%, #ddd6fe 40%, #e0f2fe 100%);
+  border: 1px solid rgba(79,70,229,.12);
+  box-shadow: 0 20px 40px -20px rgba(79,70,229,.2);
+}
+.catalog-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(79,70,229,.06) 1px, transparent 1px);
+  background-size: 22px 22px;
+  pointer-events: none;
+  opacity: .6;
+}
+.catalog-hero-inner { position: relative; z-index: 1; }
+.catalog-hero-eyebrow {
+  display: inline-block;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--c-primary);
+  background: rgba(255,255,255,.7);
+  border: 1px solid rgba(255,255,255,.6);
+  border-radius: 99px;
+  padding: 5px 13px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.catalog-hero h1 {
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  font-weight: 800;
+  letter-spacing: -.6px;
+  color: var(--c-ink);
+  margin-bottom: 10px;
+  line-height: 1.15;
+}
+.catalog-hero h1 .accent {
+  background: var(--c-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.catalog-hero p {
+  font-size: 1rem;
+  color: var(--c-ink-3);
+  max-width: 620px;
+  margin-bottom: 22px;
+  line-height: 1.65;
+}
+.catalog-hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.catalog-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255,255,255,.85);
+  border: 1px solid rgba(255,255,255,.7);
+  border-radius: 99px;
+  font-size: .82rem;
+  color: var(--c-ink-2);
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform .15s, box-shadow .15s;
+}
+.catalog-chip:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.catalog-chip strong {
+  color: var(--c-primary);
+  font-weight: 800;
+}
+.catalog-chip .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+@media (max-width: 680px) {
+  .catalog-hero { padding: 30px 24px 28px; }
+  .catalog-hero h1 { font-size: 1.5rem; }
+  .catalog-hero p  { font-size: .9rem; }
+  .catalog-chip { padding: 6px 12px; font-size: .76rem; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CREATOR PROFILE COVER STRIP (social-media style cover above avatar)
+───────────────────────────────────────────────────────────────────────────── */
+.profile-identity-cover {
+  height: 88px;
+  margin: -22px -22px 0;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  background:
+    linear-gradient(135deg, #a78bfa 0%, #f472b6 50%, #60a5fa 100%);
+  position: relative;
+  overflow: hidden;
+}
+.profile-identity-cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(rgba(255,255,255,.22) 1px, transparent 1px);
+  background-size: 14px 14px;
+  opacity: .6;
+}
+.profile-identity-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 80% at 80% 100%, rgba(255,255,255,.35), transparent 60%),
+    radial-gradient(ellipse 60% 80% at 10% 0%, rgba(255,255,255,.2), transparent 60%);
+}
+
+/* Pull the avatar up over the cover strip so it straddles the edge */
+.profile-identity.has-cover .avatar {
+  margin-top: -58px;
+  position: relative;
+  z-index: 2;
+  border: 5px solid #fff;
+  box-shadow: 0 10px 24px rgba(15,23,42,.12);
+}
+.profile-identity.has-cover { padding-top: 0; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ADMIN STAT TILE DELTA BADGE (small trend line — real-dashboard feel)
+───────────────────────────────────────────────────────────────────────────── */
+.stat-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .7rem;
+  font-weight: 700;
+  margin-top: 4px;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: var(--c-green-soft);
+  color: var(--c-green);
+  align-self: flex-start;
+  line-height: 1.4;
+}
+.stat-delta::before {
+  content: '';
+  width: 0; height: 0;
+  border-left: 3.5px solid transparent;
+  border-right: 3.5px solid transparent;
+  border-bottom: 5px solid currentColor;
+}
+.stat-delta.stat-delta-down {
+  background: var(--c-red-soft);
+  color: var(--c-red);
+}
+.stat-delta.stat-delta-down::before {
+  border-bottom: none;
+  border-top: 5px solid currentColor;
+}
+.stat-delta.stat-delta-flat {
+  background: #f1f5f9;
+  color: var(--c-ink-3);
+}
+.stat-delta.stat-delta-flat::before {
+  border: none;
+  width: 7px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    AUTOMATIC COLOR CYCLING — applies across all marketing feature grids and
    resource grids without any HTML changes. Gives every page visual variety
    by default.
