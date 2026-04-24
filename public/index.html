@@ -21,54 +21,84 @@
   <div class="hero-orb hero-orb-pink"></div>
   <div class="hero-orb hero-orb-blue"></div>
 
-  <!-- Floating creator card mockup -->
-  <div class="hero-float hero-float-tl" aria-hidden="true">
-    <div class="hero-float-head">
-      <div class="hero-float-av" style="background:linear-gradient(135deg,#ec4899,#f43f5e)">
-        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="">
-      </div>
-      <div>
-        <div class="hero-float-name">Sophie Laurent</div>
-        <div class="hero-float-sub">Fashion &amp; Beauty · Paris</div>
-      </div>
-    </div>
-    <div class="hero-float-stats">
-      <div class="hero-float-stat">
-        <div class="n">2.1M</div>
-        <div class="l">Followers</div>
-      </div>
-      <div class="hero-float-stat">
-        <div class="n" style="color:var(--c-star)">4.9★</div>
-        <div class="l">Rating</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Floating message preview mockup -->
-  <div class="hero-float hero-float-br" aria-hidden="true">
-    <div class="hero-float-head">
-      <div class="hero-float-av" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">
-        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
-      </div>
-      <div>
-        <div class="hero-float-name">Marcus Webb</div>
-        <div class="hero-float-sub">Technology · San Francisco</div>
-      </div>
-    </div>
-    <div class="hero-float-msg">"Happy to review your product. Can we jump on a call Thursday to walk through the brief?"</div>
-    <div class="hero-float-time">Active now</div>
-  </div>
-
   <div class="container">
-    <div class="hero-eyebrow fade-up">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:inline-block;vertical-align:middle;margin-right:5px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      Influencer Marketing Platform
-    </div>
-    <h1 class="fade-up fade-up-d1">Find the right <span class="accent">influencers</span><br>for your brand.</h1>
-    <p class="hero-sub fade-up fade-up-d2">Discover authentic creators, review real stats, and launch campaigns that actually convert — all in one place.</p>
-    <div class="hero-actions fade-up fade-up-d3">
-      <a href="/catalog.html" class="btn btn-hero-primary btn-xl">Browse Influencers</a>
-      <a href="/register.html" class="btn btn-hero-ghost btn-xl">Get Started Free</a>
+    <div class="hero-split">
+
+      <div class="hero-copy">
+        <div class="hero-eyebrow fade-up">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:inline-block;vertical-align:middle;margin-right:5px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Influencer Marketing Platform
+        </div>
+        <h1 class="fade-up fade-up-d1">Find the right <span class="accent">influencers</span><br>for your brand.</h1>
+        <p class="hero-sub fade-up fade-up-d2">Discover authentic creators, review real stats, and launch campaigns that actually convert — all in one place.</p>
+        <div class="hero-actions fade-up fade-up-d3">
+          <a href="/catalog.html" class="btn btn-hero-primary btn-xl">Browse Influencers</a>
+          <a href="/register.html" class="btn btn-hero-ghost btn-xl">Get Started Free</a>
+        </div>
+      </div>
+
+      <!-- Product composition visual (desktop only) -->
+      <div class="hero-visual fade-up fade-up-d2" aria-hidden="true">
+
+        <!-- Main dashboard card -->
+        <div class="glass-card hv-main">
+          <div class="hv-main-hdr">
+            <div class="hv-main-title">Creator discovery</div>
+            <span class="hv-live-badge">Live</span>
+          </div>
+          <div class="hv-search">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            Fashion · Paris · 1M+
+          </div>
+          <div class="hv-row">
+            <div class="mini-av"><img src="https://randomuser.me/api/portraits/women/44.jpg" alt=""></div>
+            <div class="hv-row-body">
+              <div class="hv-row-name">Sophie Laurent</div>
+              <div class="hv-row-sub">Fashion · 2.1M followers</div>
+            </div>
+            <div class="hv-row-rating">4.9★</div>
+            <button type="button" class="hv-contact-btn">Contact</button>
+          </div>
+          <div class="hv-row">
+            <div class="mini-av"><img src="https://randomuser.me/api/portraits/women/91.jpg" alt=""></div>
+            <div class="hv-row-body">
+              <div class="hv-row-name">Priya Sharma</div>
+              <div class="hv-row-sub">Beauty · 2.8M followers</div>
+            </div>
+            <div class="hv-row-rating">4.9★</div>
+            <button type="button" class="hv-contact-btn">Contact</button>
+          </div>
+          <div class="hv-row">
+            <div class="mini-av"><img src="https://randomuser.me/api/portraits/men/32.jpg" alt=""></div>
+            <div class="hv-row-body">
+              <div class="hv-row-name">Marcus Webb</div>
+              <div class="hv-row-sub">Technology · 890K</div>
+            </div>
+            <div class="hv-row-rating">4.8★</div>
+            <button type="button" class="hv-contact-btn">Contact</button>
+          </div>
+        </div>
+
+        <!-- Floating: analytics card -->
+        <div class="glass-card hv-analytics">
+          <div class="hv-analytics-lbl">Audience match</div>
+          <div class="hv-analytics-val">92%</div>
+          <div class="mini-bar"><span style="width:92%"></span></div>
+          <div class="hv-analytics-sub">Excellent fit</div>
+        </div>
+
+        <!-- Floating: message card -->
+        <div class="glass-card hv-message">
+          <div class="hv-msg-head">
+            <div class="mini-av"><img src="https://randomuser.me/api/portraits/men/32.jpg" alt=""></div>
+            <div class="hv-msg-name">Marcus Webb</div>
+          </div>
+          <div class="hv-msg-body">"Happy to review it. Can we jump on a call Thursday?"</div>
+          <div class="hv-msg-time">Active now</div>
+        </div>
+
+      </div>
+
     </div>
 
     <div class="hero-stats fade-up fade-up-d4">

@@ -4300,6 +4300,273 @@ input[type=number] {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   HERO SPLIT LAYOUT (desktop) + PRODUCT COMPOSITION VISUAL
+───────────────────────────────────────────────────────────────────────────── */
+
+/* On small screens the hero stays centered (existing behavior); on ≥1000px
+   it becomes a two-column split with the product visual on the right. */
+.hero-split { display: block; }
+.hero-split .hero-copy { text-align: center; }
+
+@media (min-width: 1000px) {
+  .hero-split {
+    display: grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap: 56px;
+    align-items: center;
+    text-align: left;
+    min-height: 420px;
+  }
+  .hero-split .hero-copy        { text-align: left; }
+  .hero-split .hero-eyebrow     { margin-bottom: 22px; }
+  .hero-split .hero-sub         { margin-left: 0; margin-right: 0; max-width: 480px; }
+  .hero-split .hero-actions     { justify-content: flex-start; }
+  .hero .hero-stats             { margin-top: 48px; }
+}
+
+/* Primary CTA glow on hover — premium SaaS feel */
+.btn-hero-primary {
+  position: relative;
+  transition: transform .18s, box-shadow .22s;
+}
+.btn-hero-primary:hover {
+  box-shadow: 0 20px 40px -8px rgba(255,255,255,.35), 0 0 0 1px rgba(255,255,255,.3), 0 0 30px rgba(167,139,250,.35);
+}
+
+/* Reusable glass card (used in hero visual) */
+.glass-card {
+  background: rgba(255,255,255,.97);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 30px 60px -15px rgba(15,23,42,.5),
+    0 8px 20px -8px rgba(15,23,42,.25),
+    0 0 0 1px rgba(255,255,255,.1);
+  color: var(--c-ink);
+}
+
+/* ── Hero visual container ── */
+.hero-visual {
+  position: relative;
+  display: none;
+  height: 420px;
+}
+@media (min-width: 1000px) {
+  .hero-visual { display: block; }
+}
+
+/* Main dashboard-style card — anchored behind the floats */
+.hv-main {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 30px;
+  border-radius: 16px;
+  padding: 16px 16px 14px;
+  z-index: 1;
+  transform: rotate(-1.5deg);
+}
+.hv-main-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--c-border-soft);
+  margin-bottom: 10px;
+}
+.hv-main-title {
+  font-size: .7rem;
+  font-weight: 800;
+  color: var(--c-ink-2);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.hv-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .6rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  background: var(--c-green-soft);
+  color: var(--c-green);
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.hv-live-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--c-green);
+  box-shadow: 0 0 0 3px rgba(5,150,105,.25);
+  animation: livePulse 1.8s ease-in-out infinite;
+}
+@keyframes livePulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(5,150,105,.25); }
+  50%      { box-shadow: 0 0 0 5px rgba(5,150,105,.08); }
+}
+.hv-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  font-size: .72rem;
+  color: var(--c-ink-3);
+  margin-bottom: 8px;
+}
+.hv-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 4px;
+  border-bottom: 1px solid var(--c-border-soft);
+}
+.hv-row:last-child { border-bottom: none; }
+.hv-row .mini-av {
+  width: 30px; height: 30px;
+  font-size: .6rem;
+}
+.hv-row-body { flex: 1; min-width: 0; }
+.hv-row-name {
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--c-ink);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hv-row-sub {
+  font-size: .66rem;
+  color: var(--c-ink-4);
+  font-weight: 500;
+  margin-top: 1px;
+}
+.hv-row-rating {
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--c-star);
+  flex-shrink: 0;
+}
+.hv-contact-btn {
+  padding: 5px 10px;
+  font-size: .65rem;
+  font-weight: 700;
+  border: none;
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+  border-radius: 99px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+.hv-contact-btn:hover { background: var(--c-primary-mid); }
+
+/* Floating analytics card (top-right) */
+.hv-analytics {
+  position: absolute;
+  top: -8px;
+  right: -14px;
+  width: 180px;
+  padding: 14px 16px 12px;
+  border-radius: 14px;
+  z-index: 3;
+  transform: rotate(4deg);
+  animation: floatDriftA 5.5s ease-in-out infinite;
+}
+@keyframes floatDriftA {
+  0%, 100% { transform: rotate(4deg) translateY(0); }
+  50%      { transform: rotate(4deg) translateY(-7px); }
+}
+.hv-analytics-lbl {
+  font-size: .6rem;
+  font-weight: 800;
+  color: var(--c-ink-4);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 3px;
+}
+.hv-analytics-val {
+  font-size: 1.6rem;
+  font-weight: 900;
+  background: var(--c-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.05;
+  letter-spacing: -.04em;
+}
+.hv-analytics-sub {
+  font-size: .68rem;
+  color: var(--c-primary);
+  font-weight: 700;
+  margin-top: 5px;
+}
+.hv-analytics .mini-bar { margin-top: 8px; height: 5px; }
+
+/* Floating message card (bottom-left) */
+.hv-message {
+  position: absolute;
+  bottom: -25px;
+  left: -30px;
+  width: 245px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  z-index: 3;
+  transform: rotate(-4deg);
+  animation: floatDriftM 6.5s ease-in-out infinite;
+}
+@keyframes floatDriftM {
+  0%, 100% { transform: rotate(-4deg) translateY(0); }
+  50%      { transform: rotate(-4deg) translateY(-6px); }
+}
+.hv-msg-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.hv-msg-head .mini-av { width: 26px; height: 26px; font-size: .55rem; }
+.hv-msg-name {
+  font-size: .74rem;
+  font-weight: 700;
+  color: var(--c-ink);
+}
+.hv-msg-body {
+  background: var(--c-primary-soft);
+  color: var(--c-ink-2);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: .74rem;
+  line-height: 1.5;
+}
+.hv-msg-time {
+  font-size: .62rem;
+  color: var(--c-green);
+  font-weight: 700;
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.hv-msg-time::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--c-green);
+  box-shadow: 0 0 0 3px rgba(5,150,105,.2);
+}
+
+/* Hide the old hero-float cards now that the split visual replaces them */
+@media (min-width: 1100px) {
+  .hero-float { display: none; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    AUTOMATIC COLOR CYCLING — applies across all marketing feature grids and
    resource grids without any HTML changes. Gives every page visual variety
    by default.
