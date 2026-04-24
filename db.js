@@ -1,0 +1,22 @@
+require('dotenv').config();
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  host:     process.env.PGHOST,
+  port:     parseInt(process.env.PGPORT || '5432'),
+  user:     process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  database: process.env.PGDATABASE,
+  ssl: process.env.PGSSL === 'false' ? false : { rejectUnauthorized: false },
+});
+
+pool.on('error', (err) => console.error('Idle client error:', err.message));
+
+const query = (text, params) => pool.query(text, params);
+
+const checkConnection = async () => {
+  const client = await pool.connect();
+  client.release();
+};
+
+module.exports = { query, pool, checkConnection };

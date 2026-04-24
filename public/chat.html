@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages — Brandly</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="/" class="navbar-brand">Brandly</a>
+    <div id="navbarNav" style="display:flex;align-items:center;gap:6px;flex:1"></div>
+  </div>
+</nav>
+
+<div class="chat-layout" id="chatPage">
+
+  <!-- Sidebar -->
+  <div class="chat-sidebar" id="chatSidebar">
+    <div class="chat-sidebar-hdr">
+      <h2>Messages</h2>
+      <p>Your conversations</p>
+    </div>
+    <div class="conv-list" id="convList">
+      <div class="loading">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="chat-main" id="chatMain">
+
+    <div class="chat-placeholder" id="chatPlaceholder">
+      <div class="chat-placeholder-icon">💬</div>
+      <h3>Select a conversation</h3>
+      <p class="text-muted text-sm">Choose a chat from the list to open it</p>
+    </div>
+
+    <div id="chatActive" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+      <div class="chat-hdr" id="chatHdr">
+        <button id="backBtn" class="btn btn-ghost btn-sm" onclick="goBack()" style="display:none">← Back</button>
+        <div class="avatar" id="chatAv"></div>
+        <div class="chat-hdr-info">
+          <div class="chat-hdr-name" id="chatHdrName"></div>
+          <div class="chat-hdr-sub" id="chatHdrSub"></div>
+        </div>
+        <a id="chatProfileLink" href="#" class="btn btn-ghost btn-sm" style="margin-left:auto;display:none">View profile</a>
+      </div>
+
+      <div class="chat-messages" id="chatMessages"></div>
+
+      <div class="chat-footer">
+        <textarea id="messageInput" placeholder="Type a message…" rows="1"></textarea>
+        <button class="send-btn" id="sendBtn" title="Send message">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  const urlParams  = new URLSearchParams(window.location.search);
+  let activeConvId = urlParams.get('id') ? parseInt(urlParams.get('id')) : null;
+  let currentUser  = null;
+  let pollTimer    = null;
+  let lastMsgCount = 0;
+
+  const av = (name) => name ? name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase() : '?';
+
+  const loadConversations = async () => {
+    try {
+      const convs = await api('GET', '/api/conversations');
+      const el = document.getElementById('convList');
+
+      if (!convs.length) {
+        el.innerHTML = `
+          <div class="no-convs">
+            <div style="font-size:2rem;margin-bottom:10px;opacity:.4">💬</div>
+            <p style="font-weight:600;color:var(--c-ink-3);margin-bottom:6px">No conversations yet</p>
+            ${currentUser.role === 'advertiser'
+              ? `<a href="/catalog.html" style="font-size:.8rem;color:var(--c-primary);font-weight:600">Browse influencers →</a>`
+              : `<p style="font-size:.78rem">Advertisers will reach out to you here.</p>`}
+          </div>`;
+        return;
+      }
+
+      el.innerHTML = convs.map(c => {
+        const otherId = currentUser.role === 'advertiser' ? c.blogger_id : c.advertiser_id;
+        const avHtml  = c.other_avatar
+          ? `<img src="${escHtml(c.other_avatar)}" alt="">`
+          : av(c.other_name);
+        return `
+          <div class="conv-item ${c.id === activeConvId ? 'active' : ''}"
+               onclick="openConv(${c.id}, ${JSON.stringify(escHtml(c.other_name))}, ${JSON.stringify(c.other_avatar||null)}, ${otherId})">
+            <div class="avatar" style="width:40px;height:40px;font-size:.8rem;flex-shrink:0">${avHtml}</div>
+            <div class="conv-item-body">
+              <div class="conv-name">${escHtml(c.other_name)}</div>
+              <div class="conv-preview">${c.last_message ? escHtml(c.last_message) : 'No messages yet'}</div>
+            </div>
+            <span class="conv-time">${c.last_at ? formatTime(c.last_at) : ''}</span>
+          </div>`;
+      }).join('');
+    } catch (_) {
+      document.getElementById('convList').innerHTML = `<div class="no-convs">Failed to load conversations.</div>`;
+    }
+  };
+
+  const openConv = async (convId, otherName, otherAvatar, otherUserId) => {
+    activeConvId = convId;
+    if (pollTimer) clearInterval(pollTimer);
+    history.replaceState(null, '', `/chat.html?id=${convId}`);
+
+    if (window.innerWidth <= 768) {
+      document.getElementById('chatSidebar').classList.add('hidden');
+      document.getElementById('chatMain').classList.remove('hidden');
+      document.getElementById('backBtn').style.display = 'inline-flex';
+    }
+
+    const avEl = document.getElementById('chatAv');
+    avEl.innerHTML = otherAvatar ? `<img src="${escHtml(otherAvatar)}" alt="">` : escHtml(av(otherName));
+    document.getElementById('chatHdrName').textContent = otherName;
+    document.getElementById('chatHdrSub').textContent  = currentUser.role === 'advertiser' ? 'Influencer' : 'Advertiser';
+
+    const profileLink = document.getElementById('chatProfileLink');
+    if (currentUser.role === 'advertiser' && otherUserId) {
+      profileLink.href = `/blogger.html?id=${otherUserId}`;
+      profileLink.style.display = 'inline-flex';
+    } else {
+      profileLink.style.display = 'none';
+    }
+
+    document.getElementById('chatPlaceholder').style.display = 'none';
+    const activeEl = document.getElementById('chatActive');
+    activeEl.style.display = 'flex';
+    activeEl.style.flexDirection = 'column';
+    activeEl.style.overflow = 'hidden';
+    activeEl.style.flex = '1';
+
+    document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.conv-item').forEach(el => {
+      const match = el.getAttribute('onclick')?.match(/openConv\((\d+)/);
+      if (match && parseInt(match[1]) === convId) el.classList.add('active');
+    });
+
+    lastMsgCount = 0;
+    await loadMessages();
+    pollTimer = setInterval(loadMessages, 4000);
+    loadConversations();
+  };
+
+  const goBack = () => {
+    if (pollTimer) clearInterval(pollTimer);
+    document.getElementById('chatSidebar').classList.remove('hidden');
+    document.getElementById('chatMain').classList.add('hidden');
+    document.getElementById('backBtn').style.display = 'none';
+  };
+
+  const loadMessages = async () => {
+    if (!activeConvId) return;
+    try {
+      const data = await api('GET', `/api/conversations/${activeConvId}/messages`);
+      if (data.messages.length === lastMsgCount) return;
+      lastMsgCount = data.messages.length;
+
+      const el = document.getElementById('chatMessages');
+      const wasAtBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+
+      if (!data.messages.length) {
+        el.innerHTML = `<div style="text-align:center;color:var(--c-ink-4);padding:48px 24px;font-size:.875rem">No messages yet. Say hello! 👋</div>`;
+        return;
+      }
+
+      el.innerHTML = data.messages.map(m => {
+        const mine = m.sender_id === currentUser.id;
+        return `
+          <div class="msg-row ${mine ? 'mine' : ''}">
+            ${!mine ? `<div class="msg-sender-avatar">${av(m.sender_name)}</div>` : ''}
+            <div class="msg-bubble">${escHtml(m.content).replace(/\n/g,'<br>')}</div>
+            <span class="msg-time">${formatTime(m.created_at)}</span>
+          </div>`;
+      }).join('');
+
+      if (wasAtBottom) el.scrollTop = el.scrollHeight;
+    } catch (_) {}
+  };
+
+  const sendMessage = async () => {
+    const input   = document.getElementById('messageInput');
+    const content = input.value.trim();
+    if (!content || !activeConvId) return;
+    const btn = document.getElementById('sendBtn');
+    btn.disabled = true;
+    input.value  = '';
+    input.style.height = 'auto';
+    try {
+      await api('POST', `/api/conversations/${activeConvId}/messages`, { content });
+      lastMsgCount = 0;
+      await loadMessages();
+      loadConversations();
+    } catch (err) {
+      input.value = content;
+      alert(err.message);
+    } finally {
+      btn.disabled = false;
+      input.focus();
+    }
+  };
+
+  document.getElementById('messageInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+  document.getElementById('sendBtn').addEventListener('click', sendMessage);
+
+  document.getElementById('messageInput').addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 140) + 'px';
+  });
+
+  (async () => {
+    currentUser = await requireAuth('/chat.html');
+    if (!currentUser) return;
+
+    await loadConversations();
+
+    if (activeConvId) {
+      try {
+        const conv    = await api('GET', `/api/conversations/${activeConvId}`);
+        const otherId = currentUser.role === 'advertiser' ? conv.blogger_id : conv.advertiser_id;
+        let otherName = '—', otherAvatar = null;
+        try {
+          if (currentUser.role === 'advertiser') {
+            const bp = await api('GET', `/api/bloggers/${otherId}`);
+            otherName = bp.display_name; otherAvatar = bp.avatar_url;
+          } else {
+            const convs = await api('GET', '/api/conversations');
+            const found = convs.find(c => c.id === activeConvId);
+            if (found) otherName = found.other_name;
+          }
+        } catch (_) {}
+        openConv(activeConvId, otherName, otherAvatar, otherId);
+      } catch (_) {}
+    }
+
+    if (window.innerWidth <= 768 && !activeConvId) {
+      document.getElementById('chatMain').classList.add('hidden');
+    }
+  })();
+</script>
+</body>
+</html>

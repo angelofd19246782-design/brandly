@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account — Brandly</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="/" class="navbar-brand">Brandly</a>
+    <div id="navbarNav" style="display:flex;align-items:center;gap:6px;flex:1"></div>
+  </div>
+</nav>
+
+<div class="auth-page">
+  <div class="auth-card" style="max-width:460px">
+    <div class="auth-logo">Brandly</div>
+    <h1>Create your account</h1>
+    <p class="subtitle">Join for free — no credit card required</p>
+
+    <div id="alertBox"></div>
+
+    <form id="registerForm">
+      <div style="margin-bottom:22px">
+        <label style="margin-bottom:10px">I want to join as a…</label>
+        <div class="role-select-group">
+          <div class="role-option">
+            <input type="radio" name="role" id="roleAdvertiser" value="advertiser" checked>
+            <label for="roleAdvertiser">
+              <span class="role-icon">🏢</span>
+              Advertiser
+              <span class="role-sub">Find creators</span>
+            </label>
+          </div>
+          <div class="role-option">
+            <input type="radio" name="role" id="roleBlogger" value="blogger">
+            <label for="roleBlogger">
+              <span class="role-icon">✨</span>
+              Creator
+              <span class="role-sub">Get discovered</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="display_name">Full name or brand name</label>
+        <input type="text" id="display_name" placeholder="Your name" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
+      </div>
+      <div class="form-group" style="margin-bottom:24px">
+        <label for="password">Password <span class="label-hint">min. 6 characters</span></label>
+        <input type="password" id="password" placeholder="••••••••" required autocomplete="new-password">
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%" id="submitBtn">Create Account</button>
+    </form>
+
+    <div class="auth-footer">
+      Already have an account? <a href="/login.html">Log in →</a>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  const params  = new URLSearchParams(window.location.search);
+  const preRole = params.get('role');
+  if (preRole === 'blogger')    document.getElementById('roleBlogger').checked    = true;
+  if (preRole === 'advertiser') document.getElementById('roleAdvertiser').checked = true;
+
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearAlert('alertBox');
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true; btn.textContent = 'Creating account…';
+
+    try {
+      const data = await api('POST', '/api/auth/register', {
+        email:        document.getElementById('email').value.trim(),
+        password:     document.getElementById('password').value,
+        role:         document.querySelector('input[name="role"]:checked').value,
+        display_name: document.getElementById('display_name').value.trim(),
+      });
+      window.location.href = data.role === 'blogger' ? '/edit-profile.html' : '/catalog.html';
+    } catch (err) {
+      showAlert('alertBox', err.message);
+      btn.disabled = false; btn.textContent = 'Create Account';
+    }
+  });
+</script>
+</body>
+</html>

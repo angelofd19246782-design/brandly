@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Influencers — Brandly</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="/" class="navbar-brand">Brandly</a>
+    <div id="navbarNav" style="display:flex;align-items:center;gap:6px;flex:1"></div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="container">
+    <div class="page-hero">
+      <h1>Browse Influencers</h1>
+      <p>Discover creators that match your brand — filter by niche, platform, and location.</p>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-field filter-search">
+        <label>Search</label>
+        <input type="text" id="filterSearch" placeholder="Name, niche, or keyword…">
+      </div>
+      <div class="filter-field filter-sm">
+        <label>Category</label>
+        <select id="filterCategory">
+          <option value="">All categories</option>
+        </select>
+      </div>
+      <div class="filter-field filter-sm">
+        <label>Platform</label>
+        <select id="filterPlatform">
+          <option value="">All platforms</option>
+          <option value="tiktok">TikTok</option>
+          <option value="youtube">YouTube</option>
+          <option value="instagram">Instagram</option>
+        </select>
+      </div>
+      <div class="filter-field filter-sm">
+        <label>Country</label>
+        <select id="filterCountry">
+          <option value="">All countries</option>
+        </select>
+      </div>
+      <div class="filter-field filter-sm">
+        <label>Sort by</label>
+        <select id="filterSort">
+          <option value="followers">Most followers</option>
+          <option value="rating">Highest rated</option>
+          <option value="name">Name A–Z</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="results-bar">
+      <span class="results-count" id="resultsInfo"></span>
+    </div>
+
+    <div id="bloggerGrid" class="bloggers-grid">
+      <div class="loading">Loading influencers…</div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  © 2024 <strong>Brandly</strong> — Influencer Marketplace
+</footer>
+
+<script src="/js/app.js"></script>
+<script>
+  let debounceTimer;
+
+  const filterEls = {
+    search:   document.getElementById('filterSearch'),
+    category: document.getElementById('filterCategory'),
+    platform: document.getElementById('filterPlatform'),
+    country:  document.getElementById('filterCountry'),
+    sort:     document.getElementById('filterSort'),
+  };
+
+  (async () => {
+    try {
+      const [cats, countries] = await Promise.all([
+        api('GET', '/api/filters/categories'),
+        api('GET', '/api/filters/countries'),
+      ]);
+      cats.forEach(c => {
+        const o = document.createElement('option');
+        o.value = c; o.textContent = c;
+        filterEls.category.appendChild(o);
+      });
+      countries.forEach(c => {
+        const o = document.createElement('option');
+        o.value = c; o.textContent = c;
+        filterEls.country.appendChild(o);
+      });
+    } catch (_) {}
+  })();
+
+  const loadBloggers = async () => {
+    const p = new URLSearchParams();
+    if (filterEls.search.value.trim()) p.set('search',   filterEls.search.value.trim());
+    if (filterEls.category.value)      p.set('category', filterEls.category.value);
+    if (filterEls.platform.value)      p.set('platform', filterEls.platform.value);
+    if (filterEls.country.value)       p.set('country',  filterEls.country.value);
+    if (filterEls.sort.value)          p.set('sort',     filterEls.sort.value);
+
+    const grid = document.getElementById('bloggerGrid');
+    grid.innerHTML = '<div class="loading">Loading…</div>';
+
+    try {
+      const bloggers = await api('GET', `/api/bloggers?${p}`);
+      const info = document.getElementById('resultsInfo');
+      info.textContent = bloggers.length ? `${bloggers.length} influencer${bloggers.length !== 1 ? 's' : ''} found` : '';
+
+      if (!bloggers.length) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <h3>No influencers found</h3>
+            <p>Try adjusting your filters or search terms.</p>
+          </div>`;
+        return;
+      }
+      grid.innerHTML = bloggers.map(b => bloggerCard(b)).join('');
+    } catch (_) {
+      grid.innerHTML = `<div class="empty-state"><p>Failed to load. Please refresh the page.</p></div>`;
+    }
+  };
+
+  const bloggerCard = (b) => {
+    const av = b.avatar_url
+      ? `<img src="${escHtml(b.avatar_url)}" alt="">`
+      : initials(b.display_name);
+
+    const stars = b.avg_rating
+      ? `<span class="stars" style="font-size:.85rem">${'★'.repeat(Math.round(b.avg_rating))}${'☆'.repeat(5-Math.round(b.avg_rating))}</span>`
+      : '—';
+
+    const price = b.price_min || b.price_max
+      ? `$${b.price_min || 0}${b.price_max ? '–$'+b.price_max : '+'}`
+      : 'Negotiable';
+
+    const chips = [
+      b.tiktok_url    ? `<span class="platform-chip">📱 TikTok</span>`    : '',
+      b.youtube_url   ? `<span class="platform-chip">▶ YouTube</span>`   : '',
+      b.instagram_url ? `<span class="platform-chip">📸 Instagram</span>` : '',
+    ].filter(Boolean).join('');
+
+    return `
+      <div class="blogger-card">
+        <div class="blogger-card-top">
+          <div class="avatar avatar-lg">${av}</div>
+          <div class="blogger-card-info">
+            <h3>${escHtml(b.display_name)}</h3>
+            ${b.category ? `<span class="badge">${escHtml(b.category)}</span>` : ''}
+            ${b.country ? `<div class="location">📍 ${escHtml(b.country)}${b.city ? ', '+escHtml(b.city) : ''}</div>` : ''}
+          </div>
+        </div>
+
+        ${b.bio ? `<div class="blogger-card-bio">${escHtml(b.bio)}</div>` : ''}
+
+        <div class="blogger-card-stats">
+          <div class="card-stat">
+            <div class="val">${formatFollowers(b.follower_count)}</div>
+            <div class="lbl">Followers</div>
+          </div>
+          <div class="card-stat" style="border-left:1px solid var(--c-border-soft);border-right:1px solid var(--c-border-soft)">
+            <div class="val rating-val">${b.avg_rating ? Number(b.avg_rating).toFixed(1) : '—'}</div>
+            <div class="lbl">Rating</div>
+          </div>
+          <div class="card-stat">
+            <div class="val price-val">${price}</div>
+            <div class="lbl">Price</div>
+          </div>
+        </div>
+
+        <div class="blogger-card-bottom">
+          ${chips ? `<div class="platform-chips">${chips}</div>` : ''}
+          <a href="/blogger.html?id=${b.user_id}" class="btn btn-primary" style="width:100%">View Profile</a>
+        </div>
+      </div>`;
+  };
+
+  const initials = (n) => n ? n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase() : '?';
+
+  filterEls.search.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(loadBloggers, 300);
+  });
+  ['category','platform','country','sort'].forEach(k =>
+    filterEls[k].addEventListener('change', loadBloggers)
+  );
+
+  loadBloggers();
+</script>
+</body>
+</html>

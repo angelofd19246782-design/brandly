@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile — Brandly</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="/" class="navbar-brand">Brandly</a>
+    <div id="navbarNav" style="display:flex;align-items:center;gap:6px;flex:1"></div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="container">
+    <div class="page-hero">
+      <h1 id="pageTitle">My Profile</h1>
+      <p>Keep your profile up to date so advertisers can discover and contact you.</p>
+    </div>
+
+    <div id="alertBox"></div>
+
+    <div class="edit-profile-layout">
+
+      <!-- Sidebar -->
+      <aside>
+        <div class="card avatar-card">
+          <div id="avatarPreview" class="avatar avatar-2xl" style="margin:0 auto 16px"></div>
+          <p style="font-size:.8rem;font-weight:700;color:var(--c-ink-2);margin-bottom:12px">Profile photo</p>
+
+          <div class="form-group">
+            <label>Upload image</label>
+            <input type="file" id="avatarFile" accept="image/*">
+            <p class="form-hint">JPG, PNG or WebP · Max 3 MB</p>
+          </div>
+
+          <div class="separator"></div>
+
+          <div class="form-group">
+            <label>Or paste image URL</label>
+            <input type="url" id="avatarUrlInput" placeholder="https://…">
+          </div>
+
+          <button class="btn btn-outline" style="width:100%" onclick="saveAvatar()">Save Photo</button>
+        </div>
+
+        <div class="card" style="margin-top:14px;background:var(--c-primary-soft);border-color:var(--c-primary-mid)">
+          <p style="font-size:.8rem;color:var(--c-primary);line-height:1.65">
+            <strong>Visibility:</strong> Your profile is publicly visible once a display name is set. Advertisers can find you in the catalog.
+          </p>
+        </div>
+      </aside>
+
+      <!-- Form -->
+      <main>
+        <form id="profileForm">
+          <div class="card" style="margin-bottom:16px">
+            <div class="form-section-title">Basic information</div>
+            <div class="form-row cols-2">
+              <div class="form-group">
+                <label for="display_name">Display name <span style="color:var(--c-red)">*</span></label>
+                <input type="text" id="display_name" placeholder="Your public name" required>
+              </div>
+              <div class="form-group">
+                <label for="category">Category / Niche</label>
+                <select id="category">
+                  <option value="">— Select category —</option>
+                  <option>Fashion &amp; Beauty</option>
+                  <option>Health &amp; Fitness</option>
+                  <option>Food &amp; Cooking</option>
+                  <option>Travel</option>
+                  <option>Technology</option>
+                  <option>Gaming</option>
+                  <option>Lifestyle</option>
+                  <option>Business</option>
+                  <option>Entertainment</option>
+                  <option>Education</option>
+                  <option>Sports</option>
+                  <option>Music</option>
+                  <option>Parenting</option>
+                  <option>Finance</option>
+                  <option>Arts &amp; Crafts</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="bio">Bio</label>
+              <textarea id="bio" rows="4" placeholder="Tell advertisers about yourself, your audience, and what sets you apart…"></textarea>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:16px">
+            <div class="form-section-title">Location</div>
+            <div class="form-row cols-2">
+              <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" id="country" placeholder="e.g. United States">
+              </div>
+              <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" placeholder="e.g. New York">
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:16px">
+            <div class="form-section-title">Social platforms</div>
+            <div class="form-group">
+              <label for="tiktok_url">TikTok profile URL</label>
+              <input type="url" id="tiktok_url" placeholder="https://tiktok.com/@yourhandle">
+            </div>
+            <div class="form-group">
+              <label for="youtube_url">YouTube channel URL</label>
+              <input type="url" id="youtube_url" placeholder="https://youtube.com/@yourchannel">
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label for="instagram_url">Instagram profile URL</label>
+              <input type="url" id="instagram_url" placeholder="https://instagram.com/yourhandle">
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:16px">
+            <div class="form-section-title">Audience &amp; pricing</div>
+            <div class="form-row cols-3">
+              <div class="form-group">
+                <label for="follower_count">Followers <span class="label-hint" id="followerHint">(set once)</span></label>
+                <input type="number" id="follower_count" min="0" placeholder="50000">
+              </div>
+              <div class="form-group">
+                <label for="price_min">Min price ($)</label>
+                <input type="number" id="price_min" min="0" placeholder="100">
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label for="price_max">Max price ($)</label>
+                <input type="number" id="price_max" min="0" placeholder="500">
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="form-section-title">Contact &amp; offer</div>
+            <div class="form-group" style="margin-bottom:0">
+              <label for="contact_info">Contact / offer description</label>
+              <textarea id="contact_info" rows="3" placeholder="Describe what you offer advertisers, your preferred contact method, etc."></textarea>
+            </div>
+          </div>
+
+          <div id="formAlert" style="margin-top:16px"></div>
+
+          <div style="margin-top:20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <button type="submit" class="btn btn-primary btn-lg" id="saveBtn">Save Profile</button>
+            <a id="viewProfileLink" href="#" class="btn btn-ghost" style="display:none">View public profile →</a>
+          </div>
+        </form>
+      </main>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  © 2024 <strong>Brandly</strong> — Influencer Marketplace
+</footer>
+
+<script src="/js/app.js"></script>
+<script>
+  let isNewProfile = false;
+  let currentUserId = null;
+
+  const renderAvatar = (url, name) => {
+    const el = document.getElementById('avatarPreview');
+    if (url) {
+      el.innerHTML = `<img src="${escHtml(url)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    } else {
+      el.textContent = (name||'?').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    }
+  };
+
+  (async () => {
+    const user = await requireRole('blogger');
+    if (!user) return;
+    currentUserId = user.id;
+
+    try {
+      const p = await api('GET', '/api/profile');
+      isNewProfile = !p.display_name;
+      if (isNewProfile) document.getElementById('pageTitle').textContent = 'Set up your profile';
+
+      const fields = ['display_name','bio','tiktok_url','youtube_url','instagram_url','category','country','city','price_min','price_max','contact_info'];
+      fields.forEach(f => {
+        const el = document.getElementById(f);
+        if (el && p[f] != null) el.value = p[f];
+      });
+
+      const followerInput = document.getElementById('follower_count');
+      if (!isNewProfile) {
+        followerInput.value    = p.follower_count ?? 0;
+        followerInput.readOnly = true;
+        document.getElementById('followerHint').textContent = '(admin-managed)';
+        followerInput.title = 'Follower count can only be changed by an admin after initial setup.';
+      }
+
+      renderAvatar(p.avatar_url, p.display_name || user.display_name);
+
+      if (!isNewProfile) {
+        const vl = document.getElementById('viewProfileLink');
+        vl.href = `/blogger.html?id=${currentUserId}`;
+        vl.style.display = 'inline-flex';
+      }
+    } catch (err) {
+      showAlert('alertBox', 'Failed to load profile: ' + err.message);
+    }
+  })();
+
+  document.getElementById('profileForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearAlert('formAlert');
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+
+    const payload = {
+      display_name:  document.getElementById('display_name').value.trim(),
+      bio:           document.getElementById('bio').value.trim(),
+      tiktok_url:    document.getElementById('tiktok_url').value.trim(),
+      youtube_url:   document.getElementById('youtube_url').value.trim(),
+      instagram_url: document.getElementById('instagram_url').value.trim(),
+      category:      document.getElementById('category').value,
+      country:       document.getElementById('country').value.trim(),
+      city:          document.getElementById('city').value.trim(),
+      price_min:     document.getElementById('price_min').value,
+      price_max:     document.getElementById('price_max').value,
+      contact_info:  document.getElementById('contact_info').value.trim(),
+    };
+    if (isNewProfile) payload.follower_count = document.getElementById('follower_count').value;
+
+    try {
+      await api('POST', '/api/profile', payload);
+      isNewProfile = false;
+      document.getElementById('follower_count').readOnly = true;
+      document.getElementById('followerHint').textContent = '(admin-managed)';
+      const vl = document.getElementById('viewProfileLink');
+      vl.href = `/blogger.html?id=${currentUserId}`;
+      vl.style.display = 'inline-flex';
+      showAlert('formAlert', 'Profile saved successfully!', 'success');
+    } catch (err) {
+      showAlert('formAlert', err.message);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Save Profile';
+    }
+  });
+
+  const saveAvatar = async () => {
+    const file     = document.getElementById('avatarFile').files[0];
+    const urlInput = document.getElementById('avatarUrlInput').value.trim();
+
+    if (file) {
+      const fd = new FormData();
+      fd.append('avatar', file);
+      try {
+        const res = await api('POST', '/api/profile/avatar', fd);
+        renderAvatar(res.avatar_url, document.getElementById('display_name').value);
+        showAlert('alertBox', 'Photo updated!', 'success');
+      } catch (err) { showAlert('alertBox', err.message); }
+    } else if (urlInput) {
+      try {
+        await api('POST', '/api/profile', { display_name: document.getElementById('display_name').value || ' ', avatar_url: urlInput });
+        renderAvatar(urlInput, document.getElementById('display_name').value);
+        showAlert('alertBox', 'Photo updated!', 'success');
+      } catch (err) { showAlert('alertBox', err.message); }
+    } else {
+      showAlert('alertBox', 'Please choose a file or paste an image URL.');
+    }
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Influencer Profile — Brandly</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="/" class="navbar-brand">Brandly</a>
+    <div id="navbarNav" style="display:flex;align-items:center;gap:6px;flex:1"></div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="container">
+    <a href="/catalog.html" class="back-link">← Back to catalog</a>
+    <div id="profileContent">
+      <div class="loading">Loading profile…</div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  © 2024 <strong>Brandly</strong> — Influencer Marketplace
+</footer>
+
+<script src="/js/app.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const userId = params.get('id');
+  if (!userId) window.location.href = '/catalog.html';
+
+  const initials = (n) => n ? n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase() : '?';
+
+  let selectedScore = 0;
+  const selectStar = (score) => {
+    selectedScore = score;
+    document.querySelectorAll('.star-picker button').forEach((b, i) => b.classList.toggle('active', i < score));
+  };
+
+  const contactBlogger = async () => {
+    const user = await getUser();
+    if (!user) { window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.href)}`; return; }
+    if (user.role !== 'advertiser') { alert('Only advertisers can contact bloggers.'); return; }
+    const btn = document.getElementById('contactBtn');
+    btn.disabled = true; btn.textContent = 'Opening chat…';
+    try {
+      const conv = await api('POST', '/api/conversations', { blogger_id: parseInt(userId) });
+      window.location.href = `/chat.html?id=${conv.id}`;
+    } catch (err) {
+      alert(err.message);
+      btn.disabled = false; btn.textContent = 'Contact Blogger';
+    }
+  };
+
+  const submitRating = async () => {
+    if (!selectedScore) { alert('Please select a star rating first.'); return; }
+    const btn = document.getElementById('rateBtn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      await api('POST', '/api/ratings', {
+        blogger_id: parseInt(userId),
+        score:      selectedScore,
+        review:     document.getElementById('reviewText').value.trim(),
+      });
+      showAlert('ratingAlert', 'Your rating has been saved!', 'success');
+      loadReviews();
+    } catch (err) {
+      showAlert('ratingAlert', err.message);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Submit Rating';
+    }
+  };
+
+  const loadReviews = async () => {
+    try {
+      const reviews = await api('GET', `/api/ratings/${userId}`);
+      const el = document.getElementById('reviewsList');
+      if (!reviews.length) {
+        el.innerHTML = '<p style="color:var(--c-ink-4);font-size:.875rem;font-style:italic">No reviews yet.</p>';
+        return;
+      }
+      el.innerHTML = reviews.map(r => `
+        <div class="review-item">
+          <div class="review-header">
+            <span class="review-author">${escHtml(r.advertiser_name)}</span>
+            <div class="review-meta">
+              <span class="stars" style="font-size:.85rem">${'★'.repeat(r.score)}${'☆'.repeat(5-r.score)}</span>
+              <span class="review-date">${formatDate(r.created_at)}</span>
+            </div>
+          </div>
+          ${r.review ? `<p class="review-body">${escHtml(r.review)}</p>` : ''}
+        </div>`).join('');
+    } catch (_) {}
+  };
+
+  (async () => {
+    try {
+      const [blogger, user] = await Promise.all([
+        api('GET', `/api/bloggers/${userId}`),
+        getUser(),
+      ]);
+
+      document.title = `${blogger.display_name} — Brandly`;
+
+      const avatar = blogger.avatar_url
+        ? `<img src="${escHtml(blogger.avatar_url)}" alt="">`
+        : initials(blogger.display_name);
+
+      const platformLinks = [
+        blogger.tiktok_url    ? `<a href="${escHtml(blogger.tiktok_url)}" target="_blank" rel="noopener" class="platform-link">📱 TikTok</a>` : '',
+        blogger.youtube_url   ? `<a href="${escHtml(blogger.youtube_url)}" target="_blank" rel="noopener" class="platform-link">▶️ YouTube</a>` : '',
+        blogger.instagram_url ? `<a href="${escHtml(blogger.instagram_url)}" target="_blank" rel="noopener" class="platform-link">📸 Instagram</a>` : '',
+      ].filter(Boolean).join('');
+
+      const price = blogger.price_min || blogger.price_max
+        ? `$${blogger.price_min || 0}${blogger.price_max ? ' – $'+blogger.price_max : '+'}`
+        : 'Negotiable';
+
+      const starsHtml = blogger.avg_rating
+        ? `<span class="stars">${'★'.repeat(Math.round(blogger.avg_rating))}${'☆'.repeat(5-Math.round(blogger.avg_rating))}</span>
+           <strong>${Number(blogger.avg_rating).toFixed(1)}</strong>
+           <span style="color:var(--c-ink-4);font-size:.8rem">(${blogger.rating_count} review${blogger.rating_count!==1?'s':''})</span>`
+        : `<span style="color:var(--c-ink-4);font-size:.82rem;font-style:italic">No reviews yet</span>`;
+
+      let ctaHtml = '';
+      if (!user) {
+        ctaHtml = `<a href="/login.html?redirect=${encodeURIComponent(window.location.href)}" class="btn btn-primary btn-lg" style="width:100%">Log in to Contact</a>`;
+      } else if (user.role === 'advertiser') {
+        ctaHtml = `<button id="contactBtn" class="btn btn-primary btn-lg" style="width:100%" onclick="contactBlogger()">Contact Blogger</button>`;
+      } else if (user.role === 'blogger' && String(user.id) === String(userId)) {
+        ctaHtml = `<a href="/edit-profile.html" class="btn btn-outline btn-lg" style="width:100%">Edit My Profile</a>`;
+      }
+
+      let ratingFormHtml = '';
+      if (user && user.role === 'advertiser') {
+        let myRating = null;
+        try { myRating = await api('GET', `/api/ratings/${userId}/mine`); } catch(_) {}
+        if (myRating) selectedScore = myRating.score;
+
+        ratingFormHtml = `
+          <div class="card mt-6 rating-form">
+            <div class="section-label-sm">${myRating ? 'Update your rating' : 'Leave a review'}</div>
+            <div id="ratingAlert"></div>
+            <div class="star-picker" style="margin-bottom:14px">
+              ${[1,2,3,4,5].map(i =>
+                `<button type="button" class="${myRating && i<=myRating.score?'active':''}" onclick="selectStar(${i})">★</button>`
+              ).join('')}
+            </div>
+            <div class="form-group">
+              <label for="reviewText">Review <span class="label-hint">optional</span></label>
+              <textarea id="reviewText" rows="3" placeholder="Describe your experience working with this creator…">${myRating?.review ? escHtml(myRating.review) : ''}</textarea>
+            </div>
+            <button id="rateBtn" class="btn btn-primary" onclick="submitRating()">${myRating ? 'Update Rating' : 'Submit Rating'}</button>
+          </div>`;
+      }
+
+      document.getElementById('profileContent').innerHTML = `
+        <div class="profile-layout">
+          <aside>
+            <div class="profile-card-sticky">
+              <div class="card">
+                <div class="profile-identity">
+                  <div class="avatar avatar-2xl">${avatar}</div>
+                  <h1>${escHtml(blogger.display_name)}</h1>
+                  ${blogger.category ? `<div class="category" style="margin-top:8px"><span class="badge">${escHtml(blogger.category)}</span></div>` : ''}
+                  ${blogger.country ? `<div class="location">📍 ${escHtml(blogger.country)}${blogger.city?', '+escHtml(blogger.city):''}</div>` : ''}
+                </div>
+
+                <div class="profile-stat-row">
+                  <span class="k">Followers</span>
+                  <span class="v" style="color:var(--c-primary);font-size:1rem">${formatFollowers(blogger.follower_count)}</span>
+                </div>
+                <div class="profile-stat-row">
+                  <span class="k">Rating</span>
+                  <span class="v"><span style="display:flex;align-items:center;gap:5px">${starsHtml}</span></span>
+                </div>
+                <div class="profile-stat-row">
+                  <span class="k">Price range</span>
+                  <span class="v price-tag">${price}</span>
+                </div>
+                ${blogger.contact_info ? `
+                <div style="padding:12px 0;border-top:1px solid var(--c-border-soft);margin-top:4px">
+                  <div class="section-label-sm" style="margin-bottom:6px">Contact info</div>
+                  <p style="font-size:.82rem;color:var(--c-ink-3);line-height:1.6">${escHtml(blogger.contact_info)}</p>
+                </div>` : ''}
+
+                ${platformLinks ? `<div class="platform-links">${platformLinks}</div>` : ''}
+              </div>
+
+              ${ctaHtml ? `<div>${ctaHtml}</div>` : ''}
+            </div>
+          </aside>
+
+          <main>
+            <div class="card" style="margin-bottom:20px">
+              <div class="section-label-sm">About</div>
+              ${blogger.bio
+                ? `<p style="color:var(--c-ink-2);line-height:1.75;font-size:.9rem">${escHtml(blogger.bio)}</p>`
+                : `<p style="color:var(--c-ink-4);font-size:.875rem;font-style:italic">No bio provided yet.</p>`}
+            </div>
+
+            <div class="card">
+              <div class="section-label-sm">Reviews</div>
+              <div class="review-list" id="reviewsList"><div class="loading" style="padding:24px 0">Loading…</div></div>
+            </div>
+
+            ${ratingFormHtml}
+          </main>
+        </div>`;
+
+      loadReviews();
+    } catch (_) {
+      document.getElementById('profileContent').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">😕</div>
+          <h3>Profile not found</h3>
+          <p>This profile may not exist or has been removed.</p>
+          <a href="/catalog.html" class="btn btn-outline mt-4">Back to catalog</a>
+        </div>`;
+    }
+  })();
+</script>
+</body>
+</html>

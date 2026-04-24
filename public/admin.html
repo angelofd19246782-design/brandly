@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — Brandly</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="/" class="navbar-brand">Brandly</a>
+    <div id="navbarNav" style="display:flex;align-items:center;gap:6px;flex:1"></div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="container">
+    <div class="page-hero">
+      <h1>Admin Panel</h1>
+      <p>Manage users, influencer profiles, and platform data.</p>
+    </div>
+
+    <div id="alertBox"></div>
+
+    <!-- Stats -->
+    <div class="stats-grid-admin">
+      <div class="stat-tile"><div class="icon">👥</div><div class="num" id="sTotal">—</div><div class="lbl">Total users</div></div>
+      <div class="stat-tile"><div class="icon">✨</div><div class="num" id="sBloggers">—</div><div class="lbl">Creators</div></div>
+      <div class="stat-tile"><div class="icon">🏢</div><div class="num" id="sAdvertisers">—</div><div class="lbl">Advertisers</div></div>
+      <div class="stat-tile"><div class="icon">💬</div><div class="num" id="sConvs">—</div><div class="lbl">Conversations</div></div>
+      <div class="stat-tile"><div class="icon">📨</div><div class="num" id="sMessages">—</div><div class="lbl">Messages</div></div>
+      <div class="stat-tile"><div class="icon">⭐</div><div class="num" id="sRatings">—</div><div class="lbl">Ratings</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchTab('users')">Users</button>
+      <button class="admin-tab" onclick="switchTab('bloggers')">Influencers</button>
+    </div>
+
+    <!-- Users -->
+    <div id="tab-users" class="admin-tab-panel active">
+      <div class="data-table-wrap">
+        <div class="data-table-hdr">
+          <span id="usersCount"></span>
+          <button class="btn btn-ghost btn-sm" onclick="loadUsers()">↻ Refresh</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Registered</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersBody">
+              <tr><td colspan="7" class="loading">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Influencers -->
+    <div id="tab-bloggers" class="admin-tab-panel">
+      <div class="data-table-wrap">
+        <div class="data-table-hdr">
+          <span id="bloggersCount"></span>
+          <button class="btn btn-ghost btn-sm" onclick="loadBloggers()">↻ Refresh</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Creator</th>
+                <th>Category</th>
+                <th>Country</th>
+                <th>Followers</th>
+                <th>Rating</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bloggersBody">
+              <tr><td colspan="7" class="loading">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm modal -->
+<div id="confirmModal" style="display:none" class="modal-overlay" onclick="closeModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <h3 id="modalTitle">Confirm action</h3>
+    <p id="modalBody"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger btn-sm" id="modalConfirmBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  © 2024 <strong>Brandly</strong> — Influencer Marketplace
+</footer>
+
+<script src="/js/app.js"></script>
+<script>
+  const switchTab = (name) => {
+    document.querySelectorAll('.admin-tab').forEach((t,i) =>
+      t.classList.toggle('active', ['users','bloggers'][i] === name));
+    document.querySelectorAll('.admin-tab-panel').forEach(p =>
+      p.classList.toggle('active', p.id === `tab-${name}`));
+  };
+
+  const loadStats = async () => {
+    try {
+      const s = await api('GET', '/api/admin/stats');
+      document.getElementById('sTotal').textContent       = s.total_users;
+      document.getElementById('sBloggers').textContent    = s.total_bloggers;
+      document.getElementById('sAdvertisers').textContent = s.total_advertisers;
+      document.getElementById('sConvs').textContent       = s.total_conversations;
+      document.getElementById('sMessages').textContent    = s.total_messages;
+      document.getElementById('sRatings').textContent     = s.total_ratings;
+    } catch (_) {}
+  };
+
+  const loadUsers = async () => {
+    try {
+      const users = await api('GET', '/api/admin/users');
+      document.getElementById('usersCount').textContent = `${users.length} users total`;
+      const tbody = document.getElementById('usersBody');
+      if (!users.length) { tbody.innerHTML = '<tr><td colspan="7" class="loading">No users found.</td></tr>'; return; }
+
+      tbody.innerHTML = users.map(u => `
+        <tr>
+          <td style="color:var(--c-ink-4);font-size:.78rem;font-weight:600">#${u.id}</td>
+          <td style="font-weight:600">${escHtml(u.display_name)}</td>
+          <td style="color:var(--c-ink-3)">${escHtml(u.email)}</td>
+          <td><span class="badge ${u.role==='admin'?'':'badge-gray'}">${u.role}</span></td>
+          <td><span class="badge ${u.is_blocked?'badge-red':'badge-green'}">${u.is_blocked?'Blocked':'Active'}</span></td>
+          <td style="color:var(--c-ink-4);font-size:.8rem">${formatDate(u.created_at)}</td>
+          <td>
+            ${u.role !== 'admin' ? `
+              <div class="action-btns">
+                <button class="btn btn-ghost btn-sm" onclick="toggleBlock(${u.id},${u.is_blocked},'${escHtml(u.display_name)}')">
+                  ${u.is_blocked ? 'Unblock' : 'Block'}
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete(${u.id},'${escHtml(u.display_name)}')">Delete</button>
+              </div>` : '<span style="color:var(--c-ink-4);font-size:.78rem">Protected</span>'}
+          </td>
+        </tr>`).join('');
+    } catch (err) {
+      document.getElementById('usersBody').innerHTML =
+        `<tr><td colspan="7" style="color:var(--c-red);padding:16px">Error: ${escHtml(err.message)}</td></tr>`;
+    }
+  };
+
+  const loadBloggers = async () => {
+    try {
+      const bloggers = await api('GET', '/api/admin/bloggers');
+      document.getElementById('bloggersCount').textContent = `${bloggers.length} creators total`;
+      const tbody = document.getElementById('bloggersBody');
+      if (!bloggers.length) { tbody.innerHTML = '<tr><td colspan="7" class="loading">No creators found.</td></tr>'; return; }
+
+      tbody.innerHTML = bloggers.map(b => {
+        const avHtml = b.avatar_url
+          ? `<img src="${escHtml(b.avatar_url)}" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--c-border)" alt="">`
+          : `<div class="avatar" style="width:34px;height:34px;font-size:.65rem">${(b.display_name||'?').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}</div>`;
+
+        const starsHtml = b.avg_rating
+          ? `<span class="stars" style="font-size:.8rem">${'★'.repeat(Math.round(b.avg_rating))}</span> <span style="font-size:.8rem;font-weight:600">${Number(b.avg_rating).toFixed(1)}</span>`
+          : '<span style="color:var(--c-ink-4);font-size:.78rem">—</span>';
+
+        return `
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px">
+                ${avHtml}
+                <div>
+                  <a href="/blogger.html?id=${b.user_id}" target="_blank" style="font-weight:600;color:var(--c-ink)">${escHtml(b.display_name||'(no name)')}</a>
+                  <div style="font-size:.75rem;color:var(--c-ink-4)">${escHtml(b.email)}</div>
+                </div>
+              </div>
+            </td>
+            <td>${b.category ? `<span class="badge">${escHtml(b.category)}</span>` : '—'}</td>
+            <td style="color:var(--c-ink-3);font-size:.875rem">${escHtml(b.country||'—')}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:6px">
+                <input type="number" class="follower-input" id="fc-${b.user_id}"
+                  value="${b.follower_count??0}" min="0"
+                  onkeydown="if(event.key==='Enter')saveFollowers(${b.user_id})">
+                <button class="btn btn-primary btn-sm" onclick="saveFollowers(${b.user_id})" title="Save">✓</button>
+              </div>
+            </td>
+            <td>${starsHtml}</td>
+            <td><span class="badge ${b.is_blocked?'badge-red':'badge-green'}">${b.is_blocked?'Blocked':'Active'}</span></td>
+            <td>
+              <div class="action-btns">
+                <button class="btn btn-ghost btn-sm" onclick="toggleBlock(${b.user_id},${b.is_blocked},'${escHtml(b.display_name||'')}')">
+                  ${b.is_blocked?'Unblock':'Block'}
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete(${b.user_id},'${escHtml(b.display_name||'this user')}')">Delete</button>
+              </div>
+            </td>
+          </tr>`;
+      }).join('');
+    } catch (err) {
+      document.getElementById('bloggersBody').innerHTML =
+        `<tr><td colspan="7" style="color:var(--c-red);padding:16px">Error: ${escHtml(err.message)}</td></tr>`;
+    }
+  };
+
+  const saveFollowers = async (userId) => {
+    const input = document.getElementById(`fc-${userId}`);
+    const count = parseInt(input.value);
+    if (isNaN(count) || count < 0) { alert('Enter a valid number.'); return; }
+    try {
+      await api('PUT', `/api/admin/bloggers/${userId}/followers`, { follower_count: count });
+      showAlert('alertBox', `Follower count updated to ${count.toLocaleString()}.`, 'success');
+      loadStats();
+    } catch (err) { showAlert('alertBox', err.message); }
+  };
+
+  const toggleBlock = async (userId, currentlyBlocked, name) => {
+    const action = currentlyBlocked ? 'unblock' : 'block';
+    if (!confirm(`${action.charAt(0).toUpperCase()+action.slice(1)} "${name}"?`)) return;
+    try {
+      await api('PUT', `/api/admin/users/${userId}/block`, { blocked: !currentlyBlocked });
+      showAlert('alertBox', `"${name}" has been ${action}ed.`, 'success');
+      loadUsers(); loadBloggers();
+    } catch (err) { showAlert('alertBox', err.message); }
+  };
+
+  let pendingDeleteId = null;
+  const confirmDelete = (userId, name) => {
+    pendingDeleteId = userId;
+    document.getElementById('modalTitle').textContent = 'Delete user?';
+    document.getElementById('modalBody').textContent =
+      `This will permanently delete "${name}" and all their data including messages, ratings, and profile. This action cannot be undone.`;
+    document.getElementById('modalConfirmBtn').onclick = doDelete;
+    document.getElementById('confirmModal').style.display = 'flex';
+  };
+  const doDelete = async () => {
+    if (!pendingDeleteId) return;
+    closeModal();
+    try {
+      await api('DELETE', `/api/admin/users/${pendingDeleteId}`);
+      showAlert('alertBox', 'User deleted successfully.', 'success');
+      loadUsers(); loadBloggers(); loadStats();
+    } catch (err) { showAlert('alertBox', err.message); }
+    pendingDeleteId = null;
+  };
+  const closeModal = () => { document.getElementById('confirmModal').style.display = 'none'; };
+
+  (async () => {
+    const user = await requireRole('admin');
+    if (!user) return;
+    loadStats(); loadUsers(); loadBloggers();
+  })();
+</script>
+</body>
+</html>
