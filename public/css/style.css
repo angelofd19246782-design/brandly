@@ -2419,6 +2419,178 @@ tbody tr:hover td { background: rgba(79,70,229,.025); }
   .conv-item { padding: 12px 14px; }
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   NUMBER INPUT — remove native spinner arrows everywhere
+───────────────────────────────────────────────────────────────────────────── */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   PROFILE EDIT MODE — read-only by default, toggle on Edit
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Edit bar — sticky-ish header with mode indicator + actions */
+.profile-edit-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  margin-bottom: 22px;
+  box-shadow: var(--shadow-xs);
+  flex-wrap: wrap;
+}
+.profile-edit-bar-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .85rem;
+  color: var(--c-ink-3);
+  font-weight: 600;
+}
+.profile-mode-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--c-ink-4);
+  transition: background .15s, box-shadow .15s;
+  flex-shrink: 0;
+}
+body.edit-mode .profile-mode-dot {
+  background: var(--c-amber);
+  box-shadow: 0 0 0 4px rgba(217,119,6,.18);
+}
+body.edit-mode .profile-edit-bar {
+  border-color: #fcd34d;
+  background: #fffdf5;
+}
+body.edit-mode .profile-edit-bar-info {
+  color: var(--c-amber);
+}
+.profile-edit-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Visibility toggle classes */
+body:not(.edit-mode) .edit-only-show { display: none !important; }
+body.edit-mode         .view-only-show { display: none !important; }
+
+/* Read-only input styling — looks like plain dashboard values */
+body:not(.edit-mode) #profileForm input[type=text],
+body:not(.edit-mode) #profileForm input[type=email],
+body:not(.edit-mode) #profileForm input[type=url],
+body:not(.edit-mode) #profileForm input[type=number],
+body:not(.edit-mode) #profileForm textarea {
+  border: 0 !important;
+  border-bottom: 1px solid var(--c-border-soft) !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 7px 0 !important;
+  box-shadow: none !important;
+  color: var(--c-ink) !important;
+  font-weight: 600;
+  cursor: default;
+  min-height: 34px;
+}
+body:not(.edit-mode) #profileForm textarea {
+  border-bottom: 0 !important;
+  padding: 7px 0 !important;
+  font-weight: 400;
+  color: var(--c-ink-2) !important;
+  min-height: auto;
+  resize: none;
+  line-height: 1.65;
+}
+body:not(.edit-mode) #profileForm input:hover,
+body:not(.edit-mode) #profileForm textarea:hover {
+  border-color: var(--c-border-soft) !important;
+  background: transparent !important;
+}
+body:not(.edit-mode) #profileForm input:focus,
+body:not(.edit-mode) #profileForm textarea:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+body:not(.edit-mode) #profileForm input::placeholder,
+body:not(.edit-mode) #profileForm textarea::placeholder {
+  color: var(--c-ink-5) !important;
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* Custom select in view mode — plain text look, no arrow */
+body:not(.edit-mode) #profileForm .cs-wrap {
+  pointer-events: none;
+}
+body:not(.edit-mode) #profileForm .cs-trigger {
+  border: 0 !important;
+  border-bottom: 1px solid var(--c-border-soft) !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 7px 0 !important;
+  color: var(--c-ink) !important;
+  font-weight: 600;
+  box-shadow: none !important;
+  min-height: 34px;
+}
+body:not(.edit-mode) #profileForm .cs-arrow {
+  display: none;
+}
+
+/* Empty-value hint in view mode — visual dash for unset fields */
+body:not(.edit-mode) #profileForm input:placeholder-shown,
+body:not(.edit-mode) #profileForm textarea:placeholder-shown {
+  color: var(--c-ink-4) !important;
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* Section titles in view mode — slightly muted to feel less "formy" */
+body:not(.edit-mode) #profileForm .form-section-title {
+  color: var(--c-ink-4);
+  border-bottom-color: var(--c-border-soft);
+}
+
+/* Labels stay readable in both modes */
+body:not(.edit-mode) #profileForm label {
+  color: var(--c-ink-4);
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+/* Avatar-card read-only: hide upload bits by the class toggle already */
+.avatar-label {
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--c-ink-4);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+/* Responsive: edit bar stacks on small screens */
+@media (max-width: 560px) {
+  .profile-edit-bar { align-items: stretch; }
+  .profile-edit-bar-actions { justify-content: flex-end; }
+}
+
 /* Admin action button row spacing */
 .admin-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 

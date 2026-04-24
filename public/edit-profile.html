@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit Profile — Brandly</title>
+  <title>My Profile — Brandly</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -24,37 +24,63 @@
 
     <div id="alertBox"></div>
 
+    <!-- Edit bar: view mode shows Edit; edit mode shows Cancel + Save -->
+    <div class="profile-edit-bar">
+      <div class="profile-edit-bar-info">
+        <span class="profile-mode-dot"></span>
+        <span class="view-only-show profile-mode-label">Viewing profile</span>
+        <span class="edit-only-show profile-mode-label">Editing profile</span>
+      </div>
+      <div class="profile-edit-bar-actions">
+        <a id="viewProfileLink" href="#" class="btn btn-ghost btn-sm view-only-show" style="display:none">View public profile →</a>
+        <button type="button" class="btn btn-primary btn-sm view-only-show" id="editBtn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+          Edit Profile
+        </button>
+        <button type="button" class="btn btn-ghost btn-sm edit-only-show" id="cancelBtn">Cancel</button>
+        <button type="button" class="btn btn-primary btn-sm edit-only-show" id="saveBtn">Save Changes</button>
+      </div>
+    </div>
+
     <div class="edit-profile-layout">
 
       <!-- Sidebar -->
       <aside>
         <div class="card avatar-card">
           <div id="avatarPreview" class="avatar avatar-2xl" style="margin:0 auto 16px"></div>
-          <p style="font-size:.8rem;font-weight:700;color:var(--c-ink-2);margin-bottom:12px">Profile photo</p>
+          <p class="avatar-label">Profile photo</p>
 
-          <div class="form-group">
-            <label>Upload image</label>
-            <label for="avatarFile" class="file-upload-zone" id="avatarUploadZone">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-              <strong id="avatarUploadLabel">Click to upload</strong>
-              <span class="file-upload-hint">JPG, PNG or WebP · Max 3 MB</span>
-            </label>
-            <input type="file" id="avatarFile" accept="image/*" style="display:none">
+          <div class="avatar-upload-section edit-only-show">
+            <div class="form-group">
+              <label>Upload image</label>
+              <label for="avatarFile" class="file-upload-zone" id="avatarUploadZone">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                <strong id="avatarUploadLabel">Click to upload</strong>
+                <span class="file-upload-hint">JPG, PNG or WebP · Max 3 MB</span>
+              </label>
+              <input type="file" id="avatarFile" accept="image/*" style="display:none">
+            </div>
+
+            <div class="separator"></div>
+
+            <div class="form-group">
+              <label>Or paste image URL</label>
+              <input type="url" id="avatarUrlInput" placeholder="https://…">
+            </div>
+
+            <button type="button" class="btn btn-outline btn-sm" style="width:100%" onclick="saveAvatar()">Save Photo</button>
           </div>
-
-          <div class="separator"></div>
-
-          <div class="form-group">
-            <label>Or paste image URL</label>
-            <input type="url" id="avatarUrlInput" placeholder="https://…">
-          </div>
-
-          <button class="btn btn-outline" style="width:100%" onclick="saveAvatar()">Save Photo</button>
         </div>
 
-        <div class="card" style="margin-top:14px;background:var(--c-primary-soft);border-color:var(--c-primary-mid)">
+        <div class="card view-only-show" style="margin-top:14px;background:var(--c-primary-soft);border-color:var(--c-primary-mid)">
           <p style="font-size:.8rem;color:var(--c-primary);line-height:1.65">
             <strong>Visibility:</strong> Your profile is publicly visible once a display name is set. Advertisers can find you in the catalog.
+          </p>
+        </div>
+
+        <div class="card edit-only-show" style="margin-top:14px;background:var(--c-amber-soft);border-color:#fcd34d">
+          <p style="font-size:.8rem;color:var(--c-amber);line-height:1.65">
+            <strong>Edit mode:</strong> Click Save Changes to apply your edits, or Cancel to discard them.
           </p>
         </div>
       </aside>
@@ -155,11 +181,6 @@
           </div>
 
           <div id="formAlert" style="margin-top:16px"></div>
-
-          <div style="margin-top:20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-            <button type="submit" class="btn btn-primary btn-lg" id="saveBtn">Save Profile</button>
-            <a id="viewProfileLink" href="#" class="btn btn-ghost" style="display:none">View public profile →</a>
-          </div>
         </form>
       </main>
     </div>
@@ -172,8 +193,11 @@
 
 <script src="/js/app.js"></script>
 <script>
-  let isNewProfile = false;
+  let isNewProfile  = false;
   let currentUserId = null;
+  let snapshot      = {};
+
+  const FIELDS = ['display_name','bio','tiktok_url','youtube_url','instagram_url','category','country','city','price_min','price_max','contact_info'];
 
   const renderAvatar = (url, name) => {
     const el = document.getElementById('avatarPreview');
@@ -184,6 +208,57 @@
     }
   };
 
+  // ── Edit-mode plumbing ─────────────────────────────────────────────────────
+  const takeSnapshot = () => {
+    const vals = {};
+    FIELDS.forEach(f => {
+      const el = document.getElementById(f);
+      if (el) vals[f] = el.value;
+    });
+    return vals;
+  };
+
+  const restoreSnapshot = (vals) => {
+    FIELDS.forEach(f => {
+      const el = document.getElementById(f);
+      if (el) el.value = vals[f] ?? '';
+    });
+  };
+
+  const setReadonlyInputs = (readonly) => {
+    document.querySelectorAll('#profileForm input, #profileForm textarea').forEach(el => {
+      if (el.type === 'file') return;
+      // Follower count stays admin-managed once set — don't flip it back on
+      if (el.id === 'follower_count' && !isNewProfile) { el.readOnly = true; return; }
+      el.readOnly = readonly;
+    });
+  };
+
+  const setEditMode = (on) => {
+    document.body.classList.toggle('edit-mode', on);
+    setReadonlyInputs(!on);
+  };
+
+  const enterEditMode = () => {
+    snapshot = takeSnapshot();
+    setEditMode(true);
+    clearAlert('formAlert');
+    document.getElementById('display_name').focus();
+  };
+
+  const cancelEdit = () => {
+    restoreSnapshot(snapshot);
+    setEditMode(false);
+    clearAlert('formAlert');
+  };
+
+  document.getElementById('editBtn').addEventListener('click', enterEditMode);
+  document.getElementById('cancelBtn').addEventListener('click', cancelEdit);
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    document.getElementById('profileForm').requestSubmit();
+  });
+
+  // ── Initial load ───────────────────────────────────────────────────────────
   (async () => {
     const user = await requireRole('blogger');
     if (!user) return;
@@ -192,18 +267,19 @@
     try {
       const p = await api('GET', '/api/profile');
       isNewProfile = !p.display_name;
-      if (isNewProfile) document.getElementById('pageTitle').textContent = 'Set up your profile';
 
-      const fields = ['display_name','bio','tiktok_url','youtube_url','instagram_url','category','country','city','price_min','price_max','contact_info'];
-      fields.forEach(f => {
+      if (isNewProfile) {
+        document.getElementById('pageTitle').textContent = 'Set up your profile';
+      }
+
+      FIELDS.forEach(f => {
         const el = document.getElementById(f);
         if (el && p[f] != null) el.value = p[f];
       });
 
       const followerInput = document.getElementById('follower_count');
       if (!isNewProfile) {
-        followerInput.value    = p.follower_count ?? 0;
-        followerInput.readOnly = true;
+        followerInput.value = p.follower_count ?? 0;
         document.getElementById('followerHint').textContent = '(admin-managed)';
         followerInput.title = 'Follower count can only be changed by an admin after initial setup.';
       }
@@ -215,11 +291,16 @@
         vl.href = `/blogger.html?id=${currentUserId}`;
         vl.style.display = 'inline-flex';
       }
+
+      // New profiles start in edit mode; existing profiles start read-only
+      if (isNewProfile) enterEditMode();
+      else              setEditMode(false);
     } catch (err) {
       showAlert('alertBox', 'Failed to load profile: ' + err.message);
     }
   })();
 
+  // ── Form submit (save changes) ─────────────────────────────────────────────
   document.getElementById('profileForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     clearAlert('formAlert');
@@ -250,14 +331,15 @@
       vl.href = `/blogger.html?id=${currentUserId}`;
       vl.style.display = 'inline-flex';
       showAlert('formAlert', 'Profile saved successfully!', 'success');
+      setEditMode(false); // return to view mode
     } catch (err) {
       showAlert('formAlert', err.message);
     } finally {
-      btn.disabled = false; btn.textContent = 'Save Profile';
+      btn.disabled = false; btn.textContent = 'Save Changes';
     }
   });
 
-  // File upload UI: show filename + drag state
+  // ── Avatar file upload UI ─────────────────────────────────────────────────
   (() => {
     const input = document.getElementById('avatarFile');
     const zone  = document.getElementById('avatarUploadZone');
