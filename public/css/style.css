@@ -20,6 +20,18 @@
   --c-amber-soft:    #fffbeb;
   --c-star:          #f59e0b;
 
+  /* Supporting accents — for colored icon badges, pills, and decoration */
+  --c-cyan:          #06b6d4;
+  --c-cyan-soft:     #cffafe;
+  --c-pink:          #ec4899;
+  --c-pink-soft:     #fce7f3;
+  --c-orange:        #f97316;
+  --c-orange-soft:   #ffedd5;
+  --c-mint:          #10b981;
+  --c-mint-soft:     #d1fae5;
+  --c-teal:          #14b8a6;
+  --c-teal-soft:     #ccfbf1;
+
   --c-bg:            #f7f9fc;
   --c-surface:       #ffffff;
   --c-border:        #e8ecf2;
@@ -4056,6 +4068,320 @@ input[type=number] {
   font-size: .82rem;
   opacity: .8;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   VISUAL ENRICHMENT — accents, decorative blobs, colored badges
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Colored icon badge variants (use on .overview-icon, .mkt-feature-icon,
+   .stat-tile .icon, .insight-icon-badge, etc.) */
+.icon-accent-purple { background: var(--c-primary-soft) !important; color: var(--c-primary) !important; }
+.icon-accent-cyan   { background: var(--c-cyan-soft)    !important; color: var(--c-cyan)    !important; }
+.icon-accent-pink   { background: var(--c-pink-soft)    !important; color: var(--c-pink)    !important; }
+.icon-accent-orange { background: var(--c-orange-soft)  !important; color: var(--c-orange)  !important; }
+.icon-accent-mint   { background: var(--c-mint-soft)    !important; color: var(--c-mint)    !important; }
+.icon-accent-amber  { background: var(--c-amber-soft)   !important; color: var(--c-amber)   !important; }
+.icon-accent-teal   { background: var(--c-teal-soft)    !important; color: var(--c-teal)    !important; }
+
+/* Colored pill badges (extends existing .badge) */
+.badge-cyan   { background: var(--c-cyan-soft);   color: var(--c-cyan); }
+.badge-pink   { background: var(--c-pink-soft);   color: var(--c-pink); }
+.badge-orange { background: var(--c-orange-soft); color: var(--c-orange); }
+.badge-mint   { background: var(--c-mint-soft);   color: var(--c-mint); }
+.badge-amber  { background: var(--c-amber-soft);  color: var(--c-amber); }
+.badge-teal   { background: var(--c-teal-soft);   color: var(--c-teal); }
+
+/* Number stat color variants for stat tiles */
+.stat-tile.stat-purple .num { color: var(--c-primary); }
+.stat-tile.stat-cyan   .num { color: var(--c-cyan); }
+.stat-tile.stat-pink   .num { color: var(--c-pink); }
+.stat-tile.stat-orange .num { color: var(--c-orange); }
+.stat-tile.stat-mint   .num { color: var(--c-mint); }
+.stat-tile.stat-amber  .num { color: var(--c-amber); }
+
+/* Decorative blurred color blob (absolute-positioned inside a relative
+   ancestor with overflow:hidden) */
+.deco-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: .45;
+}
+.deco-blob-purple { background: radial-gradient(circle, #a78bfa, transparent 70%); }
+.deco-blob-cyan   { background: radial-gradient(circle, #67e8f9, transparent 70%); }
+.deco-blob-pink   { background: radial-gradient(circle, #f9a8d4, transparent 70%); }
+.deco-blob-orange { background: radial-gradient(circle, #fdba74, transparent 70%); }
+.deco-blob-mint   { background: radial-gradient(circle, #6ee7b7, transparent 70%); }
+
+/* Marketing hero decoration: two soft blobs positioned at corners so every
+   public page hero has subtle depth instead of a flat gradient */
+.marketing-hero {
+  position: relative;
+  overflow: hidden;
+}
+.marketing-hero::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: -80px;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(167,139,250,.3), transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+.marketing-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -120px;
+  right: -80px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(103,232,249,.22), transparent 70%);
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+}
+.marketing-hero > .container { position: relative; z-index: 1; }
+
+/* Per-page tint variants for marketing heroes — add `data-hero-tint` on
+   the <section class="marketing-hero"> element */
+.marketing-hero[data-hero-tint="pink"]::after   { background: radial-gradient(circle, rgba(249,168,212,.3), transparent 70%); }
+.marketing-hero[data-hero-tint="orange"]::after { background: radial-gradient(circle, rgba(253,186,116,.3), transparent 70%); }
+.marketing-hero[data-hero-tint="mint"]::after   { background: radial-gradient(circle, rgba(110,231,183,.28), transparent 70%); }
+.marketing-hero[data-hero-tint="amber"]::after  { background: radial-gradient(circle, rgba(251,191,36,.25), transparent 70%); }
+.marketing-hero[data-hero-tint="pink"]::before   { background: radial-gradient(circle, rgba(236,72,153,.2), transparent 70%); }
+.marketing-hero[data-hero-tint="orange"]::before { background: radial-gradient(circle, rgba(249,115,22,.18), transparent 70%); }
+.marketing-hero[data-hero-tint="mint"]::before   { background: radial-gradient(circle, rgba(16,185,129,.2), transparent 70%); }
+.marketing-hero[data-hero-tint="amber"]::before  { background: radial-gradient(circle, rgba(245,158,11,.2), transparent 70%); }
+
+/* Hover accent bar on marketing feature cards */
+.mkt-feature-card {
+  position: relative;
+  overflow: hidden;
+}
+.mkt-feature-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 3px;
+  background: var(--c-gradient);
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity .2s, transform .2s;
+}
+.mkt-feature-card:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Overview item: accent top bar on hover too */
+.overview-item {
+  position: relative;
+  overflow: hidden;
+}
+.overview-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0; right: 0;
+  height: 3px;
+  background: currentColor;
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity .2s, transform .2s;
+}
+.overview-item:hover::after {
+  opacity: .9;
+  transform: translateY(0);
+}
+.overview-item:hover .overview-icon { transform: scale(1.08); transition: transform .2s; }
+
+/* Subtle top-bar accent for insight cards */
+.insight-card {
+  position: relative;
+  overflow: hidden;
+}
+.insight-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 40%;
+  height: 2px;
+  background: var(--c-gradient);
+  opacity: .6;
+}
+
+/* Stat tile gets a subtle accent strip on the left */
+.stat-tile {
+  position: relative;
+  overflow: hidden;
+}
+.stat-tile::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  width: 3px;
+  background: var(--c-primary);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.stat-tile.stat-cyan::before   { background: var(--c-cyan); }
+.stat-tile.stat-pink::before   { background: var(--c-pink); }
+.stat-tile.stat-orange::before { background: var(--c-orange); }
+.stat-tile.stat-mint::before   { background: var(--c-mint); }
+.stat-tile.stat-amber::before  { background: var(--c-amber); }
+.stat-tile:hover::before { opacity: 1; }
+
+/* Subtle background grid pattern for certain sections */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(15,23,42,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15,23,42,.03) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* Decorative gradient divider between sections */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--c-border) 20%, var(--c-border) 80%, transparent);
+  margin: 0;
+}
+
+/* Section eyebrow color variants */
+.section-hdr .eyebrow.eyebrow-cyan   { color: var(--c-cyan);   background: var(--c-cyan-soft);   border-color: rgba(6,182,212,.2); }
+.section-hdr .eyebrow.eyebrow-pink   { color: var(--c-pink);   background: var(--c-pink-soft);   border-color: rgba(236,72,153,.2); }
+.section-hdr .eyebrow.eyebrow-orange { color: var(--c-orange); background: var(--c-orange-soft); border-color: rgba(249,115,22,.2); }
+.section-hdr .eyebrow.eyebrow-mint   { color: var(--c-mint);   background: var(--c-mint-soft);   border-color: rgba(16,185,129,.2); }
+
+/* Product block eyebrow variants */
+.product-block-eyebrow.eb-cyan   { color: var(--c-cyan);   background: var(--c-cyan-soft);   border-color: rgba(6,182,212,.2); }
+.product-block-eyebrow.eb-pink   { color: var(--c-pink);   background: var(--c-pink-soft);   border-color: rgba(236,72,153,.2); }
+.product-block-eyebrow.eb-orange { color: var(--c-orange); background: var(--c-orange-soft); border-color: rgba(249,115,22,.2); }
+.product-block-eyebrow.eb-mint   { color: var(--c-mint);   background: var(--c-mint-soft);   border-color: rgba(16,185,129,.2); }
+.product-block-eyebrow.eb-amber  { color: var(--c-amber);  background: var(--c-amber-soft);  border-color: rgba(245,158,11,.2); }
+
+/* Marketing-hero eyebrow variants */
+.marketing-hero-eyebrow.mh-cyan   { color: var(--c-cyan);   background: var(--c-cyan-soft);   border-color: rgba(6,182,212,.2); }
+.marketing-hero-eyebrow.mh-pink   { color: var(--c-pink);   background: var(--c-pink-soft);   border-color: rgba(236,72,153,.2); }
+.marketing-hero-eyebrow.mh-orange { color: var(--c-orange); background: var(--c-orange-soft); border-color: rgba(249,115,22,.2); }
+.marketing-hero-eyebrow.mh-mint   { color: var(--c-mint);   background: var(--c-mint-soft);   border-color: rgba(16,185,129,.2); }
+.marketing-hero-eyebrow.mh-amber  { color: var(--c-amber);  background: var(--c-amber-soft);  border-color: rgba(245,158,11,.2); }
+
+/* Mockup frame halo color variants */
+.mockup-frame.halo-cyan::before   { background: radial-gradient(circle, rgba(103,232,249,.3), transparent 70%); }
+.mockup-frame.halo-pink::before   { background: radial-gradient(circle, rgba(249,168,212,.3), transparent 70%); }
+.mockup-frame.halo-orange::before { background: radial-gradient(circle, rgba(253,186,116,.3), transparent 70%); }
+.mockup-frame.halo-mint::before   { background: radial-gradient(circle, rgba(110,231,183,.3), transparent 70%); }
+
+/* Soft section background tints */
+.section-tint-purple { background: linear-gradient(180deg, var(--c-surface) 0%, #f4f3ff 100%); }
+.section-tint-cyan   { background: linear-gradient(180deg, var(--c-surface) 0%, #ecfeff 100%); }
+.section-tint-pink   { background: linear-gradient(180deg, var(--c-surface) 0%, #fdf2f8 100%); }
+.section-tint-mint   { background: linear-gradient(180deg, var(--c-surface) 0%, #f0fdf4 100%); }
+
+/* App page hero: add a soft decorative strip under the title */
+.page-hero {
+  position: relative;
+}
+.page-hero::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 60px;
+  height: 3px;
+  background: var(--c-gradient);
+  border-radius: 2px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   AUTOMATIC COLOR CYCLING — applies across all marketing feature grids and
+   resource grids without any HTML changes. Gives every page visual variety
+   by default.
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Cycle icon colors on .mkt-feature-card through 6 accents */
+.mkt-feature-grid > .mkt-feature-card:nth-child(6n+1) .mkt-feature-icon { background: var(--c-primary-soft); color: var(--c-primary); }
+.mkt-feature-grid > .mkt-feature-card:nth-child(6n+2) .mkt-feature-icon { background: var(--c-cyan-soft);    color: var(--c-cyan); }
+.mkt-feature-grid > .mkt-feature-card:nth-child(6n+3) .mkt-feature-icon { background: var(--c-pink-soft);    color: var(--c-pink); }
+.mkt-feature-grid > .mkt-feature-card:nth-child(6n+4) .mkt-feature-icon { background: var(--c-orange-soft);  color: var(--c-orange); }
+.mkt-feature-grid > .mkt-feature-card:nth-child(6n+5) .mkt-feature-icon { background: var(--c-mint-soft);    color: var(--c-mint); }
+.mkt-feature-grid > .mkt-feature-card:nth-child(6n+6) .mkt-feature-icon { background: var(--c-amber-soft);   color: var(--c-amber); }
+
+/* Same cycling for resource-grid tags */
+.resource-grid > .resource-card:nth-child(6n+1) .resource-tag { background: var(--c-primary-soft); color: var(--c-primary); }
+.resource-grid > .resource-card:nth-child(6n+2) .resource-tag { background: var(--c-cyan-soft);    color: var(--c-cyan); }
+.resource-grid > .resource-card:nth-child(6n+3) .resource-tag { background: var(--c-pink-soft);    color: var(--c-pink); }
+.resource-grid > .resource-card:nth-child(6n+4) .resource-tag { background: var(--c-orange-soft);  color: var(--c-orange); }
+.resource-grid > .resource-card:nth-child(6n+5) .resource-tag { background: var(--c-mint-soft);    color: var(--c-mint); }
+.resource-grid > .resource-card:nth-child(6n+6) .resource-tag { background: var(--c-amber-soft);   color: var(--c-amber); }
+
+/* Resource-card hover accent bar — same colored accent as the tag for visual
+   continuity */
+.resource-card {
+  position: relative;
+  overflow: hidden;
+}
+.resource-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: var(--c-primary);
+  transition: width .25s;
+}
+.resource-grid > .resource-card:nth-child(6n+2)::before { background: var(--c-cyan); }
+.resource-grid > .resource-card:nth-child(6n+3)::before { background: var(--c-pink); }
+.resource-grid > .resource-card:nth-child(6n+4)::before { background: var(--c-orange); }
+.resource-grid > .resource-card:nth-child(6n+5)::before { background: var(--c-mint); }
+.resource-grid > .resource-card:nth-child(6n+6)::before { background: var(--c-amber); }
+.resource-card:hover::before { width: 100%; }
+
+/* Testimonial cards get subtle colored accent bar at top */
+.testimonials-grid > .testimonial-card {
+  position: relative;
+  overflow: hidden;
+}
+.testimonials-grid > .testimonial-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.testimonials-grid > .testimonial-card:nth-child(3n+1)::before { background: var(--c-primary); }
+.testimonials-grid > .testimonial-card:nth-child(3n+2)::before { background: var(--c-cyan); }
+.testimonials-grid > .testimonial-card:nth-child(3n+3)::before { background: var(--c-pink); }
+.testimonials-grid > .testimonial-card:hover::before { opacity: 1; }
+
+/* Creator cards (catalog) get a subtle colored left accent on hover */
+.blogger-card {
+  position: relative;
+}
+.blogger-card::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  width: 3px;
+  background: var(--c-gradient);
+  opacity: 0;
+  transition: opacity .2s;
+  border-radius: var(--r-lg) 0 0 var(--r-lg);
+}
+.blogger-card:hover::before { opacity: 1; }
+
+/* Pricing card accents — subtle colored pill on the plan name */
+.pricing-grid > .pricing-card:nth-child(1) .pricing-name { color: var(--c-cyan); }
+.pricing-grid > .pricing-card:nth-child(2) .pricing-name { color: var(--c-primary); }
+.pricing-grid > .pricing-card:nth-child(3) .pricing-name { color: var(--c-mint); }
 
 /* Admin action button row spacing */
 .admin-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
