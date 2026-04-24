@@ -1217,6 +1217,7 @@ footer.site-footer strong { color: #94a3b8; }
 .creator-card-banner {
   height: 72px;
   position: relative;
+  overflow: visible;
 }
 .creator-card-avatar {
   position: absolute;
