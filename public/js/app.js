@@ -103,6 +103,9 @@ const logout = async () => {
 };
 
 // ── Nav ───────────────────────────────────────────────────────────────────────
+const _navInitials = (n) =>
+  n ? n.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase() : '?';
+
 const renderNav = (user) => {
   const el = document.getElementById('navbarNav');
   if (!el) return;
@@ -110,6 +113,12 @@ const renderNav = (user) => {
   const page = window.location.pathname;
   const link = (href, label) =>
     `<a href="${href}" class="nav-link${page === href ? ' active' : ''}">${label}</a>`;
+
+  const userChip = (name) => `
+    <div class="nav-user-chip" title="${escHtml(name)}">
+      <div class="nav-user-avatar">${_navInitials(name)}</div>
+      <span class="nav-user-name">${escHtml(name)}</span>
+    </div>`;
 
   let links = '', auth = '';
 
@@ -119,15 +128,15 @@ const renderNav = (user) => {
              ${link('/register.html','Sign Up').replace('nav-link','btn btn-primary btn-sm')}`;
   } else if (user.role === 'advertiser') {
     links = link('/catalog.html','Browse Bloggers') + link('/chat.html','Messages');
-    auth  = `<span class="nav-user">${escHtml(user.display_name)}</span>
+    auth  = `${userChip(user.display_name)}
              <button class="btn btn-ghost btn-sm" onclick="logout()">Log Out</button>`;
   } else if (user.role === 'blogger') {
     links = link('/catalog.html','Browse') + link('/edit-profile.html','My Profile') + link('/chat.html','Messages');
-    auth  = `<span class="nav-user">${escHtml(user.display_name)}</span>
+    auth  = `${userChip(user.display_name)}
              <button class="btn btn-ghost btn-sm" onclick="logout()">Log Out</button>`;
   } else if (user.role === 'admin') {
     links = link('/catalog.html','Browse') + link('/admin.html','Admin Panel');
-    auth  = `<span class="nav-user">Admin</span>
+    auth  = `${userChip(user.display_name || 'Admin')}
              <button class="btn btn-ghost btn-sm" onclick="logout()">Log Out</button>`;
   }
 

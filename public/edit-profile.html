@@ -34,8 +34,12 @@
 
           <div class="form-group">
             <label>Upload image</label>
-            <input type="file" id="avatarFile" accept="image/*">
-            <p class="form-hint">JPG, PNG or WebP · Max 3 MB</p>
+            <label for="avatarFile" class="file-upload-zone" id="avatarUploadZone">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+              <strong id="avatarUploadLabel">Click to upload</strong>
+              <span class="file-upload-hint">JPG, PNG or WebP · Max 3 MB</span>
+            </label>
+            <input type="file" id="avatarFile" accept="image/*" style="display:none">
           </div>
 
           <div class="separator"></div>
@@ -252,6 +256,30 @@
       btn.disabled = false; btn.textContent = 'Save Profile';
     }
   });
+
+  // File upload UI: show filename + drag state
+  (() => {
+    const input = document.getElementById('avatarFile');
+    const zone  = document.getElementById('avatarUploadZone');
+    const label = document.getElementById('avatarUploadLabel');
+    input.addEventListener('change', () => {
+      const f = input.files[0];
+      if (f) { zone.classList.add('has-file'); label.textContent = f.name; }
+      else   { zone.classList.remove('has-file'); label.textContent = 'Click to upload'; }
+    });
+    ['dragenter','dragover'].forEach(ev =>
+      zone.addEventListener(ev, e => { e.preventDefault(); zone.classList.add('dragover'); })
+    );
+    ['dragleave','drop'].forEach(ev =>
+      zone.addEventListener(ev, e => { e.preventDefault(); zone.classList.remove('dragover'); })
+    );
+    zone.addEventListener('drop', e => {
+      if (e.dataTransfer.files.length) {
+        input.files = e.dataTransfer.files;
+        input.dispatchEvent(new Event('change'));
+      }
+    });
+  })();
 
   const saveAvatar = async () => {
     const file     = document.getElementById('avatarFile').files[0];
