@@ -32,27 +32,34 @@
   <div class="chat-main" id="chatMain">
 
     <div class="chat-placeholder" id="chatPlaceholder">
-      <div class="chat-placeholder-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg></div>
+      <div class="chat-placeholder-icon">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+      </div>
       <h3>Select a conversation</h3>
       <p class="text-muted text-sm">Choose a chat from the list to open it</p>
     </div>
 
-    <div id="chatActive" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+    <div id="chatActive" class="chat-active" style="display:none">
       <div class="chat-hdr" id="chatHdr">
-        <button id="backBtn" class="btn btn-ghost btn-sm" onclick="goBack()" style="display:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Back</button>
+        <button id="backBtn" class="btn btn-ghost btn-sm chat-back-btn" style="display:none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+          Back
+        </button>
         <div class="avatar" id="chatAv"></div>
         <div class="chat-hdr-info">
           <div class="chat-hdr-name" id="chatHdrName"></div>
           <div class="chat-hdr-sub" id="chatHdrSub"></div>
         </div>
-        <a id="chatProfileLink" href="#" class="btn btn-ghost btn-sm" style="margin-left:auto;display:none">View profile</a>
+        <a id="chatProfileLink" href="#" class="btn btn-ghost btn-sm" style="display:none">View profile</a>
       </div>
 
       <div class="chat-messages" id="chatMessages"></div>
 
       <div class="chat-footer">
         <textarea id="messageInput" placeholder="Type a message…" rows="1"></textarea>
-        <button class="send-btn" id="sendBtn" title="Send message"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button>
+        <button class="send-btn" id="sendBtn" title="Send message">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+        </button>
       </div>
     </div>
   </div>
@@ -60,68 +67,91 @@
 
 <script src="/js/app.js"></script>
 <script>
-  const urlParams  = new URLSearchParams(window.location.search);
-  let activeConvId = urlParams.get('id') ? parseInt(urlParams.get('id')) : null;
-  let currentUser  = null;
-  let pollTimer    = null;
-  let lastMsgCount = 0;
+  // ── State ───────────────────────────────────────────────────────────────────
+  const urlParams = new URLSearchParams(window.location.search);
+  let activeConvId  = urlParams.get('id') ? parseInt(urlParams.get('id')) : null;
+  let currentUser   = null;
+  let pollTimer     = null;
+  let lastMsgCount  = 0;
+  let conversations = [];
 
-  const av = (name) => name ? name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase() : '?';
+  const initials = (n) =>
+    n ? n.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase() : '?';
 
+  // ── Conversations list ──────────────────────────────────────────────────────
   const loadConversations = async () => {
+    const list = document.getElementById('convList');
     try {
-      const convs = await api('GET', '/api/conversations');
-      const el = document.getElementById('convList');
+      conversations = await api('GET', '/api/conversations');
 
-      if (!convs.length) {
-        el.innerHTML = `
+      if (!conversations.length) {
+        list.innerHTML = `
           <div class="no-convs">
-            <div style="margin-bottom:10px;opacity:.4">${icon('msgCircle', 40)}</div>
-            <p style="font-weight:600;color:var(--c-ink-3);margin-bottom:6px">No conversations yet</p>
+            <div class="no-convs-icon">${icon('msgCircle', 38)}</div>
+            <p class="no-convs-title">No conversations yet</p>
             ${currentUser.role === 'advertiser'
-              ? `<a href="/catalog.html" style="font-size:.8rem;color:var(--c-primary);font-weight:600">Browse influencers →</a>`
-              : `<p style="font-size:.78rem">Advertisers will reach out to you here.</p>`}
+              ? `<a href="/catalog.html" class="no-convs-link">Browse influencers →</a>`
+              : `<p class="no-convs-sub">Advertisers will reach out to you here.</p>`}
           </div>`;
         return;
       }
 
-      el.innerHTML = convs.map(c => {
-        const otherId = currentUser.role === 'advertiser' ? c.blogger_id : c.advertiser_id;
-        const avHtml  = c.other_avatar
+      list.innerHTML = conversations.map(c => {
+        const avHtml = c.other_avatar
           ? `<img src="${escHtml(c.other_avatar)}" alt="">`
-          : av(c.other_name);
+          : initials(c.other_name);
+        const isActive = c.id === activeConvId;
         return `
-          <div class="conv-item ${c.id === activeConvId ? 'active' : ''}"
-               onclick="openConv(${c.id}, ${JSON.stringify(escHtml(c.other_name))}, ${JSON.stringify(c.other_avatar||null)}, ${otherId})">
-            <div class="avatar" style="width:40px;height:40px;font-size:.8rem;flex-shrink:0">${avHtml}</div>
+          <div class="conv-item ${isActive ? 'active' : ''}" data-conv-id="${c.id}">
+            <div class="conv-av">${avHtml}</div>
             <div class="conv-item-body">
-              <div class="conv-name">${escHtml(c.other_name)}</div>
+              <div class="conv-top-row">
+                <div class="conv-name">${escHtml(c.other_name)}</div>
+                <span class="conv-time">${c.last_at ? formatTime(c.last_at) : ''}</span>
+              </div>
               <div class="conv-preview">${c.last_message ? escHtml(c.last_message) : 'No messages yet'}</div>
             </div>
-            <span class="conv-time">${c.last_at ? formatTime(c.last_at) : ''}</span>
           </div>`;
       }).join('');
     } catch (_) {
-      document.getElementById('convList').innerHTML = `<div class="no-convs">Failed to load conversations.</div>`;
+      list.innerHTML = `<div class="no-convs">Failed to load conversations.</div>`;
     }
   };
 
+  // Event delegation — one listener for all conversation clicks
+  document.getElementById('convList').addEventListener('click', (e) => {
+    const item = e.target.closest('.conv-item');
+    if (!item) return;
+    const convId = parseInt(item.dataset.convId);
+    const conv   = conversations.find(c => c.id === convId);
+    if (!conv) return;
+    const otherId = currentUser.role === 'advertiser' ? conv.blogger_id : conv.advertiser_id;
+    openConv(convId, conv.other_name, conv.other_avatar, otherId);
+  });
+
+  // ── Open a conversation ─────────────────────────────────────────────────────
   const openConv = async (convId, otherName, otherAvatar, otherUserId) => {
     activeConvId = convId;
     if (pollTimer) clearInterval(pollTimer);
     history.replaceState(null, '', `/chat.html?id=${convId}`);
 
+    // Mobile: swap panels
     if (window.innerWidth <= 768) {
       document.getElementById('chatSidebar').classList.add('hidden');
       document.getElementById('chatMain').classList.remove('hidden');
       document.getElementById('backBtn').style.display = 'inline-flex';
     }
 
+    // Header avatar + name
     const avEl = document.getElementById('chatAv');
-    avEl.innerHTML = otherAvatar ? `<img src="${escHtml(otherAvatar)}" alt="">` : escHtml(av(otherName));
-    document.getElementById('chatHdrName').textContent = otherName;
-    document.getElementById('chatHdrSub').textContent  = currentUser.role === 'advertiser' ? 'Influencer' : 'Advertiser';
+    avEl.innerHTML = otherAvatar
+      ? `<img src="${escHtml(otherAvatar)}" alt="">`
+      : initials(otherName);
+    document.getElementById('chatHdrName').textContent = otherName || '—';
+    document.getElementById('chatHdrSub').textContent =
+      currentUser.role === 'advertiser' ? 'Influencer' : 'Advertiser';
 
+    // Profile link (only for advertisers viewing a blogger)
     const profileLink = document.getElementById('chatProfileLink');
     if (currentUser.role === 'advertiser' && otherUserId) {
       profileLink.href = `/blogger.html?id=${otherUserId}`;
@@ -130,32 +160,30 @@
       profileLink.style.display = 'none';
     }
 
+    // Swap placeholder → active chat
     document.getElementById('chatPlaceholder').style.display = 'none';
-    const activeEl = document.getElementById('chatActive');
-    activeEl.style.display = 'flex';
-    activeEl.style.flexDirection = 'column';
-    activeEl.style.overflow = 'hidden';
-    activeEl.style.flex = '1';
+    document.getElementById('chatActive').style.display = 'flex';
 
-    document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
+    // Highlight active row
     document.querySelectorAll('.conv-item').forEach(el => {
-      const match = el.getAttribute('onclick')?.match(/openConv\((\d+)/);
-      if (match && parseInt(match[1]) === convId) el.classList.add('active');
+      el.classList.toggle('active', parseInt(el.dataset.convId) === convId);
     });
 
     lastMsgCount = 0;
     await loadMessages();
     pollTimer = setInterval(loadMessages, 4000);
-    loadConversations();
+    loadConversations(); // refresh sidebar preview/timestamps
   };
 
-  const goBack = () => {
+  // ── Back button (mobile) ────────────────────────────────────────────────────
+  document.getElementById('backBtn').addEventListener('click', () => {
     if (pollTimer) clearInterval(pollTimer);
     document.getElementById('chatSidebar').classList.remove('hidden');
     document.getElementById('chatMain').classList.add('hidden');
     document.getElementById('backBtn').style.display = 'none';
-  };
+  });
 
+  // ── Messages ────────────────────────────────────────────────────────────────
   const loadMessages = async () => {
     if (!activeConvId) return;
     try {
@@ -167,17 +195,22 @@
       const wasAtBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
 
       if (!data.messages.length) {
-        el.innerHTML = `<div style="text-align:center;color:var(--c-ink-4);padding:48px 24px;font-size:.875rem">No messages yet. Say hello!</div>`;
+        el.innerHTML = `<div class="chat-empty-convo">No messages yet. Say hello!</div>`;
         return;
       }
 
       el.innerHTML = data.messages.map(m => {
         const mine = m.sender_id === currentUser.id;
+        const avatar = !mine
+          ? `<div class="msg-sender-avatar">${initials(m.sender_name)}</div>`
+          : '';
         return `
           <div class="msg-row ${mine ? 'mine' : ''}">
-            ${!mine ? `<div class="msg-sender-avatar">${av(m.sender_name)}</div>` : ''}
-            <div class="msg-bubble">${escHtml(m.content).replace(/\n/g,'<br>')}</div>
-            <span class="msg-time">${formatTime(m.created_at)}</span>
+            ${avatar}
+            <div class="msg-bubble-wrap">
+              <div class="msg-bubble">${escHtml(m.content).replace(/\n/g,'<br>')}</div>
+              <span class="msg-time">${formatTime(m.created_at)}</span>
+            </div>
           </div>`;
       }).join('');
 
@@ -185,13 +218,14 @@
     } catch (_) {}
   };
 
+  // ── Send message ────────────────────────────────────────────────────────────
   const sendMessage = async () => {
     const input   = document.getElementById('messageInput');
     const content = input.value.trim();
     if (!content || !activeConvId) return;
     const btn = document.getElementById('sendBtn');
     btn.disabled = true;
-    input.value  = '';
+    input.value = '';
     input.style.height = 'auto';
     try {
       await api('POST', `/api/conversations/${activeConvId}/messages`, { content });
@@ -212,17 +246,20 @@
   });
   document.getElementById('sendBtn').addEventListener('click', sendMessage);
 
-  document.getElementById('messageInput').addEventListener('input', function() {
+  // Auto-resize textarea
+  document.getElementById('messageInput').addEventListener('input', function () {
     this.style.height = 'auto';
     this.style.height = Math.min(this.scrollHeight, 140) + 'px';
   });
 
+  // ── Boot ────────────────────────────────────────────────────────────────────
   (async () => {
     currentUser = await requireAuth('/chat.html');
     if (!currentUser) return;
 
     await loadConversations();
 
+    // Open ?id= from URL
     if (activeConvId) {
       try {
         const conv    = await api('GET', `/api/conversations/${activeConvId}`);
@@ -231,17 +268,20 @@
         try {
           if (currentUser.role === 'advertiser') {
             const bp = await api('GET', `/api/bloggers/${otherId}`);
-            otherName = bp.display_name; otherAvatar = bp.avatar_url;
+            otherName   = bp.display_name;
+            otherAvatar = bp.avatar_url;
           } else {
-            const convs = await api('GET', '/api/conversations');
-            const found = convs.find(c => c.id === activeConvId);
+            const found = conversations.find(c => c.id === activeConvId);
             if (found) otherName = found.other_name;
           }
         } catch (_) {}
         openConv(activeConvId, otherName, otherAvatar, otherId);
-      } catch (_) {}
+      } catch (_) {
+        activeConvId = null;
+      }
     }
 
+    // Mobile: start on list view if no active conv
     if (window.innerWidth <= 768 && !activeConvId) {
       document.getElementById('chatMain').classList.add('hidden');
     }
