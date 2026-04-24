@@ -26,12 +26,12 @@
 
     <!-- Stats -->
     <div class="stats-grid-admin">
-      <div class="stat-tile"><div class="icon">👥</div><div class="num" id="sTotal">—</div><div class="lbl">Total users</div></div>
-      <div class="stat-tile"><div class="icon">✨</div><div class="num" id="sBloggers">—</div><div class="lbl">Creators</div></div>
-      <div class="stat-tile"><div class="icon">🏢</div><div class="num" id="sAdvertisers">—</div><div class="lbl">Advertisers</div></div>
-      <div class="stat-tile"><div class="icon">💬</div><div class="num" id="sConvs">—</div><div class="lbl">Conversations</div></div>
-      <div class="stat-tile"><div class="icon">📨</div><div class="num" id="sMessages">—</div><div class="lbl">Messages</div></div>
-      <div class="stat-tile"><div class="icon">⭐</div><div class="num" id="sRatings">—</div><div class="lbl">Ratings</div></div>
+      <div class="stat-tile"><div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="num" id="sTotal">—</div><div class="lbl">Total users</div></div>
+      <div class="stat-tile"><div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg></div><div class="num" id="sBloggers">—</div><div class="lbl">Creators</div></div>
+      <div class="stat-tile"><div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 0-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></div><div class="num" id="sAdvertisers">—</div><div class="lbl">Advertisers</div></div>
+      <div class="stat-tile"><div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg></div><div class="num" id="sConvs">—</div><div class="lbl">Conversations</div></div>
+      <div class="stat-tile"><div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div><div class="num" id="sMessages">—</div><div class="lbl">Messages</div></div>
+      <div class="stat-tile"><div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="num" id="sRatings">—</div><div class="lbl">Ratings</div></div>
     </div>
 
     <!-- Tabs -->
@@ -45,7 +45,7 @@
       <div class="data-table-wrap">
         <div class="data-table-hdr">
           <span id="usersCount"></span>
-          <button class="btn btn-ghost btn-sm" onclick="loadUsers()">↻ Refresh</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadUsers()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>Refresh</button>
         </div>
         <div class="table-wrap">
           <table>
@@ -73,7 +73,7 @@
       <div class="data-table-wrap">
         <div class="data-table-hdr">
           <span id="bloggersCount"></span>
-          <button class="btn btn-ghost btn-sm" onclick="loadBloggers()">↻ Refresh</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadBloggers()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>Refresh</button>
         </div>
         <div class="table-wrap">
           <table>
@@ -179,7 +179,7 @@
           : `<div class="avatar" style="width:34px;height:34px;font-size:.65rem">${(b.display_name||'?').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}</div>`;
 
         const starsHtml = b.avg_rating
-          ? `<span class="stars" style="font-size:.8rem">${'★'.repeat(Math.round(b.avg_rating))}</span> <span style="font-size:.8rem;font-weight:600">${Number(b.avg_rating).toFixed(1)}</span>`
+          ? `${starsSvg(Math.round(b.avg_rating))} <span style="font-size:.8rem;font-weight:600">${Number(b.avg_rating).toFixed(1)}</span>`
           : '<span style="color:var(--c-ink-4);font-size:.78rem">—</span>';
 
         return `
@@ -200,7 +200,7 @@
                 <input type="number" class="follower-input" id="fc-${b.user_id}"
                   value="${b.follower_count??0}" min="0"
                   onkeydown="if(event.key==='Enter')saveFollowers(${b.user_id})">
-                <button class="btn btn-primary btn-sm" onclick="saveFollowers(${b.user_id})" title="Save">✓</button>
+                <button class="btn btn-primary btn-sm" onclick="saveFollowers(${b.user_id})" title="Save">${icon('check', 13)}</button>
               </div>
             </td>
             <td>${starsHtml}</td>

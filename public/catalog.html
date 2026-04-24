@@ -122,7 +122,7 @@
       if (!bloggers.length) {
         grid.innerHTML = `
           <div class="empty-state">
-            <div class="empty-state-icon">🔍</div>
+            <div class="empty-state-icon">${icon('search', 48)}</div>
             <h3>No influencers found</h3>
             <p>Try adjusting your filters or search terms.</p>
           </div>`;
@@ -140,7 +140,7 @@
       : initials(b.display_name);
 
     const stars = b.avg_rating
-      ? `<span class="stars" style="font-size:.85rem">${'★'.repeat(Math.round(b.avg_rating))}${'☆'.repeat(5-Math.round(b.avg_rating))}</span>`
+      ? starsSvg(Math.round(b.avg_rating))
       : '—';
 
     const price = b.price_min || b.price_max
@@ -148,9 +148,9 @@
       : 'Negotiable';
 
     const chips = [
-      b.tiktok_url    ? `<span class="platform-chip">📱 TikTok</span>`    : '',
-      b.youtube_url   ? `<span class="platform-chip">▶ YouTube</span>`   : '',
-      b.instagram_url ? `<span class="platform-chip">📸 Instagram</span>` : '',
+      b.tiktok_url    ? `<span class="platform-chip">${icon('tiktok', 12)} TikTok</span>`    : '',
+      b.youtube_url   ? `<span class="platform-chip">${icon('youtube', 12)} YouTube</span>`   : '',
+      b.instagram_url ? `<span class="platform-chip">${icon('instagram', 12)} Instagram</span>` : '',
     ].filter(Boolean).join('');
 
     return `
@@ -160,7 +160,7 @@
           <div class="blogger-card-info">
             <h3>${escHtml(b.display_name)}</h3>
             ${b.category ? `<span class="badge">${escHtml(b.category)}</span>` : ''}
-            ${b.country ? `<div class="location">📍 ${escHtml(b.country)}${b.city ? ', '+escHtml(b.city) : ''}</div>` : ''}
+            ${b.country ? `<div class="location">${icon('mapPin', 12)} ${escHtml(b.country)}${b.city ? ', '+escHtml(b.city) : ''}</div>` : ''}
           </div>
         </div>
 

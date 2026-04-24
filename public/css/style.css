@@ -511,7 +511,7 @@ input[type=file] { padding: 8px 12px; cursor: pointer; font-size: .82rem; color:
   border-radius: var(--r-md);
   background: var(--c-primary-soft);
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.4rem;
+  color: var(--c-primary);
   margin-bottom: 16px;
 }
 .feature-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 7px; }
@@ -745,8 +745,9 @@ input[type=file] { padding: 8px 12px; cursor: pointer; font-size: .82rem; color:
 .rating-form .star-picker { display: flex; gap: 4px; margin-bottom: 14px; }
 .rating-form .star-picker button {
   background: none; border: none;
-  font-size: 1.8rem; color: #e2e8f0;
-  padding: 0; line-height: 1;
+  color: #e2e8f0;
+  padding: 0; line-height: 0;
+  display: flex; align-items: center; justify-content: center;
   transition: color .1s, transform .1s;
 }
 .rating-form .star-picker button.active,
@@ -995,7 +996,7 @@ input[type=file] { padding: 8px 12px; cursor: pointer; font-size: .82rem; color:
   flex-direction: column;
   gap: 4px;
 }
-.stat-tile .icon { font-size: 1.4rem; margin-bottom: 4px; }
+.stat-tile .icon { display:flex; align-items:center; justify-content:center; margin-bottom: 4px; color: var(--c-primary); }
 .stat-tile .num  { font-size: 1.75rem; font-weight: 800; color: var(--c-primary); line-height: 1; }
 .stat-tile .lbl  { font-size: .75rem; font-weight: 500; color: var(--c-ink-4); }
 
