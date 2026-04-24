@@ -164,8 +164,140 @@ const clearAlert = (containerId) => {
   if (el) el.innerHTML = '';
 };
 
+// ── Custom select component ───────────────────────────────────────────────────
+function initCustomSelect(selectEl) {
+  if (selectEl._csInit) return;
+  selectEl._csInit = true;
+
+  // Wrap
+  const wrap = document.createElement('div');
+  wrap.className = 'cs-wrap';
+  selectEl.parentNode.insertBefore(wrap, selectEl);
+  wrap.appendChild(selectEl);
+  selectEl.style.cssText = 'position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;overflow:hidden';
+
+  // Trigger button
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'cs-trigger';
+
+  const valueSpan = document.createElement('span');
+  valueSpan.className = 'cs-value';
+
+  const arrow = document.createElement('span');
+  arrow.className = 'cs-arrow';
+  arrow.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`;
+
+  trigger.appendChild(valueSpan);
+  trigger.appendChild(arrow);
+  wrap.appendChild(trigger);
+
+  // Menu
+  const menu = document.createElement('div');
+  menu.className = 'cs-menu';
+  wrap.appendChild(menu);
+
+  const buildMenu = () => {
+    menu.innerHTML = '';
+    Array.from(selectEl.options).forEach((opt, idx) => {
+      const item = document.createElement('div');
+      item.className = 'cs-option';
+      item.textContent = opt.text;
+      item.dataset.value = opt.value;
+      if (opt.value === selectEl.value) item.classList.add('selected');
+      item.addEventListener('mousedown', (e) => {
+        e.preventDefault(); // prevent blur before click registers
+        selectEl.value = opt.value;
+        selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+        syncDisplay();
+        close();
+      });
+      menu.appendChild(item);
+    });
+  };
+
+  const syncDisplay = () => {
+    const sel = selectEl.options[selectEl.selectedIndex];
+    valueSpan.textContent = sel ? sel.text : '';
+    menu.querySelectorAll('.cs-option').forEach(item => {
+      item.classList.toggle('selected', item.dataset.value === selectEl.value);
+    });
+  };
+
+  const open = () => {
+    // Close all other open dropdowns first
+    document.querySelectorAll('.cs-wrap.cs-open').forEach(w => {
+      if (w !== wrap) w.classList.remove('cs-open');
+    });
+    wrap.classList.add('cs-open');
+    // Flip above if not enough space below
+    const rect = wrap.getBoundingClientRect();
+    const below = window.innerHeight - rect.bottom;
+    if (below < 260 && rect.top > 260) {
+      menu.style.top    = 'auto';
+      menu.style.bottom = '100%';
+      menu.style.marginTop    = '0';
+      menu.style.marginBottom = '4px';
+    } else {
+      menu.style.top    = '';
+      menu.style.bottom = '';
+      menu.style.marginTop    = '';
+      menu.style.marginBottom = '';
+    }
+  };
+
+  const close  = () => wrap.classList.remove('cs-open');
+  const toggle = () => wrap.classList.contains('cs-open') ? close() : open();
+
+  trigger.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
+  trigger.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape')            { close(); trigger.blur(); }
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const idx = selectEl.selectedIndex;
+      const next = e.key === 'ArrowDown'
+        ? Math.min(idx + 1, selectEl.options.length - 1)
+        : Math.max(idx - 1, 0);
+      selectEl.selectedIndex = next;
+      selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+      syncDisplay();
+    }
+  });
+
+  // Intercept programmatic el.value = ... (e.g. edit-profile.html loads saved value)
+  const desc = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+  Object.defineProperty(selectEl, 'value', {
+    get: function ()  { return desc.get.call(this); },
+    set: function (v) { desc.set.call(this, v); syncDisplay(); },
+    configurable: true,
+  });
+
+  // Observe option additions (catalog.html loads categories/countries via API)
+  new MutationObserver(() => { buildMenu(); syncDisplay(); })
+    .observe(selectEl, { childList: true });
+
+  buildMenu();
+  syncDisplay();
+}
+
+function initAllCustomSelects() {
+  document.querySelectorAll('select:not([data-no-custom])').forEach(initCustomSelect);
+}
+
+// Close on outside click or Escape
+document.addEventListener('click', () => {
+  document.querySelectorAll('.cs-wrap.cs-open').forEach(w => w.classList.remove('cs-open'));
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.cs-wrap.cs-open').forEach(w => w.classList.remove('cs-open'));
+  }
+});
+
 // ── Init nav on every page ────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await getUser();
   renderNav(user);
+  initAllCustomSelects();
 });

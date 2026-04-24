@@ -1588,3 +1588,242 @@ footer.site-footer.footer-rich {
   .stats-grid-admin { grid-template-columns: repeat(2, 1fr); }
   .navbar-brand { font-size: 1.15rem; }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CUSTOM SELECT COMPONENT
+───────────────────────────────────────────────────────────────────────────── */
+.cs-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+/* Trigger button */
+.cs-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-md);
+  font-size: .9rem;
+  color: var(--c-ink);
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.4;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.cs-trigger:hover {
+  border-color: #a5b4fc;
+  background: #fafbff;
+}
+.cs-trigger:focus {
+  outline: none;
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(79,70,229,.1);
+}
+.cs-wrap.cs-open .cs-trigger {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(79,70,229,.1);
+  background: #fafbff;
+}
+
+.cs-value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cs-arrow {
+  flex-shrink: 0;
+  color: var(--c-ink-4);
+  display: flex;
+  align-items: center;
+  transition: transform .2s cubic-bezier(.4,0,.2,1), color .15s;
+}
+.cs-wrap.cs-open .cs-arrow {
+  transform: rotate(180deg);
+  color: var(--c-primary);
+}
+
+/* Dropdown menu */
+.cs-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  min-width: 100%;
+  background: #fff;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-md);
+  box-shadow: 0 8px 32px rgba(15,23,42,.12), 0 2px 8px rgba(15,23,42,.06);
+  z-index: 600;
+  max-height: 260px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  opacity: 0;
+  transform: translateY(-6px) scale(.98);
+  pointer-events: none;
+  transition: opacity .15s cubic-bezier(.4,0,.2,1), transform .15s cubic-bezier(.4,0,.2,1);
+  transform-origin: top;
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-border) transparent;
+}
+.cs-menu::-webkit-scrollbar { width: 4px; }
+.cs-menu::-webkit-scrollbar-track { background: transparent; }
+.cs-menu::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 4px; }
+
+.cs-wrap.cs-open .cs-menu {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Options */
+.cs-option {
+  padding: 9px 13px;
+  font-size: .875rem;
+  color: var(--c-ink-2);
+  cursor: pointer;
+  transition: background .1s, color .1s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+}
+.cs-option:hover {
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+}
+.cs-option.selected {
+  color: var(--c-primary);
+  font-weight: 600;
+  background: rgba(79,70,229,.06);
+}
+.cs-option:first-child { border-radius: calc(var(--r-md) - 2px) calc(var(--r-md) - 2px) 0 0; }
+.cs-option:last-child  { border-radius: 0 0 calc(var(--r-md) - 2px) calc(var(--r-md) - 2px); }
+
+/* Filter-bar specific sizing — match the original height */
+.filter-field .cs-trigger {
+  height: 38px;
+  padding: 0 12px;
+  font-size: .875rem;
+}
+.filter-field .cs-trigger .cs-value { line-height: 38px; }
+
+/* Ensure filter-bar stacks above the blogger grid */
+.filter-bar {
+  position: relative;
+  z-index: 10;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SEARCH INPUT ICON
+───────────────────────────────────────────────────────────────────────────── */
+#filterSearch {
+  padding-left: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 11px center;
+}
+#filterSearch:focus {
+  background-image: url("data:image/svg+xml,%3Csvg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   MICRO-INTERACTIONS & POLISH
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Sharper input focus ring */
+input[type=text]:focus,
+input[type=email]:focus,
+input[type=password]:focus,
+input[type=number]:focus,
+input[type=url]:focus,
+textarea:focus {
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(79,70,229,.1);
+  background: #fafbff;
+}
+
+/* Smooth input hover */
+input[type=text]:not([readonly]):not([disabled]):hover,
+input[type=email]:not([disabled]):hover,
+input[type=password]:not([disabled]):hover,
+input[type=number]:not([readonly]):not([disabled]):hover,
+input[type=url]:not([disabled]):hover,
+textarea:not([readonly]):not([disabled]):hover {
+  border-color: #a5b4fc;
+}
+
+/* Remove ugly blue highlight on selects */
+select:focus { outline: none; }
+
+/* Smoother button active state */
+.btn:active {
+  transform: scale(.97) translateY(0) !important;
+  transition: transform .08s;
+}
+.btn-primary:active { box-shadow: 0 1px 4px rgba(79,70,229,.3) !important; }
+
+/* Cursor on interactive cards */
+.blogger-card { cursor: default; }
+.blogger-card a { cursor: pointer; }
+
+/* Send button in chat — active state */
+.send-btn:active { transform: scale(.94) !important; }
+
+/* Star picker (blogger profile) */
+.star-picker button {
+  transition: color .15s, transform .12s;
+}
+.star-picker button:hover { transform: scale(1.2); }
+.star-picker button:active { transform: scale(.95); }
+
+/* Nav buttons smooth hover */
+.nav-link {
+  transition: color .15s, background .15s;
+}
+
+/* File input polish */
+input[type=file] {
+  cursor: pointer;
+  border-style: dashed;
+}
+input[type=file]:hover { border-color: var(--c-primary); }
+
+/* Textarea — smooth resize handle */
+textarea { transition: border-color .15s, box-shadow .15s, min-height .15s; }
+
+/* Platform chips hover */
+.platform-chip {
+  transition: background .15s, border-color .15s, color .15s;
+}
+.platform-chip:hover {
+  background: var(--c-primary-soft);
+  border-color: var(--c-primary-mid);
+  color: var(--c-primary);
+}
+
+/* Admin action button row spacing */
+.admin-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+/* Remove native focus ring in favor of custom */
+*:focus-visible {
+  outline: 2px solid var(--c-primary);
+  outline-offset: 2px;
+}
+*:focus:not(:focus-visible) { outline: none; }
+
+/* Responsive: cs-menu min-width on small screens */
+@media (max-width: 480px) {
+  .cs-menu { min-width: 160px; }
+  .filter-field .cs-trigger { font-size: .82rem; }
+}
