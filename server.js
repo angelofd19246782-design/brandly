@@ -7,6 +7,7 @@ const path     = require('path');
 const fs       = require('fs');
 const db                    = require('./db');
 const { pool, checkConnection } = require('./db');
+const { seedIfEmpty }       = require('./seed');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -691,6 +692,7 @@ async function startServer() {
 
     await initDb();
     console.log('Schema ready.');
+    await seedIfEmpty();
 
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`Brandly running on port ${PORT}`);
