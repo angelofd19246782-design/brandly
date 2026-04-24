@@ -106,6 +106,71 @@ const logout = async () => {
 const _navInitials = (n) =>
   n ? n.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase() : '?';
 
+const _chev = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:2px;opacity:.55"><path d="m6 9 6 6 6-6"/></svg>';
+
+const _navMarketing = () => {
+  const page = window.location.pathname;
+  const isProduct   = page.startsWith('/product');
+  const isCustomers = page.startsWith('/customers');
+  const isResources = page.startsWith('/resources');
+  const active = (test) => test ? ' active' : '';
+  const a = (href, label) => `<a href="${href}" class="nav-link${page === href ? ' active' : ''}">${label}</a>`;
+  const dd = (id, label, matchFn, items) => `
+    <div class="nav-dropdown" data-nav="${id}">
+      <button type="button" class="nav-link nav-dropdown-trigger${active(matchFn)}">${label}${_chev}</button>
+      <div class="nav-dropdown-menu">
+        ${items.map(([h,t,d]) => `<a href="${h}"><span class="nav-dd-item-title">${t}</span>${d ? `<span class="nav-dd-item-desc">${d}</span>` : ''}</a>`).join('')}
+      </div>
+    </div>`;
+
+  const links = `
+    ${a('/check-creator.html', 'Check creator')}
+    ${dd('product', 'Product', isProduct, [
+      ['/product.html',            'Product overview', 'Every creator tool in one platform'],
+      ['/product-discovery.html',  'Discover',         'Find creators by niche, size, country'],
+      ['/product-analytics.html',  'Analyze',          'Inspect audience match and reviews'],
+      ['/product-outreach.html',   'Outreach',         'In-app messaging without cold emails'],
+      ['/product-management.html', 'Manage',           'Track every collaboration stage'],
+    ])}
+    ${dd('customers', 'Customers', isCustomers, [
+      ['/customers.html',                'All customers',       'Who uses Brandly'],
+      ['/customers-brands.html',         'Brands & agencies',   'Built for teams of any size'],
+      ['/customers-small-business.html', 'Small business',      'Scale with your business'],
+    ])}
+    ${dd('resources', 'Resources', isResources, [
+      ['/resources.html',        'All resources', 'Grow your influencer program'],
+      ['/resources-guides.html', 'Guides',        'Step-by-step playbooks'],
+      ['/resources-blog.html',   'Blog',          'Fresh takes on creator marketing'],
+    ])}
+    ${a('/pricing.html',      'Pricing')}
+    ${a('/for-creators.html', 'For creators')}
+  `;
+
+  const langDd = `
+    <div class="nav-dropdown" data-nav="lang">
+      <button type="button" class="nav-link nav-dropdown-trigger nav-lang-trigger">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        EN${_chev}
+      </button>
+      <div class="nav-dropdown-menu nav-dropdown-menu-right" style="min-width:160px">
+        <a href="#" data-lang="en"><span class="nav-dd-item-title">English</span></a>
+        <a href="#" data-lang="es"><span class="nav-dd-item-title">Español</span></a>
+        <a href="#" data-lang="fr"><span class="nav-dd-item-title">Français</span></a>
+        <a href="#" data-lang="de"><span class="nav-dd-item-title">Deutsch</span></a>
+        <a href="#" data-lang="zh"><span class="nav-dd-item-title">中文</span></a>
+      </div>
+    </div>`;
+
+  const auth = `
+    ${langDd}
+    <a href="/login.html" class="btn btn-ghost btn-sm">Sign In</a>
+    <a href="/register.html" class="btn btn-outline btn-sm">Sign Up</a>
+    <a href="/request-demo.html" class="btn btn-primary btn-sm">Request demo</a>
+  `;
+
+  return `<div class="nav-links">${links}</div><div class="nav-auth">${auth}</div>`;
+};
+
 const renderNav = (user) => {
   const el = document.getElementById('navbarNav');
   if (!el) return;
@@ -120,13 +185,14 @@ const renderNav = (user) => {
       <span class="nav-user-name">${escHtml(name)}</span>
     </div>`;
 
-  let links = '', auth = '';
-
   if (!user) {
-    links = link('/catalog.html', 'Browse Bloggers');
-    auth  = `${link('/login.html','Log In').replace('nav-link','btn btn-ghost btn-sm')}
-             ${link('/register.html','Sign Up').replace('nav-link','btn btn-primary btn-sm')}`;
-  } else if (user.role === 'advertiser') {
+    el.innerHTML = _navMarketing();
+    _wireNavDropdowns();
+    return;
+  }
+
+  let links = '', auth = '';
+  if (user.role === 'advertiser') {
     links = link('/catalog.html','Browse Bloggers') + link('/chat.html','Messages');
     auth  = `${userChip(user.display_name)}
              <button class="btn btn-ghost btn-sm" onclick="logout()">Log Out</button>`;
@@ -142,6 +208,42 @@ const renderNav = (user) => {
 
   el.innerHTML = `<div class="nav-links">${links}</div><div class="nav-auth">${auth}</div>`;
 };
+
+// Nav dropdown interactions (click-open, outside-click + Escape close)
+function _wireNavDropdowns() {
+  const triggers = document.querySelectorAll('.nav-dropdown-trigger');
+  triggers.forEach(trigger => {
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const dd = trigger.closest('.nav-dropdown');
+      const wasOpen = dd.classList.contains('open');
+      document.querySelectorAll('.nav-dropdown.open').forEach(d => d.classList.remove('open'));
+      if (!wasOpen) dd.classList.add('open');
+    });
+  });
+
+  // Language selector — visual-only (demo)
+  document.querySelectorAll('.nav-dropdown[data-nav="lang"] a').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const code = (a.dataset.lang || 'en').toUpperCase();
+      document.querySelector('.nav-lang-trigger').childNodes[2].textContent = ' ' + code;
+      document.querySelectorAll('.nav-dropdown.open').forEach(d => d.classList.remove('open'));
+    });
+  });
+}
+
+// Global close handlers for nav dropdowns
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.nav-dropdown')) {
+    document.querySelectorAll('.nav-dropdown.open').forEach(d => d.classList.remove('open'));
+  }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.nav-dropdown.open').forEach(d => d.classList.remove('open'));
+  }
+});
 
 // ── Guard helpers ─────────────────────────────────────────────────────────────
 const requireAuth = async (redirect) => {
