@@ -98,18 +98,6 @@
   </div>
 </div>
 
-<!-- Confirm modal -->
-<div id="confirmModal" style="display:none" class="modal-overlay" onclick="closeModal()">
-  <div class="modal-box" onclick="event.stopPropagation()">
-    <h3 id="modalTitle">Confirm action</h3>
-    <p id="modalBody"></p>
-    <div class="modal-actions">
-      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-danger btn-sm" id="modalConfirmBtn">Confirm</button>
-    </div>
-  </div>
-</div>
-
 <footer class="site-footer">
   © 2024 <strong>Brandly</strong> — Influencer Marketplace
 </footer>
@@ -224,7 +212,10 @@
   const saveFollowers = async (userId) => {
     const input = document.getElementById(`fc-${userId}`);
     const count = parseInt(input.value);
-    if (isNaN(count) || count < 0) { alert('Enter a valid number.'); return; }
+    if (isNaN(count) || count < 0) {
+      await notify('Please enter a valid number (0 or greater).', { title: 'Invalid follower count' });
+      return;
+    }
     try {
       await api('PUT', `/api/admin/bloggers/${userId}/followers`, { follower_count: count });
       showAlert('alertBox', `Follower count updated to ${count.toLocaleString()}.`, 'success');
@@ -234,7 +225,14 @@
 
   const toggleBlock = async (userId, currentlyBlocked, name) => {
     const action = currentlyBlocked ? 'unblock' : 'block';
-    if (!confirm(`${action.charAt(0).toUpperCase()+action.slice(1)} "${name}"?`)) return;
+    const verb   = action.charAt(0).toUpperCase() + action.slice(1);
+    const ok = await confirmAction({
+      title:       `${verb} user?`,
+      message:     `"${name}" will be ${currentlyBlocked ? 'restored to active status and allowed to use the platform again' : 'blocked from logging in and using the platform'}.`,
+      confirmText: verb,
+      danger:      !currentlyBlocked,
+    });
+    if (!ok) return;
     try {
       await api('PUT', `/api/admin/users/${userId}/block`, { blocked: !currentlyBlocked });
       showAlert('alertBox', `"${name}" has been ${action}ed.`, 'success');
@@ -242,26 +240,20 @@
     } catch (err) { showAlert('alertBox', err.message); }
   };
 
-  let pendingDeleteId = null;
-  const confirmDelete = (userId, name) => {
-    pendingDeleteId = userId;
-    document.getElementById('modalTitle').textContent = 'Delete user?';
-    document.getElementById('modalBody').textContent =
-      `This will permanently delete "${name}" and all their data including messages, ratings, and profile. This action cannot be undone.`;
-    document.getElementById('modalConfirmBtn').onclick = doDelete;
-    document.getElementById('confirmModal').style.display = 'flex';
-  };
-  const doDelete = async () => {
-    if (!pendingDeleteId) return;
-    closeModal();
+  const confirmDelete = async (userId, name) => {
+    const ok = await confirmAction({
+      title:       'Delete user?',
+      message:     `This will permanently delete "${name}" along with their messages, ratings, and profile data. This action cannot be undone.`,
+      confirmText: 'Delete permanently',
+      danger:      true,
+    });
+    if (!ok) return;
     try {
-      await api('DELETE', `/api/admin/users/${pendingDeleteId}`);
+      await api('DELETE', `/api/admin/users/${userId}`);
       showAlert('alertBox', 'User deleted successfully.', 'success');
       loadUsers(); loadBloggers(); loadStats();
     } catch (err) { showAlert('alertBox', err.message); }
-    pendingDeleteId = null;
   };
-  const closeModal = () => { document.getElementById('confirmModal').style.display = 'none'; };
 
   (async () => {
     const user = await requireRole('admin');

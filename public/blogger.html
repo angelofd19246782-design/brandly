@@ -52,20 +52,20 @@
   const contactBlogger = async () => {
     const user = await getUser();
     if (!user) { window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.href)}`; return; }
-    if (user.role !== 'advertiser') { alert('Only advertisers can contact bloggers.'); return; }
+    if (user.role !== 'advertiser') { await notify('Only advertisers can contact bloggers.', { title: 'Action not allowed' }); return; }
     const btn = document.getElementById('contactBtn');
     btn.disabled = true; btn.textContent = 'Opening chat…';
     try {
       const conv = await api('POST', '/api/conversations', { blogger_id: parseInt(userId) });
       window.location.href = `/chat.html?id=${conv.id}`;
     } catch (err) {
-      alert(err.message);
+      await notify(err.message, { title: 'Could not open chat' });
       btn.disabled = false; btn.textContent = 'Contact Blogger';
     }
   };
 
   const submitRating = async () => {
-    if (!selectedScore) { alert('Please select a star rating first.'); return; }
+    if (!selectedScore) { await notify('Please select a star rating first.', { title: 'Rating required' }); return; }
     const btn = document.getElementById('rateBtn');
     btn.disabled = true; btn.textContent = 'Saving…';
     try {

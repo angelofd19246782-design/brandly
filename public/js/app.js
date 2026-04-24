@@ -173,6 +173,95 @@ const clearAlert = (containerId) => {
   if (el) el.innerHTML = '';
 };
 
+// ── Modal system (notify + confirmAction) ─────────────────────────────────────
+let _modalRoot = null;
+
+function _ensureModalRoot() {
+  if (_modalRoot) return _modalRoot;
+  _modalRoot = document.createElement('div');
+  _modalRoot.id = '_brandlyModalRoot';
+  document.body.appendChild(_modalRoot);
+  return _modalRoot;
+}
+
+function _openModal(innerHtml) {
+  const root = _ensureModalRoot();
+  root.innerHTML = `<div class="modal-overlay"><div class="modal-box">${innerHtml}</div></div>`;
+
+  const overlay = root.querySelector('.modal-overlay');
+  const box     = root.querySelector('.modal-box');
+  let closed    = false;
+
+  const close = (cb) => {
+    if (closed) return;
+    closed = true;
+    document.removeEventListener('keydown', onKey);
+    root.innerHTML = '';
+    if (cb) cb();
+  };
+
+  const onKey = (e) => { if (e.key === 'Escape') close(onEscape); };
+  let onEscape = null;
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) close(onEscape);
+  });
+  box.addEventListener('click', (e) => e.stopPropagation());
+
+  document.addEventListener('keydown', onKey);
+
+  return {
+    root, box, close,
+    onEscapeSet: (fn) => { onEscape = fn; },
+  };
+}
+
+function notify(message, opts = {}) {
+  const { title = 'Notice', okText = 'OK' } = opts;
+  return new Promise((resolve) => {
+    const m = _openModal(`
+      <h3>${escHtml(title)}</h3>
+      <p>${escHtml(message)}</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary btn-sm" data-modal-ok>${escHtml(okText)}</button>
+      </div>
+    `);
+    m.onEscapeSet(resolve);
+    m.box.querySelector('[data-modal-ok]').addEventListener('click', () => m.close(resolve));
+    setTimeout(() => m.box.querySelector('[data-modal-ok]').focus(), 40);
+  });
+}
+
+function confirmAction(opts = {}) {
+  const {
+    title       = 'Confirm action',
+    message     = '',
+    confirmText = 'Confirm',
+    cancelText  = 'Cancel',
+    danger      = false,
+  } = opts;
+  return new Promise((resolve) => {
+    let result = false;
+    const done = () => resolve(result);
+
+    const m = _openModal(`
+      <h3>${escHtml(title)}</h3>
+      <p>${escHtml(message)}</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost btn-sm" data-modal-cancel>${escHtml(cancelText)}</button>
+        <button class="btn ${danger ? 'btn-danger' : 'btn-primary'} btn-sm" data-modal-confirm>${escHtml(confirmText)}</button>
+      </div>
+    `);
+    m.onEscapeSet(done);
+    m.box.querySelector('[data-modal-cancel]').addEventListener('click', () => m.close(done));
+    m.box.querySelector('[data-modal-confirm]').addEventListener('click', () => {
+      result = true;
+      m.close(done);
+    });
+    setTimeout(() => m.box.querySelector('[data-modal-confirm]').focus(), 40);
+  });
+}
+
 // ── Custom select component ───────────────────────────────────────────────────
 function initCustomSelect(selectEl) {
   if (selectEl._csInit) return;

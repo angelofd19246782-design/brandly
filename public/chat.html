@@ -234,7 +234,7 @@
       loadConversations();
     } catch (err) {
       input.value = content;
-      alert(err.message);
+      await notify(err.message, { title: 'Message not sent' });
     } finally {
       btn.disabled = false;
       input.focus();
