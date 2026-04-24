@@ -19,172 +19,205 @@
   <div class="container">
     <div class="page-hero">
       <h1 id="pageTitle">My Profile</h1>
-      <p>Keep your profile up to date so advertisers can discover and contact you.</p>
+      <p>Your public creator profile. Advertisers discover you through the catalog.</p>
     </div>
 
     <div id="alertBox"></div>
 
-    <!-- Edit bar: view mode shows Edit; edit mode shows Cancel + Save -->
-    <div class="profile-edit-bar">
-      <div class="profile-edit-bar-info">
-        <span class="profile-mode-dot"></span>
-        <span class="view-only-show profile-mode-label">Viewing profile</span>
-        <span class="edit-only-show profile-mode-label">Editing profile</span>
+    <!-- ────────── DASHBOARD (read-only view) ────────── -->
+    <div class="profile-dashboard">
+
+      <div class="card profile-dashboard-hero">
+        <div id="avatarPreview" class="avatar avatar-2xl"></div>
+        <div class="profile-dashboard-identity">
+          <h1 id="viewName">—</h1>
+          <div class="profile-meta">
+            <span class="badge" id="viewCategory" style="display:none"></span>
+            <span class="profile-location" id="viewLocation" style="display:none">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span id="viewLocationText"></span>
+            </span>
+          </div>
+        </div>
+        <div class="profile-dashboard-actions">
+          <a id="viewProfileLink" href="#" class="btn btn-ghost btn-sm" style="display:none">View public profile →</a>
+          <button type="button" class="btn btn-primary" id="editBtn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+            Edit Profile
+          </button>
+        </div>
       </div>
-      <div class="profile-edit-bar-actions">
-        <a id="viewProfileLink" href="#" class="btn btn-ghost btn-sm view-only-show" style="display:none">View public profile →</a>
-        <button type="button" class="btn btn-primary btn-sm view-only-show" id="editBtn">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
-          Edit Profile
-        </button>
-        <button type="button" class="btn btn-ghost btn-sm edit-only-show" id="cancelBtn">Cancel</button>
-        <button type="button" class="btn btn-primary btn-sm edit-only-show" id="saveBtn">Save Changes</button>
+
+      <div class="profile-dashboard-grid">
+
+        <div class="card dash-section">
+          <div class="dash-label">About</div>
+          <div class="dash-value empty" id="viewBio">No bio added yet.</div>
+        </div>
+
+        <div class="card dash-section">
+          <div class="dash-label">Social platforms</div>
+          <div class="dash-value empty" id="viewPlatforms">No platforms linked yet.</div>
+        </div>
+
+        <div class="dash-row">
+          <div class="card dash-section">
+            <div class="dash-label">Followers</div>
+            <div class="dash-value-stat" id="viewFollowers">—</div>
+          </div>
+          <div class="card dash-section">
+            <div class="dash-label">Price range</div>
+            <div class="dash-value-stat" id="viewPricing">Negotiable</div>
+          </div>
+        </div>
+
+        <div class="card dash-section">
+          <div class="dash-label">Contact &amp; offer</div>
+          <div class="dash-value empty" id="viewContact">No contact info provided.</div>
+        </div>
+
       </div>
-    </div>
-
-    <div class="edit-profile-layout">
-
-      <!-- Sidebar -->
-      <aside>
-        <div class="card avatar-card">
-          <div id="avatarPreview" class="avatar avatar-2xl" style="margin:0 auto 16px"></div>
-          <p class="avatar-label">Profile photo</p>
-
-          <div class="avatar-upload-section edit-only-show">
-            <div class="form-group">
-              <label>Upload image</label>
-              <label for="avatarFile" class="file-upload-zone" id="avatarUploadZone">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-                <strong id="avatarUploadLabel">Click to upload</strong>
-                <span class="file-upload-hint">JPG, PNG or WebP · Max 3 MB</span>
-              </label>
-              <input type="file" id="avatarFile" accept="image/*" style="display:none">
-            </div>
-
-            <div class="separator"></div>
-
-            <div class="form-group">
-              <label>Or paste image URL</label>
-              <input type="url" id="avatarUrlInput" placeholder="https://…">
-            </div>
-
-            <button type="button" class="btn btn-outline btn-sm" style="width:100%" onclick="saveAvatar()">Save Photo</button>
-          </div>
-        </div>
-
-        <div class="card view-only-show" style="margin-top:14px;background:var(--c-primary-soft);border-color:var(--c-primary-mid)">
-          <p style="font-size:.8rem;color:var(--c-primary);line-height:1.65">
-            <strong>Visibility:</strong> Your profile is publicly visible once a display name is set. Advertisers can find you in the catalog.
-          </p>
-        </div>
-
-        <div class="card edit-only-show" style="margin-top:14px;background:var(--c-amber-soft);border-color:#fcd34d">
-          <p style="font-size:.8rem;color:var(--c-amber);line-height:1.65">
-            <strong>Edit mode:</strong> Click Save Changes to apply your edits, or Cancel to discard them.
-          </p>
-        </div>
-      </aside>
-
-      <!-- Form -->
-      <main>
-        <form id="profileForm">
-          <div class="card" style="margin-bottom:16px">
-            <div class="form-section-title">Basic information</div>
-            <div class="form-row cols-2">
-              <div class="form-group">
-                <label for="display_name">Display name <span style="color:var(--c-red)">*</span></label>
-                <input type="text" id="display_name" placeholder="Your public name" required>
-              </div>
-              <div class="form-group">
-                <label for="category">Category / Niche</label>
-                <select id="category">
-                  <option value="">— Select category —</option>
-                  <option>Fashion &amp; Beauty</option>
-                  <option>Health &amp; Fitness</option>
-                  <option>Food &amp; Cooking</option>
-                  <option>Travel</option>
-                  <option>Technology</option>
-                  <option>Gaming</option>
-                  <option>Lifestyle</option>
-                  <option>Business</option>
-                  <option>Entertainment</option>
-                  <option>Education</option>
-                  <option>Sports</option>
-                  <option>Music</option>
-                  <option>Parenting</option>
-                  <option>Finance</option>
-                  <option>Arts &amp; Crafts</option>
-                  <option>Other</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="bio">Bio</label>
-              <textarea id="bio" rows="4" placeholder="Tell advertisers about yourself, your audience, and what sets you apart…"></textarea>
-            </div>
-          </div>
-
-          <div class="card" style="margin-bottom:16px">
-            <div class="form-section-title">Location</div>
-            <div class="form-row cols-2">
-              <div class="form-group">
-                <label for="country">Country</label>
-                <input type="text" id="country" placeholder="e.g. United States">
-              </div>
-              <div class="form-group">
-                <label for="city">City</label>
-                <input type="text" id="city" placeholder="e.g. New York">
-              </div>
-            </div>
-          </div>
-
-          <div class="card" style="margin-bottom:16px">
-            <div class="form-section-title">Social platforms</div>
-            <div class="form-group">
-              <label for="tiktok_url">TikTok profile URL</label>
-              <input type="url" id="tiktok_url" placeholder="https://tiktok.com/@yourhandle">
-            </div>
-            <div class="form-group">
-              <label for="youtube_url">YouTube channel URL</label>
-              <input type="url" id="youtube_url" placeholder="https://youtube.com/@yourchannel">
-            </div>
-            <div class="form-group" style="margin-bottom:0">
-              <label for="instagram_url">Instagram profile URL</label>
-              <input type="url" id="instagram_url" placeholder="https://instagram.com/yourhandle">
-            </div>
-          </div>
-
-          <div class="card" style="margin-bottom:16px">
-            <div class="form-section-title">Audience &amp; pricing</div>
-            <div class="form-row cols-3">
-              <div class="form-group">
-                <label for="follower_count">Followers <span class="label-hint" id="followerHint">(set once)</span></label>
-                <input type="number" id="follower_count" min="0" placeholder="50000">
-              </div>
-              <div class="form-group">
-                <label for="price_min">Min price ($)</label>
-                <input type="number" id="price_min" min="0" placeholder="100">
-              </div>
-              <div class="form-group" style="margin-bottom:0">
-                <label for="price_max">Max price ($)</label>
-                <input type="number" id="price_max" min="0" placeholder="500">
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="form-section-title">Contact &amp; offer</div>
-            <div class="form-group" style="margin-bottom:0">
-              <label for="contact_info">Contact / offer description</label>
-              <textarea id="contact_info" rows="3" placeholder="Describe what you offer advertisers, your preferred contact method, etc."></textarea>
-            </div>
-          </div>
-
-          <div id="formAlert" style="margin-top:16px"></div>
-        </form>
-      </main>
     </div>
   </div>
+</div>
+
+<!-- ────────── DRAWER (edit panel) ────────── -->
+<div class="drawer-backdrop" id="editDrawer" aria-hidden="true">
+  <aside class="drawer" role="dialog" aria-label="Edit profile">
+    <div class="drawer-hdr">
+      <h2>Edit Profile</h2>
+      <button type="button" class="drawer-close" id="drawerCloseBtn" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="drawer-tabs" id="drawerTabs">
+      <button type="button" class="drawer-tab active" data-tab="basic">Basic info</button>
+      <button type="button" class="drawer-tab" data-tab="location">Location</button>
+      <button type="button" class="drawer-tab" data-tab="platforms">Platforms</button>
+      <button type="button" class="drawer-tab" data-tab="pricing">Pricing</button>
+      <button type="button" class="drawer-tab" data-tab="photo">Photo</button>
+    </div>
+
+    <div class="drawer-body">
+      <div id="formAlert" style="margin-bottom:14px"></div>
+
+      <form id="profileForm">
+
+        <!-- BASIC INFO -->
+        <div class="drawer-panel active" data-panel="basic">
+          <div class="form-group">
+            <label for="display_name">Display name <span style="color:var(--c-red)">*</span></label>
+            <input type="text" id="display_name" placeholder="Your public name" required>
+          </div>
+          <div class="form-group">
+            <label for="category">Category / Niche</label>
+            <select id="category">
+              <option value="">— Select category —</option>
+              <option>Fashion &amp; Beauty</option>
+              <option>Health &amp; Fitness</option>
+              <option>Food &amp; Cooking</option>
+              <option>Travel</option>
+              <option>Technology</option>
+              <option>Gaming</option>
+              <option>Lifestyle</option>
+              <option>Business</option>
+              <option>Entertainment</option>
+              <option>Education</option>
+              <option>Sports</option>
+              <option>Music</option>
+              <option>Parenting</option>
+              <option>Finance</option>
+              <option>Arts &amp; Crafts</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="bio">Bio</label>
+            <textarea id="bio" rows="5" placeholder="Tell advertisers about yourself, your audience, and what sets you apart…"></textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label for="contact_info">Contact / offer description</label>
+            <textarea id="contact_info" rows="3" placeholder="Describe what you offer advertisers, your preferred contact method, etc."></textarea>
+          </div>
+        </div>
+
+        <!-- LOCATION -->
+        <div class="drawer-panel" data-panel="location">
+          <div class="form-group">
+            <label for="country">Country</label>
+            <input type="text" id="country" placeholder="e.g. United States">
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label for="city">City</label>
+            <input type="text" id="city" placeholder="e.g. New York">
+          </div>
+        </div>
+
+        <!-- PLATFORMS -->
+        <div class="drawer-panel" data-panel="platforms">
+          <div class="form-group">
+            <label for="tiktok_url">TikTok profile URL</label>
+            <input type="url" id="tiktok_url" placeholder="https://tiktok.com/@yourhandle">
+          </div>
+          <div class="form-group">
+            <label for="youtube_url">YouTube channel URL</label>
+            <input type="url" id="youtube_url" placeholder="https://youtube.com/@yourchannel">
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label for="instagram_url">Instagram profile URL</label>
+            <input type="url" id="instagram_url" placeholder="https://instagram.com/yourhandle">
+          </div>
+        </div>
+
+        <!-- PRICING -->
+        <div class="drawer-panel" data-panel="pricing">
+          <div class="form-group">
+            <label for="follower_count">Followers <span class="label-hint" id="followerHint">(set once)</span></label>
+            <input type="number" id="follower_count" min="0" placeholder="50000">
+          </div>
+          <div class="form-row cols-2">
+            <div class="form-group">
+              <label for="price_min">Min price ($)</label>
+              <input type="number" id="price_min" min="0" placeholder="100">
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label for="price_max">Max price ($)</label>
+              <input type="number" id="price_max" min="0" placeholder="500">
+            </div>
+          </div>
+        </div>
+
+      </form>
+
+      <!-- PHOTO (outside form — avatar has its own save endpoint) -->
+      <div class="drawer-panel" data-panel="photo">
+        <div class="avatar-edit-preview">
+          <div id="avatarPreviewDrawer" class="avatar avatar-xl"></div>
+        </div>
+        <div class="form-group">
+          <label>Upload image</label>
+          <label for="avatarFile" class="file-upload-zone" id="avatarUploadZone">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+            <strong id="avatarUploadLabel">Click to upload</strong>
+            <span class="file-upload-hint">JPG, PNG or WebP · Max 3 MB</span>
+          </label>
+          <input type="file" id="avatarFile" accept="image/*" style="display:none">
+        </div>
+        <div class="separator"></div>
+        <div class="form-group">
+          <label for="avatarUrlInput">Or paste image URL</label>
+          <input type="url" id="avatarUrlInput" placeholder="https://…">
+        </div>
+        <button type="button" class="btn btn-outline" style="width:100%" onclick="saveAvatar()">Save Photo</button>
+      </div>
+    </div>
+
+    <div class="drawer-footer">
+      <button type="button" class="btn btn-ghost" id="drawerCancelBtn">Cancel</button>
+      <button type="button" class="btn btn-primary" id="drawerSaveBtn">Save Changes</button>
+    </div>
+  </aside>
 </div>
 
 <footer class="site-footer">
@@ -195,26 +228,98 @@
 <script>
   let isNewProfile  = false;
   let currentUserId = null;
+  let currentUser   = null;
   let snapshot      = {};
+  let profileData   = {};
 
   const FIELDS = ['display_name','bio','tiktok_url','youtube_url','instagram_url','category','country','city','price_min','price_max','contact_info'];
 
+  // ── Dashboard rendering ────────────────────────────────────────────────────
   const renderAvatar = (url, name) => {
-    const el = document.getElementById('avatarPreview');
-    if (url) {
-      el.innerHTML = `<img src="${escHtml(url)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    const initials = (name||'?').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    const makeHtml = (url) => url
+      ? `<img src="${escHtml(url)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+      : initials;
+    document.getElementById('avatarPreview').innerHTML       = makeHtml(url);
+    document.getElementById('avatarPreviewDrawer').innerHTML = makeHtml(url);
+  };
+
+  const renderDashboard = (p) => {
+    // Name + category + location
+    document.getElementById('viewName').textContent = p.display_name || 'Your name';
+
+    const catEl = document.getElementById('viewCategory');
+    if (p.category) { catEl.textContent = p.category; catEl.style.display = 'inline-flex'; }
+    else            { catEl.style.display = 'none'; }
+
+    const locEl = document.getElementById('viewLocation');
+    const locText = [p.country, p.city].filter(Boolean).join(', ');
+    if (locText) { document.getElementById('viewLocationText').textContent = locText; locEl.style.display = 'inline-flex'; }
+    else         { locEl.style.display = 'none'; }
+
+    // Bio
+    const bioEl = document.getElementById('viewBio');
+    if (p.bio) { bioEl.textContent = p.bio; bioEl.classList.remove('empty'); }
+    else       { bioEl.textContent = 'No bio added yet.'; bioEl.classList.add('empty'); }
+
+    // Platforms
+    const platformsEl = document.getElementById('viewPlatforms');
+    const platforms = [
+      p.tiktok_url    && { name: 'TikTok',    url: p.tiktok_url,    ic: 'tiktok' },
+      p.youtube_url   && { name: 'YouTube',   url: p.youtube_url,   ic: 'youtube' },
+      p.instagram_url && { name: 'Instagram', url: p.instagram_url, ic: 'instagram' },
+    ].filter(Boolean);
+    if (platforms.length) {
+      platformsEl.classList.remove('empty');
+      platformsEl.innerHTML = `<div class="dash-platforms">${platforms.map(pl =>
+        `<a href="${escHtml(pl.url)}" target="_blank" rel="noopener" class="platform-link">${icon(pl.ic, 13)} ${pl.name}</a>`
+      ).join('')}</div>`;
     } else {
-      el.textContent = (name||'?').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+      platformsEl.classList.add('empty');
+      platformsEl.textContent = 'No platforms linked yet.';
+    }
+
+    // Followers
+    const followersEl = document.getElementById('viewFollowers');
+    followersEl.textContent = p.follower_count != null ? formatFollowers(p.follower_count) : '—';
+
+    // Pricing
+    const pricingEl = document.getElementById('viewPricing');
+    if (p.price_min || p.price_max) {
+      pricingEl.textContent = `$${p.price_min || 0}${p.price_max ? ' – $' + p.price_max : '+'}`;
+    } else {
+      pricingEl.textContent = 'Negotiable';
+    }
+
+    // Contact
+    const contactEl = document.getElementById('viewContact');
+    if (p.contact_info) { contactEl.textContent = p.contact_info; contactEl.classList.remove('empty'); }
+    else                { contactEl.textContent = 'No contact info provided.'; contactEl.classList.add('empty'); }
+
+    renderAvatar(p.avatar_url, p.display_name || (currentUser && currentUser.display_name));
+  };
+
+  // ── Form value sync ────────────────────────────────────────────────────────
+  const populateForm = (p) => {
+    FIELDS.forEach(f => {
+      const el = document.getElementById(f);
+      if (el) el.value = (p[f] != null) ? p[f] : '';
+    });
+    const followerInput = document.getElementById('follower_count');
+    followerInput.value = p.follower_count ?? 0;
+    if (!isNewProfile) {
+      followerInput.readOnly = true;
+      document.getElementById('followerHint').textContent = '(admin-managed)';
+      followerInput.title = 'Follower count can only be changed by an admin after initial setup.';
+    } else {
+      followerInput.readOnly = false;
+      document.getElementById('followerHint').textContent = '(set once)';
     }
   };
 
-  // ── Edit-mode plumbing ─────────────────────────────────────────────────────
   const takeSnapshot = () => {
     const vals = {};
-    FIELDS.forEach(f => {
-      const el = document.getElementById(f);
-      if (el) vals[f] = el.value;
-    });
+    FIELDS.forEach(f => { vals[f] = document.getElementById(f).value; });
     return vals;
   };
 
@@ -225,66 +330,88 @@
     });
   };
 
-  const setReadonlyInputs = (readonly) => {
-    document.querySelectorAll('#profileForm input, #profileForm textarea').forEach(el => {
-      if (el.type === 'file') return;
-      // Follower count stays admin-managed once set — don't flip it back on
-      if (el.id === 'follower_count' && !isNewProfile) { el.readOnly = true; return; }
-      el.readOnly = readonly;
-    });
+  const isDirty = () => {
+    return FIELDS.some(f => (document.getElementById(f).value !== (snapshot[f] ?? '')));
   };
 
-  const setEditMode = (on) => {
-    document.body.classList.toggle('edit-mode', on);
-    setReadonlyInputs(!on);
+  // ── Drawer open/close + tabs ───────────────────────────────────────────────
+  const drawer = document.getElementById('editDrawer');
+
+  const switchTab = (name) => {
+    document.querySelectorAll('.drawer-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.tab === name));
+    document.querySelectorAll('.drawer-panel').forEach(p =>
+      p.classList.toggle('active', p.dataset.panel === name));
+    document.querySelector('.drawer-body').scrollTop = 0;
   };
 
-  const enterEditMode = () => {
+  document.querySelectorAll('.drawer-tab').forEach(t => {
+    t.addEventListener('click', () => switchTab(t.dataset.tab));
+  });
+
+  const openDrawer = () => {
     snapshot = takeSnapshot();
-    setEditMode(true);
     clearAlert('formAlert');
-    document.getElementById('display_name').focus();
+    switchTab('basic');
+    drawer.classList.add('open');
+    drawer.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('display_name').focus(), 260);
   };
 
-  const cancelEdit = () => {
-    restoreSnapshot(snapshot);
-    setEditMode(false);
-    clearAlert('formAlert');
+  const closeDrawer = (restore = false) => {
+    if (restore) restoreSnapshot(snapshot);
+    drawer.classList.remove('open');
+    drawer.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
   };
 
-  document.getElementById('editBtn').addEventListener('click', enterEditMode);
-  document.getElementById('cancelBtn').addEventListener('click', cancelEdit);
-  document.getElementById('saveBtn').addEventListener('click', () => {
+  const tryClose = async () => {
+    if (isDirty()) {
+      const ok = await confirmAction({
+        title:       'Discard changes?',
+        message:     'You have unsaved changes. Closing now will lose them.',
+        confirmText: 'Discard',
+        cancelText:  'Keep editing',
+        danger:      true,
+      });
+      if (!ok) return;
+    }
+    closeDrawer(true);
+  };
+
+  document.getElementById('editBtn').addEventListener('click', openDrawer);
+  document.getElementById('drawerCloseBtn').addEventListener('click', tryClose);
+  document.getElementById('drawerCancelBtn').addEventListener('click', tryClose);
+  document.getElementById('drawerSaveBtn').addEventListener('click', () => {
     document.getElementById('profileForm').requestSubmit();
+  });
+
+  // Escape closes drawer (with dirty-check), backdrop click closes too
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && drawer.classList.contains('open')) tryClose();
+  });
+  drawer.addEventListener('click', (e) => {
+    if (e.target === drawer) tryClose();
   });
 
   // ── Initial load ───────────────────────────────────────────────────────────
   (async () => {
-    const user = await requireRole('blogger');
-    if (!user) return;
-    currentUserId = user.id;
+    currentUser = await requireRole('blogger');
+    if (!currentUser) return;
+    currentUserId = currentUser.id;
 
     try {
       const p = await api('GET', '/api/profile');
+      profileData  = p;
       isNewProfile = !p.display_name;
 
       if (isNewProfile) {
         document.getElementById('pageTitle').textContent = 'Set up your profile';
       }
 
-      FIELDS.forEach(f => {
-        const el = document.getElementById(f);
-        if (el && p[f] != null) el.value = p[f];
-      });
-
-      const followerInput = document.getElementById('follower_count');
-      if (!isNewProfile) {
-        followerInput.value = p.follower_count ?? 0;
-        document.getElementById('followerHint').textContent = '(admin-managed)';
-        followerInput.title = 'Follower count can only be changed by an admin after initial setup.';
-      }
-
-      renderAvatar(p.avatar_url, p.display_name || user.display_name);
+      populateForm(p);
+      renderDashboard(p);
 
       if (!isNewProfile) {
         const vl = document.getElementById('viewProfileLink');
@@ -292,9 +419,7 @@
         vl.style.display = 'inline-flex';
       }
 
-      // New profiles start in edit mode; existing profiles start read-only
-      if (isNewProfile) enterEditMode();
-      else              setEditMode(false);
+      if (isNewProfile) openDrawer(); // auto-open for new profiles
     } catch (err) {
       showAlert('alertBox', 'Failed to load profile: ' + err.message);
     }
@@ -304,7 +429,7 @@
   document.getElementById('profileForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     clearAlert('formAlert');
-    const btn = document.getElementById('saveBtn');
+    const btn = document.getElementById('drawerSaveBtn');
     btn.disabled = true; btn.textContent = 'Saving…';
 
     const payload = {
@@ -327,11 +452,19 @@
       isNewProfile = false;
       document.getElementById('follower_count').readOnly = true;
       document.getElementById('followerHint').textContent = '(admin-managed)';
+
+      // Re-pull fresh profile so the dashboard reflects canonical server data
+      const fresh = await api('GET', '/api/profile');
+      profileData = fresh;
+      renderDashboard(fresh);
+
       const vl = document.getElementById('viewProfileLink');
       vl.href = `/blogger.html?id=${currentUserId}`;
       vl.style.display = 'inline-flex';
-      showAlert('formAlert', 'Profile saved successfully!', 'success');
-      setEditMode(false); // return to view mode
+
+      showAlert('alertBox', 'Profile saved successfully.', 'success');
+      snapshot = takeSnapshot();
+      closeDrawer(false);
     } catch (err) {
       showAlert('formAlert', err.message);
     } finally {
@@ -366,23 +499,43 @@
   const saveAvatar = async () => {
     const file     = document.getElementById('avatarFile').files[0];
     const urlInput = document.getElementById('avatarUrlInput').value.trim();
+    const nameForInitials = document.getElementById('display_name').value || (currentUser && currentUser.display_name);
 
     if (file) {
       const fd = new FormData();
       fd.append('avatar', file);
       try {
         const res = await api('POST', '/api/profile/avatar', fd);
-        renderAvatar(res.avatar_url, document.getElementById('display_name').value);
-        showAlert('alertBox', 'Photo updated!', 'success');
-      } catch (err) { showAlert('alertBox', err.message); }
+        renderAvatar(res.avatar_url, nameForInitials);
+        profileData.avatar_url = res.avatar_url;
+        showAlert('formAlert', 'Photo updated.', 'success');
+      } catch (err) { showAlert('formAlert', err.message); }
     } else if (urlInput) {
+      // Send full form payload so unset fields don't get nulled out by the
+      // backend UPDATE when saving just an avatar URL.
+      const payload = {
+        display_name:  document.getElementById('display_name').value.trim() || profileData.display_name || ' ',
+        bio:           document.getElementById('bio').value.trim(),
+        tiktok_url:    document.getElementById('tiktok_url').value.trim(),
+        youtube_url:   document.getElementById('youtube_url').value.trim(),
+        instagram_url: document.getElementById('instagram_url').value.trim(),
+        category:      document.getElementById('category').value,
+        country:       document.getElementById('country').value.trim(),
+        city:          document.getElementById('city').value.trim(),
+        price_min:     document.getElementById('price_min').value,
+        price_max:     document.getElementById('price_max').value,
+        contact_info:  document.getElementById('contact_info').value.trim(),
+        avatar_url:    urlInput,
+      };
+      if (isNewProfile) payload.follower_count = document.getElementById('follower_count').value;
       try {
-        await api('POST', '/api/profile', { display_name: document.getElementById('display_name').value || ' ', avatar_url: urlInput });
-        renderAvatar(urlInput, document.getElementById('display_name').value);
-        showAlert('alertBox', 'Photo updated!', 'success');
-      } catch (err) { showAlert('alertBox', err.message); }
+        await api('POST', '/api/profile', payload);
+        renderAvatar(urlInput, nameForInitials);
+        profileData.avatar_url = urlInput;
+        showAlert('formAlert', 'Photo updated.', 'success');
+      } catch (err) { showAlert('formAlert', err.message); }
     } else {
-      showAlert('alertBox', 'Please choose a file or paste an image URL.');
+      showAlert('formAlert', 'Please choose a file or paste an image URL.');
     }
   };
 </script>

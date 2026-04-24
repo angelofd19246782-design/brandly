@@ -2434,161 +2434,248 @@ input[type=number] {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   PROFILE EDIT MODE — read-only by default, toggle on Edit
+   PROFILE DASHBOARD (read-only view)
 ───────────────────────────────────────────────────────────────────────────── */
-
-/* Edit bar — sticky-ish header with mode indicator + actions */
-.profile-edit-bar {
-  display: flex;
+.profile-dashboard-hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 22px;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 18px;
-  background: var(--c-surface);
-  border: 1px solid var(--c-border);
-  border-radius: var(--r-lg);
-  margin-bottom: 22px;
-  box-shadow: var(--shadow-xs);
-  flex-wrap: wrap;
+  padding: 24px 26px;
+  margin-bottom: 18px;
 }
-.profile-edit-bar-info {
+.profile-dashboard-hero .avatar { margin: 0; }
+.profile-dashboard-identity { min-width: 0; }
+.profile-dashboard-identity h1 {
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -.4px;
+  color: var(--c-ink);
+  margin-bottom: 6px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.profile-dashboard-identity .profile-meta {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
   font-size: .85rem;
-  color: var(--c-ink-3);
-  font-weight: 600;
 }
-.profile-mode-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--c-ink-4);
-  transition: background .15s, box-shadow .15s;
-  flex-shrink: 0;
+.profile-dashboard-identity .profile-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--c-ink-4);
+  font-weight: 500;
 }
-body.edit-mode .profile-mode-dot {
-  background: var(--c-amber);
-  box-shadow: 0 0 0 4px rgba(217,119,6,.18);
-}
-body.edit-mode .profile-edit-bar {
-  border-color: #fcd34d;
-  background: #fffdf5;
-}
-body.edit-mode .profile-edit-bar-info {
-  color: var(--c-amber);
-}
-.profile-edit-bar-actions {
+.profile-dashboard-actions {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
-/* Visibility toggle classes */
-body:not(.edit-mode) .edit-only-show { display: none !important; }
-body.edit-mode         .view-only-show { display: none !important; }
-
-/* Read-only input styling — looks like plain dashboard values */
-body:not(.edit-mode) #profileForm input[type=text],
-body:not(.edit-mode) #profileForm input[type=email],
-body:not(.edit-mode) #profileForm input[type=url],
-body:not(.edit-mode) #profileForm input[type=number],
-body:not(.edit-mode) #profileForm textarea {
-  border: 0 !important;
-  border-bottom: 1px solid var(--c-border-soft) !important;
-  background: transparent !important;
-  border-radius: 0 !important;
-  padding: 7px 0 !important;
-  box-shadow: none !important;
-  color: var(--c-ink) !important;
-  font-weight: 600;
-  cursor: default;
-  min-height: 34px;
+.profile-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
 }
-body:not(.edit-mode) #profileForm textarea {
-  border-bottom: 0 !important;
-  padding: 7px 0 !important;
-  font-weight: 400;
-  color: var(--c-ink-2) !important;
-  min-height: auto;
-  resize: none;
-  line-height: 1.65;
+.dash-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
 }
-body:not(.edit-mode) #profileForm input:hover,
-body:not(.edit-mode) #profileForm textarea:hover {
-  border-color: var(--c-border-soft) !important;
-  background: transparent !important;
+.dash-section {
+  padding: 18px 22px;
 }
-body:not(.edit-mode) #profileForm input:focus,
-body:not(.edit-mode) #profileForm textarea:focus {
-  outline: none !important;
-  box-shadow: none !important;
-}
-body:not(.edit-mode) #profileForm input::placeholder,
-body:not(.edit-mode) #profileForm textarea::placeholder {
-  color: var(--c-ink-5) !important;
-  font-weight: 400;
-  font-style: italic;
-}
-
-/* Custom select in view mode — plain text look, no arrow */
-body:not(.edit-mode) #profileForm .cs-wrap {
-  pointer-events: none;
-}
-body:not(.edit-mode) #profileForm .cs-trigger {
-  border: 0 !important;
-  border-bottom: 1px solid var(--c-border-soft) !important;
-  background: transparent !important;
-  border-radius: 0 !important;
-  padding: 7px 0 !important;
-  color: var(--c-ink) !important;
-  font-weight: 600;
-  box-shadow: none !important;
-  min-height: 34px;
-}
-body:not(.edit-mode) #profileForm .cs-arrow {
-  display: none;
-}
-
-/* Empty-value hint in view mode — visual dash for unset fields */
-body:not(.edit-mode) #profileForm input:placeholder-shown,
-body:not(.edit-mode) #profileForm textarea:placeholder-shown {
-  color: var(--c-ink-4) !important;
-  font-weight: 400;
-  font-style: italic;
-}
-
-/* Section titles in view mode — slightly muted to feel less "formy" */
-body:not(.edit-mode) #profileForm .form-section-title {
-  color: var(--c-ink-4);
-  border-bottom-color: var(--c-border-soft);
-}
-
-/* Labels stay readable in both modes */
-body:not(.edit-mode) #profileForm label {
-  color: var(--c-ink-4);
+.dash-label {
   font-size: .72rem;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  font-weight: 700;
-  margin-bottom: 2px;
-}
-
-/* Avatar-card read-only: hide upload bits by the class toggle already */
-.avatar-label {
-  font-size: .75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: .06em;
+  letter-spacing: .08em;
   color: var(--c-ink-4);
-  text-align: center;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+}
+.dash-value {
+  font-size: .92rem;
+  color: var(--c-ink);
+  line-height: 1.65;
+  word-break: break-word;
+}
+.dash-value.empty {
+  color: var(--c-ink-4);
+  font-style: italic;
+  font-weight: 400;
+}
+.dash-value-stat {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -.3px;
+  color: var(--c-primary);
+  line-height: 1.1;
+}
+.dash-value a { color: var(--c-primary); font-weight: 600; }
+.dash-platforms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-/* Responsive: edit bar stacks on small screens */
+@media (max-width: 680px) {
+  .profile-dashboard-hero {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+  }
+  .profile-dashboard-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+  .dash-row { grid-template-columns: 1fr; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   RIGHT-SIDE DRAWER (edit panel)
+───────────────────────────────────────────────────────────────────────────── */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.5);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 900;
+  display: none;
+  opacity: 0;
+  transition: opacity .2s ease-out;
+}
+.drawer-backdrop.open {
+  display: block;
+  opacity: 1;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 520px;
+  max-width: 100vw;
+  background: var(--c-surface);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -20px 0 40px -10px rgba(15,23,42,.2);
+  transform: translateX(100%);
+  transition: transform .25s cubic-bezier(.4,0,.2,1);
+  z-index: 1;
+}
+.drawer-backdrop.open .drawer {
+  transform: translateX(0);
+}
+
+.drawer-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 14px;
+  border-bottom: 1px solid var(--c-border);
+  flex-shrink: 0;
+}
+.drawer-hdr h2 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -.3px;
+  color: var(--c-ink);
+}
+.drawer-close {
+  background: transparent;
+  border: none;
+  color: var(--c-ink-3);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.drawer-close:hover {
+  background: var(--c-bg);
+  color: var(--c-ink);
+}
+
+.drawer-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 6px 16px 0;
+  border-bottom: 1px solid var(--c-border);
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.drawer-tabs::-webkit-scrollbar { display: none; }
+.drawer-tab {
+  padding: 10px 14px;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--c-ink-3);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  border-radius: var(--r-sm) var(--r-sm) 0 0;
+  cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s;
+  white-space: nowrap;
+}
+.drawer-tab:hover {
+  color: var(--c-ink);
+  background: rgba(79,70,229,.04);
+}
+.drawer-tab.active {
+  color: var(--c-primary);
+  border-bottom-color: var(--c-primary);
+}
+
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px 24px 20px;
+  min-height: 0;
+}
+.drawer-panel { display: none; }
+.drawer-panel.active { display: block; }
+
+.drawer-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--c-border);
+  background: var(--c-surface);
+  flex-shrink: 0;
+  box-shadow: 0 -4px 12px rgba(15,23,42,.04);
+}
+.drawer-footer .btn { min-width: 104px; }
+
+/* Avatar preview inside the Photo tab */
+.avatar-edit-preview {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 18px;
+}
+
+/* Mobile: full-screen drawer */
 @media (max-width: 560px) {
-  .profile-edit-bar { align-items: stretch; }
-  .profile-edit-bar-actions { justify-content: flex-end; }
+  .drawer { width: 100vw; }
+  .drawer-hdr     { padding: 16px 18px 12px; }
+  .drawer-tabs    { padding: 6px 10px 0; }
+  .drawer-body    { padding: 18px 18px 16px; }
+  .drawer-footer  { padding: 12px 18px; }
+  .drawer-footer .btn { flex: 1; min-width: auto; }
 }
 
 /* Admin action button row spacing */
