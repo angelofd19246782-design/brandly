@@ -390,8 +390,9 @@ input[type=file] { padding: 8px 12px; cursor: pointer; font-size: .82rem; color:
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(167,139,250,.18) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 60% at 10% 80%, rgba(99,102,241,.14) 0%, transparent 55%);
+    radial-gradient(ellipse 60% 50% at 85% 15%, rgba(167,139,250,.28) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 60% at 10% 85%, rgba(99,102,241,.22) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(236,72,153,.08) 0%, transparent 60%);
   pointer-events: none;
 }
 .hero::after {
@@ -2676,6 +2677,195 @@ input[type=number] {
   .drawer-body    { padding: 18px 18px 16px; }
   .drawer-footer  { padding: 12px 18px; }
   .drawer-footer .btn { flex: 1; min-width: auto; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   HERO DECORATIVE ORBS (extra depth behind the text)
+───────────────────────────────────────────────────────────────────────────── */
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: screen;
+  opacity: .65;
+}
+.hero-orb-purple {
+  top: -80px; left: -60px;
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, #a78bfa 0%, transparent 70%);
+}
+.hero-orb-pink {
+  top: 40%; right: -100px;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, #f472b6 0%, transparent 70%);
+  opacity: .35;
+}
+.hero-orb-blue {
+  bottom: -80px; left: 30%;
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, #60a5fa 0%, transparent 70%);
+  opacity: .4;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TESTIMONIALS SECTION (landing)
+───────────────────────────────────────────────────────────────────────────── */
+.section-testimonials {
+  padding: 88px 0;
+  background: var(--c-bg);
+}
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 22px;
+}
+.testimonial-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-xl);
+  padding: 28px 26px 22px;
+  box-shadow: var(--shadow-sm);
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s;
+  display: flex;
+  flex-direction: column;
+}
+.testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--c-primary-mid);
+}
+.testimonial-stars {
+  color: var(--c-star);
+  display: flex;
+  gap: 2px;
+  margin-bottom: 16px;
+}
+.testimonial-quote {
+  font-size: .95rem;
+  color: var(--c-ink-2);
+  line-height: 1.7;
+  margin-bottom: 22px;
+  flex: 1;
+}
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--c-border-soft);
+}
+.testimonial-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--c-gradient);
+}
+.testimonial-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.testimonial-meta { min-width: 0; }
+.testimonial-name {
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--c-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.testimonial-role {
+  font-size: .78rem;
+  color: var(--c-ink-4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SKELETON LOADERS
+───────────────────────────────────────────────────────────────────────────── */
+@keyframes skeletonShimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skel {
+  background: linear-gradient(90deg, #eef2f7 0%, #f8fafc 50%, #eef2f7 100%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.4s infinite linear;
+  border-radius: var(--r-sm);
+  display: block;
+}
+.skel-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+}
+.skel-line {
+  height: 12px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+.skel-line.short { width: 40%; }
+.skel-line.mid   { width: 65%; }
+.skel-line.long  { width: 90%; }
+
+.skeleton-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: 22px;
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+}
+.skeleton-card-top {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.skeleton-card-stats {
+  display: flex;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--c-border-soft);
+}
+.skeleton-card-stats .skel-line {
+  flex: 1;
+  margin: 0;
+  height: 20px;
+}
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(295px, 1fr));
+  gap: 20px;
+}
+
+/* Skeleton for table rows */
+.skeleton-row td {
+  padding: 14px 16px;
+}
+.skeleton-row .skel-line {
+  margin: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ENTRANCE ANIMATIONS (on page load)
+───────────────────────────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up {
+  animation: fadeUp .5s cubic-bezier(.22,.8,.28,1) backwards;
+}
+.fade-up-d1 { animation-delay: .08s; }
+.fade-up-d2 { animation-delay: .16s; }
+.fade-up-d3 { animation-delay: .24s; }
+.fade-up-d4 { animation-delay: .32s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up { animation: none; }
+  .hero-orb { display: none; }
+  .skel     { animation: none; }
 }
 
 /* Admin action button row spacing */

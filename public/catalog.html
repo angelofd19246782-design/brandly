@@ -62,9 +62,7 @@
       <span class="results-count" id="resultsInfo"></span>
     </div>
 
-    <div id="bloggerGrid" class="bloggers-grid">
-      <div class="loading">Loading influencers…</div>
-    </div>
+    <div id="bloggerGrid" class="bloggers-grid"></div>
   </div>
 </div>
 
@@ -110,6 +108,24 @@
     } catch (_) {}
   })();
 
+  const skeletonCard = () => `
+    <div class="skeleton-card">
+      <div class="skeleton-card-top">
+        <div class="skel skel-avatar"></div>
+        <div style="flex:1;padding-top:4px">
+          <div class="skel skel-line mid"></div>
+          <div class="skel skel-line short"></div>
+        </div>
+      </div>
+      <div class="skel skel-line long"></div>
+      <div class="skel skel-line mid" style="margin-bottom:18px"></div>
+      <div class="skeleton-card-stats">
+        <div class="skel skel-line"></div>
+        <div class="skel skel-line"></div>
+        <div class="skel skel-line"></div>
+      </div>
+    </div>`;
+
   const loadBloggers = async () => {
     const p = new URLSearchParams();
     if (filterEls.search.value.trim()) p.set('search',   filterEls.search.value.trim());
@@ -119,7 +135,7 @@
     if (filterEls.sort.value)          p.set('sort',     filterEls.sort.value);
 
     const grid = document.getElementById('bloggerGrid');
-    grid.innerHTML = '<div class="loading">Loading…</div>';
+    grid.innerHTML = Array.from({length: 6}, skeletonCard).join('');
 
     try {
       const bloggers = await api('GET', `/api/bloggers?${p}`);
