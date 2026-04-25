@@ -57,6 +57,8 @@
         <a id="chatProfileLink" href="#" class="btn btn-ghost btn-sm" style="display:none">View profile</a>
       </div>
 
+      <div class="chat-timeline-strip" id="chatTimelineStrip" style="display:none"></div>
+
       <div class="chat-order-actions" id="chatOrderActions"></div>
 
       <div class="chat-messages" id="chatMessages"></div>
@@ -98,6 +100,52 @@
   // Parse a structured campaign request out of a message body. Returns
   // { isRequest, title, format, budget, deadline, body } or null if the
   // message is not a structured request.
+  const parseEvent = (text) => {
+    if (!text || !text.startsWith('[BRANDLY:EVENT]')) return null;
+    const lines  = text.split('\n');
+    const kind   = lines[0].slice('[BRANDLY:EVENT]'.length).trim();
+    const label  = lines[1] || '';
+    const detail = lines.slice(2).join('\n').trim();
+    return { kind, label, detail };
+  };
+
+  const EVENT_ICONS = {
+    accepted:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+    declined:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+    submitted: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>',
+    revision:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>',
+    completed: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  };
+
+  // Build a 4-step order timeline tagged to the current status.
+  const renderTimeline = (status) => {
+    if (status === 'declined') {
+      return `<div class="order-timeline declined">
+        <div class="timeline-step done"><span class="dot"></span><span class="lbl">Request</span></div>
+        <div class="timeline-line"></div>
+        <div class="timeline-step terminal"><span class="dot"></span><span class="lbl">Declined</span></div>
+      </div>`;
+    }
+    const step = ({ accepted: 1, in_progress: 1, revision_requested: 1, submitted: 2, completed: 3 }[status]) ?? 0;
+    const stages = [
+      { key: 'request',   label: 'Request' },
+      { key: 'inprogress',label: 'In progress' },
+      { key: 'submitted', label: 'Submitted' },
+      { key: 'completed', label: 'Completed' },
+    ];
+    const html = stages.map((s, i) => {
+      const cls = i < step ? 'done' : i === step ? 'active' : '';
+      const line = i < stages.length - 1
+        ? `<div class="timeline-line ${i < step ? 'done' : ''}"></div>`
+        : '';
+      return `<div class="timeline-step ${cls}" data-step="${s.key}">
+        <span class="dot"></span>
+        <span class="lbl">${s.label}</span>
+      </div>${line}`;
+    }).join('');
+    return `<div class="order-timeline">${html}</div>`;
+  };
+
   const parseRequest = (text) => {
     if (!text || !text.startsWith('[BRANDLY:REQUEST]')) return null;
     const lines = text.split('\n');
@@ -271,6 +319,8 @@
     if (actionsBar) { actionsBar.innerHTML = ''; actionsBar.style.display = 'none'; }
     const metaEl = document.getElementById('chatHdrMeta');
     if (metaEl) { metaEl.innerHTML = ''; metaEl.style.display = 'none'; }
+    const tlEl = document.getElementById('chatTimelineStrip');
+    if (tlEl)   { tlEl.innerHTML = '';   tlEl.style.display   = 'none'; }
     if (pollTimer) clearInterval(pollTimer);
     history.replaceState(null, '', `/chat.html?id=${convId}`);
 
@@ -360,6 +410,13 @@
         headerStatus.style.display = 'inline-flex';
       }
 
+      // Populate the order timeline strip
+      const tlStrip = document.getElementById('chatTimelineStrip');
+      if (tlStrip) {
+        tlStrip.innerHTML = renderTimeline(status);
+        tlStrip.style.display = 'block';
+      }
+
       // Render action buttons appropriate to role + status
       renderOrderActions(status);
 
@@ -392,6 +449,23 @@
         const avatar = !mine
           ? `<div class="msg-sender-avatar">${initials(m.sender_name)}</div>`
           : '';
+
+        // System events (Accept / Decline / Submit / Revision / Complete) get
+        // their own centered, styled rendering so the chat reads as a real
+        // workflow log, not a wall of regular bubbles.
+        const evt = parseEvent(m.content);
+        if (evt) {
+          const ic = EVENT_ICONS[evt.kind] || EVENT_ICONS.completed;
+          return `
+            <div class="msg-system msg-system-${evt.kind}">
+              <span class="msg-system-icon">${ic}</span>
+              <div class="msg-system-body">
+                <strong>${escHtml(evt.label)}</strong>
+                ${evt.detail ? `<span class="msg-system-detail">${escHtml(evt.detail).replace(/\n/g,'<br>')}</span>` : ''}
+                <time>${formatTime(m.created_at)}</time>
+              </div>
+            </div>`;
+        }
 
         // Render the structured first request as a special "request card"
         // instead of a normal text bubble.
@@ -556,10 +630,15 @@
     loadConversations();
   };
 
+  // System-event payload helper — first line is [BRANDLY:EVENT]<kind>,
+  // second is the headline, remaining lines are optional detail body.
+  const eventPayload = (kind, label, detail) =>
+    '[BRANDLY:EVENT]' + kind + '\n' + label + (detail ? '\n' + detail : '');
+
   // ── Action handlers — exposed on window so onclick="" works ────────────────
   window.acceptRequest = async () => {
     setOrderState(activeConvId, { status: 'in_progress' });
-    await _postAndRefresh('I’ve accepted the request. Looking forward to working together!');
+    await _postAndRefresh(eventPayload('accepted', 'Request accepted', 'The creator opened this thread for direct collaboration.'));
     showToast('Request accepted — chat is open', 'success');
   };
 
@@ -567,7 +646,7 @@
     const reason = await openDeclineModal();
     if (!reason) return;
     setOrderState(activeConvId, { status: 'declined', declineReason: reason });
-    await _postAndRefresh('Unfortunately I have to decline this request: ' + reason);
+    await _postAndRefresh(eventPayload('declined', 'Request declined', reason));
     showToast('Request declined', 'info');
   };
 
@@ -575,9 +654,8 @@
     const submission = await openSubmitModal();
     if (!submission) return;
     setOrderState(activeConvId, { status: 'submitted', submission });
-    let body = 'Work submitted: ' + submission.link;
-    if (submission.note) body += '\n\nNotes: ' + submission.note;
-    await _postAndRefresh(body);
+    const detail = submission.link + (submission.note ? '\n\n' + submission.note : '');
+    await _postAndRefresh(eventPayload('submitted', 'Work submitted', detail));
     showToast('Work submitted to the brand', 'success');
   };
 
@@ -585,7 +663,7 @@
     const reason = await openRevisionModal();
     if (!reason) return;
     setOrderState(activeConvId, { status: 'revision_requested', revisionReason: reason });
-    await _postAndRefresh('Revision requested: ' + reason);
+    await _postAndRefresh(eventPayload('revision', 'Revision requested', reason));
     showToast('Revision requested', 'info');
   };
 
@@ -597,7 +675,7 @@
     });
     if (!ok) return;
     setOrderState(activeConvId, { status: 'completed', completedAt: Date.now() });
-    await _postAndRefresh('Order completed. Thank you for the great work!');
+    await _postAndRefresh(eventPayload('completed', 'Order completed', 'Thanks for the collaboration.'));
     showToast('Order completed — please leave a review', 'success');
     setTimeout(() => window.leaveReview(), 500);
   };

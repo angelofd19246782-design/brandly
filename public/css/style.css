@@ -5421,6 +5421,257 @@ input[type=number] {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   ORDER TIMELINE (in chat header strip)
+───────────────────────────────────────────────────────────────────────────── */
+.chat-timeline-strip {
+  padding: 14px 22px;
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border-soft);
+  flex-shrink: 0;
+}
+.order-timeline {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 560px;
+}
+.timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  min-width: 0;
+}
+.timeline-step .dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--c-border);
+  border: 2px solid var(--c-border);
+  position: relative;
+  transition: background .2s, border-color .2s, box-shadow .2s;
+}
+.timeline-step.done .dot {
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+}
+.timeline-step.done .dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/8px 8px no-repeat;
+}
+.timeline-step.active .dot {
+  background: #fff;
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 4px rgba(79,70,229,.16);
+  animation: timelinePulse 1.6s ease-in-out infinite;
+}
+@keyframes timelinePulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(79,70,229,.16); }
+  50%      { box-shadow: 0 0 0 7px rgba(79,70,229,.06); }
+}
+.timeline-step .lbl {
+  font-size: .68rem;
+  font-weight: 700;
+  color: var(--c-ink-4);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.timeline-step.done .lbl   { color: var(--c-ink-3); }
+.timeline-step.active .lbl { color: var(--c-primary); }
+
+.timeline-line {
+  flex: 1;
+  height: 2px;
+  background: var(--c-border);
+  margin: -16px 4px 0; /* lift slightly so it aligns with dot center */
+  transition: background .2s;
+}
+.timeline-line.done { background: var(--c-primary); }
+
+/* Declined terminal state */
+.order-timeline.declined .timeline-step.terminal .dot {
+  background: var(--c-red);
+  border-color: var(--c-red);
+}
+.order-timeline.declined .timeline-step.terminal .dot::after {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 12 12'/%3E%3C/svg%3E") center/8px 8px no-repeat;
+}
+.order-timeline.declined .timeline-step.terminal .lbl { color: var(--c-red); }
+
+@media (max-width: 600px) {
+  .chat-timeline-strip { padding: 12px 14px; }
+  .timeline-step .lbl { font-size: .58rem; }
+  .timeline-line { margin: -14px 2px 0; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SYSTEM EVENT MESSAGES — centered workflow events in the chat stream
+───────────────────────────────────────────────────────────────────────────── */
+.msg-system {
+  align-self: center;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  max-width: 78%;
+  margin: 4px 0;
+  box-shadow: var(--shadow-xs);
+  position: relative;
+}
+.msg-system-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.msg-system-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.msg-system-body strong {
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--c-ink);
+  letter-spacing: -.1px;
+}
+.msg-system-body .msg-system-detail {
+  font-size: .78rem;
+  color: var(--c-ink-3);
+  line-height: 1.55;
+  word-break: break-word;
+}
+.msg-system-body time {
+  font-size: .65rem;
+  color: var(--c-ink-4);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* Per-event color tint */
+.msg-system-accepted  .msg-system-icon { background: var(--c-cyan-soft);  color: var(--c-cyan); }
+.msg-system-accepted  { border-color: rgba(6,182,212,.25); background: linear-gradient(135deg, #fff, #ecfeff); }
+.msg-system-declined  .msg-system-icon { background: var(--c-red-soft);   color: var(--c-red); }
+.msg-system-declined  { border-color: rgba(220,38,38,.25); background: linear-gradient(135deg, #fff, #fef2f2); }
+.msg-system-submitted .msg-system-icon { background: var(--c-primary-soft); color: var(--c-primary); }
+.msg-system-submitted { border-color: rgba(79,70,229,.25); background: linear-gradient(135deg, #fff, #eef2ff); }
+.msg-system-revision  .msg-system-icon { background: var(--c-orange-soft); color: var(--c-orange); }
+.msg-system-revision  { border-color: rgba(249,115,22,.28); background: linear-gradient(135deg, #fff, #ffedd5); }
+.msg-system-completed .msg-system-icon { background: var(--c-green-soft); color: var(--c-green); }
+.msg-system-completed { border-color: rgba(5,150,105,.28); background: linear-gradient(135deg, #fff, #ecfdf5); }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ADMIN — Recent activity panel
+───────────────────────────────────────────────────────────────────────────── */
+.admin-activity {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: 22px 24px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-xs);
+}
+.admin-activity-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.admin-activity-hdr h3 {
+  font-size: .95rem;
+  font-weight: 800;
+  color: var(--c-ink);
+  letter-spacing: -.2px;
+}
+.admin-activity-hdr .live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--c-green);
+  background: var(--c-green-soft);
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+.admin-activity-hdr .live-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--c-green);
+  box-shadow: 0 0 0 3px rgba(5,150,105,.25);
+  animation: livePulse 1.8s ease-in-out infinite;
+}
+.admin-activity-feed {
+  display: flex;
+  flex-direction: column;
+}
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--c-border-soft);
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.activity-icon.ai-cyan   { background: var(--c-cyan-soft);   color: var(--c-cyan); }
+.activity-icon.ai-mint   { background: var(--c-mint-soft);   color: var(--c-mint); }
+.activity-icon.ai-pink   { background: var(--c-pink-soft);   color: var(--c-pink); }
+.activity-icon.ai-amber  { background: var(--c-amber-soft);  color: var(--c-amber); }
+.activity-icon.ai-orange { background: var(--c-orange-soft); color: var(--c-orange); }
+.activity-icon.ai-red    { background: var(--c-red-soft);    color: var(--c-red); }
+.activity-body { flex: 1; min-width: 0; }
+.activity-text {
+  font-size: .85rem;
+  color: var(--c-ink-2);
+  line-height: 1.5;
+}
+.activity-text strong { color: var(--c-ink); font-weight: 700; }
+.activity-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  font-size: .72rem;
+  color: var(--c-ink-4);
+}
+.activity-meta .activity-status {
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-size: .62rem;
+  padding: 2px 7px;
+  border-radius: 99px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    ADMIN STAT TILE DELTA BADGE (small trend line — real-dashboard feel)
 ───────────────────────────────────────────────────────────────────────────── */
 .stat-delta {
