@@ -10358,3 +10358,163 @@ section[class*="section-"], .marketing-hero { position: relative; z-index: 1; }
     animation: none !important;
   }
 }
+
+/* ==========================================================================
+   HERO — FLOATING SCATTERED COMPOSITION
+   No box, no vignette, no back ghost — cards float freely in space.
+   Main creator card is dominant (scale 1.18, -5deg), three secondaries
+   scattered loosely around it with mixed rotations + back-layer blur.
+   ========================================================================== */
+
+/* Kill the dark vignette and ghost block (defensive — markup also drops
+   them, but this also overrides any earlier !important rules). */
+.hv-vignette,
+.scene-ghost,
+.scene-slot-trend,
+.scene-slot-grow { display: none !important; }
+
+/* ── MAIN creator card — focal, scaled, slight tilt, strong glow ─────── */
+.scene-slot-creator {
+  top: 70px !important;
+  right: 70px !important;
+  width: 300px !important;
+  z-index: 6 !important;
+  animation: scene-float-creator-v2 8s ease-in-out infinite !important;
+}
+@keyframes scene-float-creator-v2 {
+  0%   { transform: translate3d(calc(var(--mx)*18px), calc(var(--my)*18px), 0) translateY(0)    rotate(-5deg) scale(1.18); }
+  50%  { transform: translate3d(calc(var(--mx)*18px), calc(var(--my)*18px), 0) translateY(-8px) rotate(-4deg) scale(1.18); }
+  100% { transform: translate3d(calc(var(--mx)*18px), calc(var(--my)*18px), 0) translateY(0)    rotate(-5deg) scale(1.18); }
+}
+.scene-creator {
+  box-shadow:
+    inset 0 0 50px rgba(255, 255, 255, .10),
+    inset 0 1px 0 rgba(255, 255, 255, .25),
+    0 0 80px rgba(124, 92, 255, .50),
+    0 0 160px rgba(255, 77, 157, .25),
+    0 50px 120px rgba(0, 0, 0, .65) !important;
+}
+
+/* Soft purple/blue radial glow specifically behind the main card so the
+   focal point reads as lit, without enclosing the whole scene. */
+.scene-slot-creator::before {
+  content: '';
+  position: absolute;
+  inset: -60px;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 45%,
+    rgba(124, 92, 255, .45) 0%,
+    rgba(0, 180, 255, .18) 35%,
+    rgba(255, 77, 157, .15) 55%,
+    transparent 75%);
+  filter: blur(50px);
+  pointer-events: none;
+  animation: scene-creator-halo 7s ease-in-out infinite;
+}
+@keyframes scene-creator-halo {
+  0%, 100% { opacity: .85; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.06); }
+}
+
+/* ── SCATTERED SECONDARIES ───────────────────────────────────────────── */
+
+/* Chat card — top-left, back-mid layer (blurred + faded) */
+.scene-slot-chat {
+  top: 30px !important;
+  left: 20px !important;
+  bottom: auto !important;
+  right: auto !important;
+  width: 220px !important;
+  z-index: 3 !important;
+  animation: scene-float-chat-v2 9s ease-in-out infinite !important;
+}
+@keyframes scene-float-chat-v2 {
+  0%   { transform: translate3d(calc(var(--mx)*9px), calc(var(--my)*9px), 0) translateY(0)   rotate(-7deg); }
+  50%  { transform: translate3d(calc(var(--mx)*9px), calc(var(--my)*9px), 0) translateY(-6px) rotate(-6deg); }
+  100% { transform: translate3d(calc(var(--mx)*9px), calc(var(--my)*9px), 0) translateY(0)   rotate(-7deg); }
+}
+.scene-chat {
+  opacity: .9 !important;
+  filter: blur(.8px) !important;
+}
+
+/* Rating card — left-mid, normal layer */
+.scene-slot-rating {
+  top: 270px !important;
+  left: -20px !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 210px !important;
+  z-index: 4 !important;
+  animation: scene-float-rating-v2 7s ease-in-out infinite !important;
+}
+@keyframes scene-float-rating-v2 {
+  0%   { transform: translate3d(calc(var(--mx)*13px), calc(var(--my)*13px), 0) translateY(0)   rotate(6deg); }
+  50%  { transform: translate3d(calc(var(--mx)*13px), calc(var(--my)*13px), 0) translateY(-9px) rotate(7deg); }
+  100% { transform: translate3d(calc(var(--mx)*13px), calc(var(--my)*13px), 0) translateY(0)   rotate(6deg); }
+}
+.scene-rating { opacity: .95 !important; }
+
+/* Budget card — bottom-right, normal layer (slight rotation +5deg) */
+.scene-slot-budget {
+  bottom: 30px !important;
+  right: -10px !important;
+  left: auto !important;
+  top: auto !important;
+  width: 210px !important;
+  z-index: 5 !important;
+  animation: scene-float-budget-v2 9.5s ease-in-out infinite !important;
+}
+@keyframes scene-float-budget-v2 {
+  0%   { transform: translate3d(calc(var(--mx)*15px), calc(var(--my)*15px), 0) translateY(0)    rotate(5deg); }
+  50%  { transform: translate3d(calc(var(--mx)*15px), calc(var(--my)*15px), 0) translateY(-10px) rotate(6deg); }
+  100% { transform: translate3d(calc(var(--mx)*15px), calc(var(--my)*15px), 0) translateY(0)    rotate(5deg); }
+}
+.scene-budget { opacity: .95 !important; }
+
+/* Avatars group — bottom-left, back layer (more blur, more fade) */
+.scene-slot-avatars {
+  bottom: 40px !important;
+  left: 60px !important;
+  right: auto !important;
+  top: auto !important;
+  width: 220px !important;
+  z-index: 2 !important;
+  animation: scene-float-avatars-v2 7.5s ease-in-out infinite !important;
+}
+@keyframes scene-float-avatars-v2 {
+  0%   { transform: translate3d(calc(var(--mx)*7px), calc(var(--my)*7px), 0) translateY(0)   rotate(-3deg); }
+  50%  { transform: translate3d(calc(var(--mx)*7px), calc(var(--my)*7px), 0) translateY(-6px) rotate(-2deg); }
+  100% { transform: translate3d(calc(var(--mx)*7px), calc(var(--my)*7px), 0) translateY(0)   rotate(-3deg); }
+}
+.scene-avatars {
+  opacity: .85 !important;
+  filter: blur(1.2px) !important;
+}
+
+/* Loose, slightly larger portal so it haloes the area around the main card
+   without forming a tight rotating ring. */
+.hv-portal {
+  right: -100px !important;
+  top: 20px !important;
+  width: 580px !important;
+  height: 580px !important;
+  opacity: .50 !important;
+}
+.hv-portal-bloom {
+  right: -120px !important;
+  top: -20px !important;
+  width: 660px !important;
+  height: 660px !important;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .scene-slot-creator::before,
+  .scene-slot-creator,
+  .scene-slot-chat,
+  .scene-slot-rating,
+  .scene-slot-budget,
+  .scene-slot-avatars { animation: none !important; }
+}

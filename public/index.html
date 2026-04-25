@@ -123,22 +123,14 @@
              colored bloom, parallax on mouse. Not consumed by any real flow. -->
         <div class="hv-scene">
 
-          <!-- Neon portal halo behind the main card (the "wow" element) -->
+          <!-- Loose atmosphere: soft portal glow + drifting mist
+               (no vignette, no ghost block — cards float in open space) -->
           <div class="hv-portal-bloom"></div>
           <div class="hv-portal"></div>
-          <div class="hv-vignette"></div>
-
-          <!-- Slow-drifting soft light mist (extra atmospheric blobs) -->
           <span class="hv-mist hv-mist-1"></span>
           <span class="hv-mist hv-mist-2"></span>
-
-          <!-- Ambient colored bloom blobs inside the scene -->
           <span class="hv-bloom hv-bloom-purple"></span>
-          <span class="hv-bloom hv-bloom-pink"></span>
           <span class="hv-bloom hv-bloom-blue"></span>
-
-          <!-- Back-layer ghost (blurred soft shape for depth) -->
-          <div class="scene-ghost"></div>
 
           <!-- Chat card -->
           <div class="scene-slot scene-slot-chat" data-depth="9">
@@ -261,20 +253,6 @@
                 <span>online now</span>
               </div>
             </div>
-          </div>
-
-          <!-- Floating badges (controlled chaos, overlap card edges) -->
-          <div class="scene-slot scene-slot-trend" data-depth="24">
-            <span class="scene-badge scene-badge-trend">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 6 6 9 6 13a6 6 0 0 0 12 0c0-2-1-4-3-6 0 2-1 3-2 3 0-3-1-6-1-8z"/></svg>
-              Trending
-            </span>
-          </div>
-          <div class="scene-slot scene-slot-grow" data-depth="22">
-            <span class="scene-badge scene-badge-grow">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l10-10"/><path d="M8 7h9v9"/></svg>
-              +12% this week
-            </span>
           </div>
 
         </div><!-- /.hv-scene -->
