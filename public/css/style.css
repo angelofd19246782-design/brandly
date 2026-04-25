@@ -6547,6 +6547,121 @@ input[type=number] {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   CARD FOOTER — VISUAL SPACING & TYPOGRAPHY POLISH
+   Per spec: 20px divider gap, 8/12/16 vertical rhythm, weak label ↔ strong
+   $500, left-aligned, no overlap. Stripe/Linear vibe.
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Card grows to 510 to absorb the new footer height. Online card touches
+   bottom edge exactly with no overlap. */
+.hv-creator-v2 {
+  height: 510px !important;
+}
+
+/* Compact avatar so the footer breathes */
+.hv-creator-v2 .hv-avatar-glow {
+  width: 130px !important;
+  height: 130px !important;
+  margin: 30px auto 16px !important;
+}
+.hv-creator-v2 .hv-avatar-glow::before {
+  inset: -32px !important;
+}
+
+/* Smaller platform icons for vertical compactness */
+.hv-creator-v2 .hv-platform-icon {
+  width: 32px !important;
+  height: 32px !important;
+}
+.hv-creator-v2 .hv-platform-stats {
+  gap: 8px !important;
+  margin-bottom: 0 !important;
+}
+.hv-creator-v2 .hv-niche-v2 {
+  margin-bottom: 10px !important;
+}
+
+/* DIVIDER — proper margin and reduced opacity */
+.hv-creator-v2 .card-footer {
+  gap: 0;
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  position: relative;
+  align-items: flex-start;
+  text-align: left;
+}
+/* Subtle gradient highlight over the divider */
+.hv-creator-v2 .card-footer::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(167,139,250,.3), transparent);
+  pointer-events: none;
+}
+
+/* RATING block — flex-row with consistent rhythm */
+.hv-creator-v2 .card-footer .hv-rating-line {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 0 0 8px 0 !important;
+  font-size: .82rem !important;
+}
+.hv-creator-v2 .card-footer .hv-rating-line strong {
+  color: #fff;
+  font-weight: 700;
+}
+.hv-creator-v2 .card-footer .hv-rating-line .hv-reviews {
+  color: rgba(255,255,255,.55);
+}
+
+/* PRICE block — clean label/value hierarchy per spec */
+.hv-creator-v2 .card-footer .hv-price {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 4px !important;
+  margin: 8px 0 0 0 !important;
+}
+.hv-creator-v2 .card-footer .hv-price span {
+  font-size: 11px !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  color: #fff !important;
+  opacity: 0.6 !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+}
+.hv-creator-v2 .card-footer .hv-price strong {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  color: #fff !important;
+  letter-spacing: -.02em !important;
+  margin: 0 !important;
+}
+
+/* BUTTON — consistent rhythm spacing, content-sized, left-aligned */
+.hv-creator-v2 .card-footer .hv-view-btn-v2 {
+  width: fit-content !important;
+  align-self: flex-start !important;
+  margin: 16px 0 0 0 !important;
+  padding: 10px 22px !important;
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .hv-creator-v2 .card-footer .hv-view-btn-v2 {
+    width: 100% !important;
+    align-self: stretch !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    CATALOG HERO BAND (replaces the plain page-hero on discovery)
 ───────────────────────────────────────────────────────────────────────────── */
 .catalog-hero {
