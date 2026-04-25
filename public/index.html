@@ -15,7 +15,7 @@
   </div>
 </nav>
 
-<!-- HERO -->
+<!-- HERO — rebuilt: glass marketplace mockup with creator/request/chat/rating -->
 <section class="hero">
   <div class="hero-orb hero-orb-purple"></div>
   <div class="hero-orb hero-orb-pink"></div>
@@ -27,97 +27,80 @@
       <div class="hero-copy">
         <div class="hero-eyebrow fade-up">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:inline-block;vertical-align:middle;margin-right:5px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          Influencer Marketing Platform
+          Direct creator marketplace
         </div>
-        <h1 class="fade-up fade-up-d1">Find the right <span class="accent">influencers</span><br>for your brand.</h1>
-        <p class="hero-sub fade-up fade-up-d2">A direct marketplace where brands hire creators — no agencies, no commission, no middlemen. Send a request, the creator accepts, you chat, the work ships, you both leave a review.</p>
+        <h1 class="fade-up fade-up-d1">Hire the right <span class="accent">creators</span><br>for your next campaign.</h1>
+        <p class="hero-sub fade-up fade-up-d2">Send a request, the creator accepts, you chat, the work ships, you both leave a review. No agencies, no commission, no middlemen.</p>
         <div class="hero-actions fade-up fade-up-d3">
           <a href="/catalog.html" class="btn btn-hero-primary btn-xl">Browse creators</a>
           <a href="/register.html?role=blogger" class="btn btn-hero-ghost btn-xl">Become a creator</a>
         </div>
+        <div class="hero-trust-line fade-up fade-up-d4">
+          <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Free to start</span>
+          <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Zero commission</span>
+          <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 12,400+ creators</span>
+        </div>
       </div>
 
-      <!-- Product composition visual (desktop only) -->
+      <!-- Glass product mockup (desktop only) -->
       <div class="hero-visual fade-up fade-up-d2" aria-hidden="true">
 
-        <!-- Main dashboard card -->
-        <div class="glass-card hv-main">
-          <div class="hv-main-hdr">
-            <div class="hv-main-title">Creator discovery</div>
-            <span class="hv-live-badge">Live</span>
-          </div>
-          <div class="hv-search">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            Fashion · Paris · 1M+
-          </div>
-          <div class="hv-row">
-            <div class="mini-av"><img src="https://randomuser.me/api/portraits/women/44.jpg" alt=""></div>
-            <div class="hv-row-body">
-              <div class="hv-row-name">Sophie Laurent</div>
-              <div class="hv-row-sub">Fashion · 2.1M followers</div>
+        <!-- 1. Creator card -->
+        <div class="glass-card hv-creator">
+          <div class="hv-creator-cover"></div>
+          <div class="hv-creator-body">
+            <div class="hv-creator-avatar"><img src="https://randomuser.me/api/portraits/women/44.jpg" alt=""></div>
+            <h4>Sophie Laurent</h4>
+            <div class="hv-creator-meta">
+              <span class="hv-badge-niche">Fashion &amp; Beauty</span>
+              <span class="hv-creator-loc">Paris, France</span>
             </div>
-            <div class="hv-row-rating">4.9★</div>
-            <button type="button" class="hv-contact-btn">Contact</button>
-          </div>
-          <div class="hv-row">
-            <div class="mini-av"><img src="https://randomuser.me/api/portraits/women/91.jpg" alt=""></div>
-            <div class="hv-row-body">
-              <div class="hv-row-name">Priya Sharma</div>
-              <div class="hv-row-sub">Beauty · 2.8M followers</div>
+            <div class="hv-creator-stats">
+              <div><strong>2.1M</strong><span>Followers</span></div>
+              <div><strong style="color:var(--c-star)">4.9★</strong><span>Rating</span></div>
+              <div><strong style="color:var(--c-green)">$800+</strong><span>Price</span></div>
             </div>
-            <div class="hv-row-rating">4.9★</div>
-            <button type="button" class="hv-contact-btn">Contact</button>
-          </div>
-          <div class="hv-row">
-            <div class="mini-av"><img src="https://randomuser.me/api/portraits/men/32.jpg" alt=""></div>
-            <div class="hv-row-body">
-              <div class="hv-row-name">Marcus Webb</div>
-              <div class="hv-row-sub">Technology · 890K</div>
-            </div>
-            <div class="hv-row-rating">4.8★</div>
-            <button type="button" class="hv-contact-btn">Contact</button>
+            <button type="button" class="hv-cta-btn">Send request</button>
           </div>
         </div>
 
-        <!-- Floating: analytics card -->
-        <div class="glass-card hv-analytics">
-          <div class="hv-analytics-lbl">Audience match</div>
-          <div class="hv-analytics-val">92%</div>
-          <div class="mini-bar"><span style="width:92%"></span></div>
-          <div class="hv-analytics-sub">Excellent fit</div>
+        <!-- 2. Rating badge (small, floating) -->
+        <div class="glass-card hv-rating-badge">
+          <div class="hv-rating-stars">★★★★★</div>
+          <div>
+            <strong>4.9</strong>
+            <span>24 reviews</span>
+          </div>
         </div>
 
-        <!-- Floating: message card -->
-        <div class="glass-card hv-message">
-          <div class="hv-msg-head">
-            <div class="mini-av"><img src="https://randomuser.me/api/portraits/men/32.jpg" alt=""></div>
-            <div class="hv-msg-name">Marcus Webb</div>
+        <!-- 3. Request status card -->
+        <div class="glass-card hv-request">
+          <div class="hv-request-hdr">
+            <span class="chat-status-pill chat-status-pending">Pending</span>
+            <span class="hv-request-time">12 min ago</span>
           </div>
-          <div class="hv-msg-body">"Happy to review it. Can we jump on a call Thursday?"</div>
-          <div class="hv-msg-time">Active now</div>
+          <div class="hv-request-title">Spring vitamin C launch</div>
+          <div class="hv-request-meta">
+            <div><span>Budget</span><strong>$1,500</strong></div>
+            <div><span>Format</span><strong>Reel</strong></div>
+            <div><span>Due</span><strong>May 15</strong></div>
+          </div>
+        </div>
+
+        <!-- 4. Chat preview -->
+        <div class="glass-card hv-chat">
+          <div class="hv-chat-head">
+            <img class="hv-chat-av" src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
+            <div>
+              <strong>Marcus Webb</strong>
+              <span class="hv-chat-status">Active now</span>
+            </div>
+          </div>
+          <div class="hv-chat-bubble">"Happy to review it. Can we jump on a call Thursday?"</div>
         </div>
 
       </div>
 
-    </div>
-
-    <div class="hero-stats fade-up fade-up-d4">
-      <div class="hero-stat">
-        <div class="num">12,400+</div>
-        <div class="lbl">Influencers</div>
-      </div>
-      <div class="hero-stat">
-        <div class="num">3,800+</div>
-        <div class="lbl">Advertisers</div>
-      </div>
-      <div class="hero-stat">
-        <div class="num">28,000+</div>
-        <div class="lbl">Deals started</div>
-      </div>
-      <div class="hero-stat">
-        <div class="num">9,600+</div>
-        <div class="lbl">Reviews</div>
-      </div>
     </div>
   </div>
 </section>
