@@ -49,19 +49,131 @@
     document.querySelectorAll('.star-picker button').forEach((b, i) => b.classList.toggle('active', i < score));
   };
 
-  const contactBlogger = async () => {
+  // Send-request modal — opens a campaign brief form, on submit creates a
+  // conversation and sends the brief as a structured first message.
+  const sendRequest = async () => {
     const user = await getUser();
     if (!user) { window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.href)}`; return; }
-    if (user.role !== 'advertiser') { await notify('Only advertisers can contact bloggers.', { title: 'Action not allowed' }); return; }
-    const btn = document.getElementById('contactBtn');
-    btn.disabled = true; btn.textContent = 'Opening chat…';
-    try {
-      const conv = await api('POST', '/api/conversations', { blogger_id: parseInt(userId) });
-      window.location.href = `/chat.html?id=${conv.id}`;
-    } catch (err) {
-      await notify(err.message, { title: 'Could not open chat' });
-      btn.disabled = false; btn.textContent = 'Start a conversation';
+    if (user.role !== 'advertiser') {
+      await notify('Only brands can send requests to creators.', { title: 'Action not allowed' });
+      return;
     }
+    openRequestModal();
+  };
+
+  // Keep the old name working for any inline handlers we missed
+  const contactBlogger = sendRequest;
+
+  const openRequestModal = () => {
+    const root = document.body.appendChild(document.createElement('div'));
+    root.id = '_brandlyRequestRoot';
+    root.innerHTML = `
+      <div class="modal-overlay">
+        <div class="modal-box request-modal">
+          <button type="button" class="request-modal-close" aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+          <div class="request-modal-hdr">
+            <div class="request-modal-eyebrow">New campaign request</div>
+            <h3>Send a brief to this creator</h3>
+            <p>The creator will see your request and can accept or decline. If accepted, your private thread opens for direct conversation.</p>
+          </div>
+          <div id="reqAlert"></div>
+          <form id="requestForm">
+            <div class="form-group">
+              <label for="reqTitle">Campaign title <span style="color:var(--c-red)">*</span></label>
+              <input type="text" id="reqTitle" placeholder="e.g. Spring vitamin C launch" required maxlength="120">
+            </div>
+            <div class="form-row cols-2">
+              <div class="form-group">
+                <label for="reqFormat">Content format</label>
+                <select id="reqFormat">
+                  <option value="">— Select format —</option>
+                  <option>Single post</option>
+                  <option>Story series</option>
+                  <option>Reel / Short video</option>
+                  <option>Long-form video</option>
+                  <option>Multi-post campaign</option>
+                  <option>Other (described in message)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="reqBudget">Budget (USD)</label>
+                <input type="number" id="reqBudget" placeholder="e.g. 1500" min="0">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="reqDeadline">Deadline</label>
+              <input type="date" id="reqDeadline">
+            </div>
+            <div class="form-group" style="margin-bottom:8px">
+              <label for="reqMessage">Message to the creator <span style="color:var(--c-red)">*</span></label>
+              <textarea id="reqMessage" rows="5" placeholder="Describe what you'd like to collaborate on, what makes this creator a fit, and any specific deliverables." required></textarea>
+            </div>
+            <div class="request-modal-footer">
+              <button type="button" class="btn btn-ghost" data-cancel>Cancel</button>
+              <button type="submit" class="btn btn-primary" id="reqSubmit">Send request</button>
+            </div>
+          </form>
+        </div>
+      </div>`;
+
+    const cleanup = () => {
+      root.remove();
+      document.removeEventListener('keydown', onKey);
+    };
+    const onKey = (e) => { if (e.key === 'Escape') cleanup(); };
+    document.addEventListener('keydown', onKey);
+
+    root.querySelector('.modal-overlay').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) cleanup();
+    });
+    root.querySelector('.request-modal-close').addEventListener('click', cleanup);
+    root.querySelector('[data-cancel]').addEventListener('click', cleanup);
+    setTimeout(() => root.querySelector('#reqTitle').focus(), 50);
+
+    root.querySelector('#requestForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title    = root.querySelector('#reqTitle').value.trim();
+      const format   = root.querySelector('#reqFormat').value;
+      const budget   = root.querySelector('#reqBudget').value;
+      const deadline = root.querySelector('#reqDeadline').value;
+      const message  = root.querySelector('#reqMessage').value.trim();
+
+      if (!title || !message) {
+        showAlert('reqAlert', 'Title and message are required.');
+        return;
+      }
+
+      const submitBtn = root.querySelector('#reqSubmit');
+      submitBtn.disabled = true; submitBtn.textContent = 'Sending…';
+
+      try {
+        // 1. Create or fetch existing conversation with this creator
+        const conv = await api('POST', '/api/conversations', { blogger_id: parseInt(userId) });
+
+        // 2. Send the structured brief as the first message. We use a
+        //    machine-parseable header so chat.html can render it as a
+        //    request card; the human-readable body follows below.
+        const lines = [];
+        lines.push('[BRANDLY:REQUEST]');
+        lines.push('Title: ' + title);
+        if (format)   lines.push('Format: ' + format);
+        if (budget)   lines.push('Budget: $' + parseInt(budget).toLocaleString());
+        if (deadline) lines.push('Deadline: ' + deadline);
+        lines.push('');
+        lines.push(message);
+        const content = lines.join('\n');
+
+        await api('POST', `/api/conversations/${conv.id}/messages`, { content });
+
+        // 3. Redirect to the order/chat page
+        window.location.href = `/chat.html?id=${conv.id}`;
+      } catch (err) {
+        showAlert('reqAlert', err.message || 'Could not send the request.');
+        submitBtn.disabled = false; submitBtn.textContent = 'Send request';
+      }
+    });
   };
 
   const submitRating = async () => {
@@ -192,9 +304,9 @@
 
       let ctaHtml = '';
       if (!user) {
-        ctaHtml = `<a href="/login.html?redirect=${encodeURIComponent(window.location.href)}" class="btn btn-primary btn-lg" style="width:100%">Sign in to start a conversation</a>`;
+        ctaHtml = `<a href="/login.html?redirect=${encodeURIComponent(window.location.href)}" class="btn btn-primary btn-lg" style="width:100%">Sign in to send a request</a>`;
       } else if (user.role === 'advertiser') {
-        ctaHtml = `<button id="contactBtn" class="btn btn-primary btn-lg" style="width:100%" onclick="contactBlogger()">Start a conversation</button>`;
+        ctaHtml = `<button id="contactBtn" class="btn btn-primary btn-lg" style="width:100%" onclick="sendRequest()">Send a request</button>`;
       } else if (user.role === 'blogger' && String(user.id) === String(userId)) {
         ctaHtml = `<a href="/edit-profile.html" class="btn btn-outline btn-lg" style="width:100%">Edit my profile</a>`;
       }

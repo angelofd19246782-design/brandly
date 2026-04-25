@@ -20,8 +20,8 @@
   <!-- Sidebar -->
   <div class="chat-sidebar" id="chatSidebar">
     <div class="chat-sidebar-hdr">
-      <h2>Messages</h2>
-      <p>Your conversations</p>
+      <h2 id="chatSidebarTitle">Orders</h2>
+      <p id="chatSidebarSub">Active campaign threads</p>
     </div>
     <div class="conv-list" id="convList">
       <div class="loading">Loading…</div>
@@ -47,7 +47,10 @@
         </button>
         <div class="avatar" id="chatAv"></div>
         <div class="chat-hdr-info">
-          <div class="chat-hdr-name" id="chatHdrName"></div>
+          <div class="chat-hdr-name-row">
+            <div class="chat-hdr-name" id="chatHdrName"></div>
+            <span id="chatHdrStatus" class="chat-status-pill chat-status-pending" style="display:none">Pending</span>
+          </div>
           <div class="chat-hdr-sub" id="chatHdrSub"></div>
         </div>
         <a id="chatProfileLink" href="#" class="btn btn-ghost btn-sm" style="display:none">View profile</a>
@@ -78,6 +81,41 @@
   const initials = (n) =>
     n ? n.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase() : '?';
 
+  // Parse a structured campaign request out of a message body. Returns
+  // { isRequest, title, format, budget, deadline, body } or null if the
+  // message is not a structured request.
+  const parseRequest = (text) => {
+    if (!text || !text.startsWith('[BRANDLY:REQUEST]')) return null;
+    const lines = text.split('\n');
+    const meta  = { isRequest: true, title: '', format: '', budget: '', deadline: '' };
+    let i = 1;
+    for (; i < lines.length; i++) {
+      const line = lines[i];
+      if (!line.trim()) { i++; break; } // blank line ends meta block
+      const m = line.match(/^([A-Za-z]+):\s*(.+)$/);
+      if (!m) break;
+      const key = m[1].toLowerCase();
+      if (['title','format','budget','deadline'].includes(key)) meta[key] = m[2];
+    }
+    meta.body = lines.slice(i).join('\n').trim();
+    return meta;
+  };
+
+  // Derive an order status from message stream + ratings cache.
+  // Returns 'pending' | 'accepted' | 'completed'.
+  const deriveStatus = (messages, hasRating) => {
+    if (hasRating) return 'completed';
+    if (!messages || !messages.length) return 'pending';
+    const senders = new Set(messages.map(m => m.sender_id));
+    return senders.size >= 2 ? 'accepted' : 'pending';
+  };
+
+  const statusLabel = (s) => ({
+    pending:   'Pending',
+    accepted:  'In progress',
+    completed: 'Completed',
+  }[s] || 'Pending');
+
   // ── Conversations list ──────────────────────────────────────────────────────
   const loadConversations = async () => {
     const list = document.getElementById('convList');
@@ -102,6 +140,18 @@
           ? `<img src="${escHtml(c.other_avatar)}" alt="">`
           : initials(c.other_name);
         const isActive = c.id === activeConvId;
+
+        // Try to extract the campaign title from the last message — if the
+        // last message IS the structured first request, show its title; else
+        // show the body. Falls back to plain preview.
+        let preview = c.last_message ? escHtml(c.last_message) : 'No messages yet';
+        const parsed = parseRequest(c.last_message || '');
+        if (parsed && parsed.title) {
+          preview = '<span class="conv-preview-tag">Request:</span> ' + escHtml(parsed.title);
+        } else if (parsed && parsed.body) {
+          preview = escHtml(parsed.body.slice(0, 80));
+        }
+
         return `
           <div class="conv-item ${isActive ? 'active' : ''}" data-conv-id="${c.id}">
             <div class="conv-av">${avHtml}</div>
@@ -110,7 +160,7 @@
                 <div class="conv-name">${escHtml(c.other_name)}</div>
                 <span class="conv-time">${c.last_at ? formatTime(c.last_at) : ''}</span>
               </div>
-              <div class="conv-preview">${c.last_message ? escHtml(c.last_message) : 'No messages yet'}</div>
+              <div class="conv-preview">${preview}</div>
             </div>
           </div>`;
       }).join('');
@@ -200,11 +250,56 @@
         return;
       }
 
-      el.innerHTML = data.messages.map(m => {
+      // Update the chat header status pill based on parsed conversation
+      const status = deriveStatus(data.messages, false);
+      const headerStatus = document.getElementById('chatHdrStatus');
+      if (headerStatus) {
+        headerStatus.className = 'chat-status-pill chat-status-' + status;
+        headerStatus.textContent = statusLabel(status);
+        headerStatus.style.display = data.messages.length ? 'inline-flex' : 'none';
+      }
+
+      // If the first message is a structured request, surface the campaign
+      // title in the chat header sub
+      const first = data.messages[0];
+      const firstParsed = first && parseRequest(first.content);
+      const subEl = document.getElementById('chatHdrSub');
+      if (firstParsed && firstParsed.title) {
+        subEl.textContent = firstParsed.title;
+      }
+
+      el.innerHTML = data.messages.map((m, idx) => {
         const mine = m.sender_id === currentUser.id;
         const avatar = !mine
           ? `<div class="msg-sender-avatar">${initials(m.sender_name)}</div>`
           : '';
+
+        // Render the structured first request as a special "request card"
+        // instead of a normal text bubble.
+        const parsed = parseRequest(m.content);
+        if (parsed) {
+          return `
+            <div class="msg-row ${mine ? 'mine' : ''}">
+              ${avatar}
+              <div class="msg-bubble-wrap" style="max-width:78%">
+                <div class="request-card">
+                  <div class="request-card-hdr">
+                    <span class="request-card-eyebrow">Campaign request</span>
+                    <span class="chat-status-pill chat-status-pending">${mine ? 'Sent' : 'New'}</span>
+                  </div>
+                  ${parsed.title ? `<div class="request-card-title">${escHtml(parsed.title)}</div>` : ''}
+                  <div class="request-card-meta">
+                    ${parsed.format   ? `<div class="rc-meta-row"><span class="rc-meta-k">Format</span><span class="rc-meta-v">${escHtml(parsed.format)}</span></div>` : ''}
+                    ${parsed.budget   ? `<div class="rc-meta-row"><span class="rc-meta-k">Budget</span><span class="rc-meta-v">${escHtml(parsed.budget)}</span></div>` : ''}
+                    ${parsed.deadline ? `<div class="rc-meta-row"><span class="rc-meta-k">Deadline</span><span class="rc-meta-v">${escHtml(parsed.deadline)}</span></div>` : ''}
+                  </div>
+                  ${parsed.body ? `<div class="request-card-body">${escHtml(parsed.body).replace(/\n/g,'<br>')}</div>` : ''}
+                </div>
+                <span class="msg-time">${formatTime(m.created_at)}</span>
+              </div>
+            </div>`;
+        }
+
         return `
           <div class="msg-row ${mine ? 'mine' : ''}">
             ${avatar}
@@ -257,6 +352,17 @@
   (async () => {
     currentUser = await requireAuth('/chat.html');
     if (!currentUser) return;
+
+    // Role-aware sidebar header
+    const titleEl = document.getElementById('chatSidebarTitle');
+    const subEl   = document.getElementById('chatSidebarSub');
+    if (currentUser.role === 'advertiser') {
+      titleEl.textContent = 'Orders';
+      subEl.textContent   = 'Active campaign threads';
+    } else if (currentUser.role === 'blogger') {
+      titleEl.textContent = 'Requests';
+      subEl.textContent   = 'Incoming briefs from brands';
+    }
 
     await loadConversations();
 
