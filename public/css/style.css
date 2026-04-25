@@ -4584,33 +4584,32 @@ input[type=number] {
 .hero-trust-line {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 10px;
   margin-top: 22px;
   flex-wrap: wrap;
 }
 .hero-trust-line span {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
   font-size: .82rem;
   color: rgba(255,255,255,.7);
   font-weight: 500;
   white-space: nowrap;
 }
-.hero-trust-line span svg {
-  color: #6ee7b7;
-  flex-shrink: 0;
+.hero-trust-line .hero-trust-dot {
+  color: rgba(255,255,255,.35);
+  font-weight: 700;
 }
 @media (max-width: 600px) {
-  .hero-trust-line { gap: 14px; justify-content: center; }
+  .hero-trust-line { justify-content: center; }
   .hero-trust-line span { font-size: .76rem; }
 }
 
-/* ─── Creator card (main, top-left) ───────────────────────────────── */
+/* ─── Creator card (main, central) ────────────────────────────────── */
 .hv-creator {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 50px;
+  left: 30px;
   width: 280px;
   border-radius: 20px;
   padding: 0;
@@ -4624,12 +4623,21 @@ input[type=number] {
   0%, 100% { transform: rotate(-2deg) translateY(0); }
   50%      { transform: rotate(-2deg) translateY(-7px); }
 }
+.hv-creator {
+  /* Layered shadow with a soft purple glow halo */
+  box-shadow:
+    0 30px 60px -15px rgba(15,23,42,.5),
+    0 8px 20px -8px rgba(15,23,42,.25),
+    0 0 0 1px rgba(255,255,255,.1),
+    0 0 80px -10px rgba(167,139,250,.5);
+}
 .hv-creator:hover {
   animation-play-state: paused;
   transform: rotate(-2deg) translateY(-6px) scale(1.02);
   box-shadow:
     0 40px 80px -16px rgba(15,23,42,.55),
-    0 0 0 1px rgba(255,255,255,.16) inset;
+    0 0 0 1px rgba(255,255,255,.16) inset,
+    0 0 100px -10px rgba(167,139,250,.6);
 }
 .hv-creator-cover {
   height: 64px;
@@ -4727,34 +4735,38 @@ input[type=number] {
   box-shadow: 0 10px 24px rgba(79,70,229,.5), 0 0 30px rgba(124,58,237,.3);
 }
 
-/* ─── Rating badge (small, floating top-right) ─────────────────────── */
+/* ─── Rating badge (top-left, small, floating) ─────────────────────── */
 .hv-rating-badge {
   position: absolute;
-  top: 28px;
-  right: -16px;
-  padding: 10px 14px;
+  top: -10px;
+  left: -10px;
+  padding: 9px 13px;
   border-radius: 14px;
-  z-index: 4;
+  z-index: 5;
   display: flex;
   align-items: center;
-  gap: 10px;
-  transform: rotate(5deg);
+  gap: 9px;
+  transform: rotate(-4deg);
   animation: hvDriftB 6s ease-in-out infinite;
   transition: transform .35s cubic-bezier(.22,.8,.28,1), box-shadow .35s;
 }
 @keyframes hvDriftB {
-  0%, 100% { transform: rotate(5deg) translateY(0); }
-  50%      { transform: rotate(5deg) translateY(-6px); }
+  0%, 100% { transform: rotate(-4deg) translateY(0); }
+  50%      { transform: rotate(-4deg) translateY(-6px); }
 }
 .hv-rating-badge:hover {
   animation-play-state: paused;
-  transform: rotate(5deg) translateY(-4px) scale(1.04);
+  transform: rotate(-4deg) translateY(-4px) scale(1.05);
 }
 .hv-rating-stars {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--c-amber-soft);
   color: var(--c-star);
-  font-size: .8rem;
-  letter-spacing: 1px;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .hv-rating-badge strong {
   display: block;
@@ -4770,77 +4782,94 @@ input[type=number] {
   font-weight: 600;
 }
 
-/* ─── Request status card (mid-right) ──────────────────────────────── */
-.hv-request {
+/* ─── Status card (top-right, small) ───────────────────────────────── */
+.hv-status {
   position: absolute;
-  top: 200px;
-  right: -8px;
-  width: 250px;
-  padding: 14px 16px;
+  top: 0;
+  right: 10px;
+  width: 175px;
+  padding: 12px 14px;
   border-radius: 14px;
-  z-index: 3;
-  transform: rotate(3deg);
-  animation: hvDriftC 8s ease-in-out infinite;
+  z-index: 4;
+  transform: rotate(5deg);
+  animation: hvDriftC 7s ease-in-out infinite;
   transition: transform .35s cubic-bezier(.22,.8,.28,1), box-shadow .35s;
 }
 @keyframes hvDriftC {
-  0%, 100% { transform: rotate(3deg) translateY(0); }
-  50%      { transform: rotate(3deg) translateY(-7px); }
+  0%, 100% { transform: rotate(5deg) translateY(0); }
+  50%      { transform: rotate(5deg) translateY(-6px); }
 }
-.hv-request:hover {
+.hv-status:hover {
   animation-play-state: paused;
-  transform: rotate(3deg) translateY(-5px) scale(1.02);
-  box-shadow: 0 40px 80px -16px rgba(15,23,42,.55), 0 0 0 1px rgba(255,255,255,.16) inset;
+  transform: rotate(5deg) translateY(-5px) scale(1.04);
+  box-shadow: 0 30px 60px -16px rgba(15,23,42,.5), 0 0 0 1px rgba(255,255,255,.16) inset;
 }
-.hv-request-hdr {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-.hv-request-time {
-  font-size: .65rem;
-  color: var(--c-ink-4);
-  font-weight: 600;
-}
-.hv-request-title {
-  font-size: .92rem;
+.hv-status-title {
+  font-size: .85rem;
   font-weight: 800;
   letter-spacing: -.2px;
   color: var(--c-ink);
-  margin-bottom: 12px;
-  line-height: 1.3;
+  margin-top: 10px;
+  line-height: 1.2;
 }
-.hv-request-meta {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  padding-top: 10px;
-  border-top: 1px solid var(--c-border-soft);
+.hv-status-sub {
+  font-size: .68rem;
+  color: var(--c-ink-4);
+  font-weight: 600;
+  margin-top: 3px;
 }
-.hv-request-meta span {
-  display: block;
+
+/* ─── Budget card (mid-right, small) ──────────────────────────────── */
+.hv-budget {
+  position: absolute;
+  top: 215px;
+  right: -18px;
+  width: 165px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  z-index: 4;
+  transform: rotate(7deg);
+  animation: hvDriftE 8.5s ease-in-out infinite;
+  transition: transform .35s cubic-bezier(.22,.8,.28,1), box-shadow .35s;
+  background: linear-gradient(135deg, rgba(255,255,255,.97) 0%, rgba(236,254,255,.97) 100%) !important;
+}
+@keyframes hvDriftE {
+  0%, 100% { transform: rotate(7deg) translateY(0); }
+  50%      { transform: rotate(7deg) translateY(-8px); }
+}
+.hv-budget:hover {
+  animation-play-state: paused;
+  transform: rotate(7deg) translateY(-6px) scale(1.04);
+  box-shadow: 0 30px 60px -16px rgba(6,182,212,.4), 0 0 0 1px rgba(255,255,255,.16) inset;
+}
+.hv-budget-label {
   font-size: .56rem;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: var(--c-ink-4);
-  font-weight: 700;
-  margin-bottom: 3px;
-}
-.hv-request-meta strong {
-  font-size: .82rem;
-  color: var(--c-ink);
   font-weight: 800;
-  letter-spacing: -.02em;
+  color: var(--c-ink-4);
+  margin-bottom: 4px;
 }
-.hv-request-meta > div:nth-child(1) strong { color: var(--c-green); }
+.hv-budget-value {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--c-green);
+  letter-spacing: -.04em;
+  line-height: 1;
+}
+.hv-budget-sub {
+  font-size: .65rem;
+  color: var(--c-ink-3);
+  font-weight: 600;
+  margin-top: 6px;
+}
 
 /* ─── Chat preview (bottom-left) ───────────────────────────────────── */
 .hv-chat {
   position: absolute;
   bottom: 0;
-  left: 30px;
-  width: 250px;
+  left: 0;
+  width: 260px;
   padding: 14px 16px;
   border-radius: 14px;
   z-index: 3;
