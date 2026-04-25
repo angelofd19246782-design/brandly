@@ -10518,3 +10518,143 @@ section[class*="section-"], .marketing-hero { position: relative; z-index: 1; }
   .scene-slot-budget,
   .scene-slot-avatars { animation: none !important; }
 }
+
+/* ==========================================================================
+   HERO — CRISP GLASS PASS (no fog, no blurry content)
+   Strip the muddy overlays: lower backdrop-blur to 10px max, drop content
+   blur from cards, remove opacity on full card containers (so text/images
+   stay sharp). Tone the background atmosphere down. Only the most-receded
+   back layer (.scene-avatars) keeps a slight fade.
+   ========================================================================== */
+
+/* 1+2. Glass base — exact spec. Override .scene-card cleanly. */
+.hv-scene .scene-card {
+  background: rgba(255, 255, 255, .07) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(150%) !important;
+          backdrop-filter: blur(10px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, .18) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .22),
+    0 24px 70px rgba(0, 0, 0, .45),
+    0 0 40px rgba(124, 92, 255, .18) !important;
+}
+/* Per-card colored accent halo, applied as an extra layered shadow so
+   each card retains its identity without enclosing fog. */
+.hv-scene .scene-creator { box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.30),
+    0 30px 90px rgba(0,0,0,.55),
+    0 0 80px rgba(124,92,255,.40),
+    0 0 140px rgba(255,77,157,.20) !important; }
+.hv-scene .scene-chat    { box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    0 24px 70px rgba(0,0,0,.45),
+    0 0 50px rgba(0,180,255,.45) !important; }
+.hv-scene .scene-rating  { box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    0 24px 70px rgba(0,0,0,.45),
+    0 0 50px rgba(255,200,60,.45) !important; }
+.hv-scene .scene-budget  { box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    0 24px 70px rgba(0,0,0,.45),
+    0 0 50px rgba(60,220,140,.45) !important; }
+.hv-scene .scene-avatars { box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    0 22px 60px rgba(0,0,0,.45),
+    0 0 45px rgba(255,77,157,.35) !important; }
+
+/* 3. Drop content-blur and per-card opacity — text & icons must be crisp.
+      Only the deepest back layer (.scene-avatars) keeps a hint of fade. */
+.hv-scene .scene-chat,
+.hv-scene .scene-rating,
+.hv-scene .scene-budget,
+.hv-scene .scene-creator {
+  filter: none !important;
+  opacity: 1 !important;
+}
+.hv-scene .scene-avatars {
+  filter: none !important;
+  opacity: .92 !important;
+}
+
+/* Top reflection on every card — keep but soften so it doesn't haze content. */
+.hv-scene .scene-card::before {
+  height: 35% !important;
+  opacity: .35 !important;
+}
+
+/* Stronger inner shine on the focal main card (white inset) for a clean
+   premium edge — replaces the old "inset 0 0 50px white" which read as fog. */
+.hv-scene .scene-creator {
+  background:
+    linear-gradient(160deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.02) 60%),
+    rgba(255, 255, 255, .07) !important;
+}
+
+/* 4. Background atmosphere — reduce the foggy elements behind cards. */
+
+/* Decorative SVG curves were stroke 2.5 / opacity .55 in earlier pass.
+   Drop opacity so they read as a hint, not haze. */
+.hero-v2 .hero-decor-curves {
+  opacity: .25 !important;
+  filter: blur(.4px) !important;
+}
+.hero-v2 .hero-decor-curves path {
+  stroke-width: 1.5 !important;
+  opacity: .45 !important;
+}
+
+/* Tone the ambient blooms (purple/blue still in markup) — they were too
+   loud and competed with cards. */
+.hv-scene .hv-bloom { opacity: .35 !important; }
+
+/* Lower the mist opacity so the area behind cards reads as deep space,
+   not fog. */
+.hv-scene .hv-mist-1 { opacity: .12 !important; }
+.hv-scene .hv-mist-2 { opacity: .10 !important; }
+
+/* Soft darkening shape behind the main creator card for contrast.
+   Sits at z:1 — above the z:0 atmosphere blobs but below all cards
+   (z:2+), so it darkens the area where the main card sits without
+   touching the cards themselves. */
+.hv-scene::before {
+  content: '';
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  width: 400px;
+  height: 480px;
+  z-index: 1;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(6, 3, 20, .45) 0%,
+    rgba(6, 3, 20, .22) 50%,
+    transparent 80%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+/* Portal: keep but trim the heavy ring blur that was contributing to the
+   smoky look. */
+.hv-portal {
+  filter: blur(6px) saturate(130%) !important;
+  opacity: .40 !important;
+}
+.hv-portal-bloom {
+  opacity: .60 !important;
+}
+
+/* 5. Main-card content sharpness — text + button + avatar */
+.hv-scene .scene-creator .sc-name-text {
+  filter: drop-shadow(0 0 10px rgba(255,255,255,.22)); /* keep glow tight */
+}
+.hv-scene .scene-creator .sc-cta {
+  /* a touch brighter base color for clarity over the now-darker behind */
+  filter: brightness(1.05) saturate(1.05);
+}
+.hv-scene .scene-creator .sc-avatar img {
+  border-color: rgba(255,255,255,.32) !important;
+}
+
+/* The earlier hero-bg pass added an inline-SVG noise overlay on
+   .hero-v2::after with opacity .06 — keep but verify it doesn't read
+   as smudge over cards. Cards live above it via z-index, so they stay clean. */
