@@ -5133,6 +5133,151 @@ input[type=number] {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   ORDER ACTIONS BAR (between chat header and message stream)
+───────────────────────────────────────────────────────────────────────────── */
+.chat-order-actions {
+  display: none;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 22px;
+  background: linear-gradient(180deg, var(--c-bg) 0%, var(--c-surface) 100%);
+  border-bottom: 1px solid var(--c-border);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.order-action-note {
+  font-size: .85rem;
+  color: var(--c-ink-2);
+  flex: 1;
+  min-width: 200px;
+  line-height: 1.5;
+}
+.order-action-note strong { color: var(--c-ink); }
+.order-action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.order-submission-link {
+  font-size: .82rem;
+  padding: 6px 10px;
+  background: var(--c-primary-soft);
+  border-radius: var(--r-md);
+  color: var(--c-primary);
+  font-weight: 600;
+  flex-basis: 100%;
+  word-break: break-all;
+}
+.order-submission-link a { text-decoration: underline; word-break: break-all; }
+
+/* Decline-reasons radio list */
+.decline-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.decline-reason {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  font-size: .88rem;
+  color: var(--c-ink-2);
+}
+.decline-reason:hover { border-color: var(--c-primary-mid); background: var(--c-bg); }
+.decline-reason input[type=radio] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--c-primary);
+  margin: 0;
+}
+.decline-reason input:checked ~ span { color: var(--c-primary); font-weight: 600; }
+.decline-reason:has(input:checked) {
+  border-color: var(--c-primary);
+  background: var(--c-primary-soft);
+}
+
+/* Conv-item sidebar status row */
+.conv-status-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 3px 0 4px;
+}
+.chat-status-pill-sm {
+  font-size: .58rem;
+  padding: 2px 7px;
+  letter-spacing: .04em;
+}
+.chat-status-pill-sm::before { width: 5px; height: 5px; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TOAST NOTIFICATIONS
+───────────────────────────────────────────────────────────────────────────── */
+#_brandlyToastHost {
+  position: fixed;
+  top: calc(var(--nav-h) + 12px);
+  right: 16px;
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  max-width: calc(100vw - 32px);
+}
+.brandly-toast {
+  background: var(--c-ink);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: var(--r-md);
+  font-size: .88rem;
+  font-weight: 500;
+  box-shadow: 0 16px 36px -12px rgba(15,23,42,.4), 0 4px 10px rgba(15,23,42,.18);
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity .25s ease-out, transform .25s ease-out;
+  pointer-events: auto;
+  max-width: 360px;
+  letter-spacing: .005em;
+}
+.brandly-toast.show { opacity: 1; transform: translateX(0); }
+.brandly-toast-success { background: var(--c-green); }
+.brandly-toast-error   { background: var(--c-red); }
+.brandly-toast-info    { background: var(--c-ink); }
+@media (max-width: 560px) {
+  #_brandlyToastHost { right: 12px; left: 12px; max-width: none; }
+  .brandly-toast { max-width: none; }
+}
+
+/* Star picker (used in review modal) */
+.star-picker {
+  display: flex;
+  gap: 4px;
+}
+.star-picker button {
+  background: none;
+  border: none;
+  color: #e2e8f0;
+  padding: 0;
+  line-height: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color .15s, transform .15s;
+}
+.star-picker button:hover,
+.star-picker button.active {
+  color: var(--c-star);
+  transform: scale(1.1);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    ADMIN STAT TILE DELTA BADGE (small trend line — real-dashboard feel)
 ───────────────────────────────────────────────────────────────────────────── */
 .stat-delta {

@@ -56,6 +56,8 @@
         <a id="chatProfileLink" href="#" class="btn btn-ghost btn-sm" style="display:none">View profile</a>
       </div>
 
+      <div class="chat-order-actions" id="chatOrderActions"></div>
+
       <div class="chat-messages" id="chatMessages"></div>
 
       <div class="chat-footer">
@@ -101,20 +103,14 @@
     return meta;
   };
 
-  // Derive an order status from message stream + ratings cache.
-  // Returns 'pending' | 'accepted' | 'completed'.
-  const deriveStatus = (messages, hasRating) => {
-    if (hasRating) return 'completed';
-    if (!messages || !messages.length) return 'pending';
-    const senders = new Set(messages.map(m => m.sender_id));
-    return senders.size >= 2 ? 'accepted' : 'pending';
-  };
+  // Wraps app.js helpers — kept locally so the rest of this file is unchanged
+  const deriveStatus = (messages, hasRating) =>
+    computeOrderStatus(activeConvId, messages, hasRating);
+  const statusLabel = (s) => orderStatusLabel(s);
 
-  const statusLabel = (s) => ({
-    pending:   'Pending',
-    accepted:  'In progress',
-    completed: 'Completed',
-  }[s] || 'Pending');
+  // Track the latest derived status so action handlers can read it
+  let _currentStatus = 'pending';
+  let _currentMyRating = null;
 
   // ── Conversations list ──────────────────────────────────────────────────────
   const loadConversations = async () => {
@@ -141,9 +137,6 @@
           : initials(c.other_name);
         const isActive = c.id === activeConvId;
 
-        // Try to extract the campaign title from the last message — if the
-        // last message IS the structured first request, show its title; else
-        // show the body. Falls back to plain preview.
         let preview = c.last_message ? escHtml(c.last_message) : 'No messages yet';
         const parsed = parseRequest(c.last_message || '');
         if (parsed && parsed.title) {
@@ -151,6 +144,12 @@
         } else if (parsed && parsed.body) {
           preview = escHtml(parsed.body.slice(0, 80));
         }
+
+        // Show status pill — derived from localStorage if present, else from
+        // message-thread heuristic (no rating context here yet)
+        const ls = getOrderState(c.id);
+        const status = ls && ls.status ? ls.status : (c.last_message ? 'in_progress' : 'pending');
+        const statusHtml = `<span class="chat-status-pill chat-status-${status} chat-status-pill-sm">${orderStatusLabel(status)}</span>`;
 
         return `
           <div class="conv-item ${isActive ? 'active' : ''}" data-conv-id="${c.id}">
@@ -160,6 +159,7 @@
                 <div class="conv-name">${escHtml(c.other_name)}</div>
                 <span class="conv-time">${c.last_at ? formatTime(c.last_at) : ''}</span>
               </div>
+              <div class="conv-status-row">${statusHtml}</div>
               <div class="conv-preview">${preview}</div>
             </div>
           </div>`;
@@ -183,6 +183,10 @@
   // ── Open a conversation ─────────────────────────────────────────────────────
   const openConv = async (convId, otherName, otherAvatar, otherUserId) => {
     activeConvId = convId;
+    _currentMyRating = null;
+    _currentStatus   = 'pending';
+    const actionsBar = document.getElementById('chatOrderActions');
+    if (actionsBar) { actionsBar.innerHTML = ''; actionsBar.style.display = 'none'; }
     if (pollTimer) clearInterval(pollTimer);
     history.replaceState(null, '', `/chat.html?id=${convId}`);
 
@@ -250,14 +254,29 @@
         return;
       }
 
-      // Update the chat header status pill based on parsed conversation
-      const status = deriveStatus(data.messages, false);
+      // Check if current user has already rated this creator (advertiser only)
+      let hasRating = false;
+      if (currentUser.role === 'advertiser') {
+        try {
+          const conv = data.conversation || await api('GET', `/api/conversations/${activeConvId}`);
+          const myRating = await api('GET', `/api/ratings/${conv.blogger_id}/mine`);
+          if (myRating) { hasRating = true; _currentMyRating = myRating; }
+        } catch (_) {}
+      }
+
+      // Compute status: localStorage flag wins, otherwise derive from messages
+      const status = computeOrderStatus(activeConvId, data.messages, hasRating);
+      _currentStatus = status;
+
       const headerStatus = document.getElementById('chatHdrStatus');
       if (headerStatus) {
         headerStatus.className = 'chat-status-pill chat-status-' + status;
         headerStatus.textContent = statusLabel(status);
-        headerStatus.style.display = data.messages.length ? 'inline-flex' : 'none';
+        headerStatus.style.display = 'inline-flex';
       }
+
+      // Render action buttons appropriate to role + status
+      renderOrderActions(status);
 
       // If the first message is a structured request, surface the campaign
       // title in the chat header sub
@@ -346,6 +365,319 @@
   document.getElementById('messageInput').addEventListener('input', function () {
     this.style.height = 'auto';
     this.style.height = Math.min(this.scrollHeight, 140) + 'px';
+  });
+
+  // ── Order action bar ───────────────────────────────────────────────────────
+  const renderOrderActions = (status) => {
+    const bar = document.getElementById('chatOrderActions');
+    if (!bar) return;
+    const role = currentUser.role;
+    let html = '';
+    const note = (text) => `<div class="order-action-note">${text}</div>`;
+
+    if (role === 'blogger') {
+      if (status === 'pending') {
+        html = `
+          ${note('A brand sent you this request. Accept to open the chat or decline with a reason.')}
+          <div class="order-action-buttons">
+            <button type="button" class="btn btn-primary btn-sm" onclick="acceptRequest()">Accept request</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="declineRequest()">Decline</button>
+          </div>`;
+      } else if (status === 'accepted' || status === 'in_progress') {
+        html = `
+          ${note('Order is in progress. Submit your work when it’s ready.')}
+          <div class="order-action-buttons">
+            <button type="button" class="btn btn-primary btn-sm" onclick="submitWork()">Submit work</button>
+          </div>`;
+      } else if (status === 'revision_requested') {
+        const ls = getOrderState(activeConvId) || {};
+        const reason = ls.revisionReason || 'No reason provided';
+        html = `
+          ${note('Revision requested: <strong>' + escHtml(reason) + '</strong>')}
+          <div class="order-action-buttons">
+            <button type="button" class="btn btn-primary btn-sm" onclick="submitWork()">Submit revised work</button>
+          </div>`;
+      } else if (status === 'submitted') {
+        html = note('Work submitted. Waiting for the brand to review.');
+      } else if (status === 'completed') {
+        html = note('Order completed. Thanks for the great collaboration.');
+      } else if (status === 'declined') {
+        html = note('You declined this request.');
+      }
+    } else if (role === 'advertiser') {
+      if (status === 'pending') {
+        html = note('Waiting for the creator to accept your request.');
+      } else if (status === 'accepted' || status === 'in_progress') {
+        html = note('Creator has accepted. They’ll submit work here when ready.');
+      } else if (status === 'submitted') {
+        const ls = getOrderState(activeConvId) || {};
+        const link = ls.submission && ls.submission.link;
+        const linkBlock = link
+          ? `<div class="order-submission-link">Submitted link: <a href="${escHtml(link)}" target="_blank" rel="noopener">${escHtml(link)}</a></div>`
+          : '';
+        html = `
+          ${note('The creator has submitted their work. Review it and complete or request a revision.')}
+          ${linkBlock}
+          <div class="order-action-buttons">
+            <button type="button" class="btn btn-primary btn-sm" onclick="completeOrder()">Accept &amp; complete</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="requestRevision()">Request revision</button>
+          </div>`;
+      } else if (status === 'revision_requested') {
+        html = note('Revision requested. Waiting for the creator to resubmit.');
+      } else if (status === 'completed') {
+        if (_currentMyRating) {
+          html = note('Order completed and reviewed. ✨');
+        } else {
+          html = `
+            ${note('Order completed. Leave a review to help other brands and creators.')}
+            <div class="order-action-buttons">
+              <button type="button" class="btn btn-primary btn-sm" onclick="leaveReview()">Leave a review</button>
+            </div>`;
+        }
+      } else if (status === 'declined') {
+        const ls = getOrderState(activeConvId) || {};
+        const reason = ls.declineReason || 'No reason provided';
+        html = note('Request declined: <strong>' + escHtml(reason) + '</strong>');
+      }
+    }
+
+    bar.innerHTML = html;
+    bar.style.display = html ? 'flex' : 'none';
+  };
+
+  // Helper: post a system-style message into the conversation so the action
+  // is visible in the chat history, then refresh
+  const _postAndRefresh = async (content) => {
+    try {
+      await api('POST', `/api/conversations/${activeConvId}/messages`, { content });
+    } catch (_) {}
+    lastMsgCount = 0;
+    await loadMessages();
+    loadConversations();
+  };
+
+  // ── Action handlers — exposed on window so onclick="" works ────────────────
+  window.acceptRequest = async () => {
+    setOrderState(activeConvId, { status: 'in_progress' });
+    await _postAndRefresh('I’ve accepted the request. Looking forward to working together!');
+    showToast('Request accepted — chat is open', 'success');
+  };
+
+  window.declineRequest = async () => {
+    const reason = await openDeclineModal();
+    if (!reason) return;
+    setOrderState(activeConvId, { status: 'declined', declineReason: reason });
+    await _postAndRefresh('Unfortunately I have to decline this request: ' + reason);
+    showToast('Request declined', 'info');
+  };
+
+  window.submitWork = async () => {
+    const submission = await openSubmitModal();
+    if (!submission) return;
+    setOrderState(activeConvId, { status: 'submitted', submission });
+    let body = 'Work submitted: ' + submission.link;
+    if (submission.note) body += '\n\nNotes: ' + submission.note;
+    await _postAndRefresh(body);
+    showToast('Work submitted to the brand', 'success');
+  };
+
+  window.requestRevision = async () => {
+    const reason = await openRevisionModal();
+    if (!reason) return;
+    setOrderState(activeConvId, { status: 'revision_requested', revisionReason: reason });
+    await _postAndRefresh('Revision requested: ' + reason);
+    showToast('Revision requested', 'info');
+  };
+
+  window.completeOrder = async () => {
+    const ok = await confirmAction({
+      title:       'Complete this order?',
+      message:     'Mark this order as completed. You’ll be prompted to leave a review next.',
+      confirmText: 'Complete order',
+    });
+    if (!ok) return;
+    setOrderState(activeConvId, { status: 'completed', completedAt: Date.now() });
+    await _postAndRefresh('Order completed. Thank you for the great work!');
+    showToast('Order completed — please leave a review', 'success');
+    setTimeout(() => window.leaveReview(), 500);
+  };
+
+  window.leaveReview = async () => {
+    const review = await openReviewModal();
+    if (!review) return;
+    try {
+      const conv = await api('GET', `/api/conversations/${activeConvId}`);
+      await api('POST', '/api/ratings', {
+        blogger_id: conv.blogger_id,
+        score:      review.score,
+        review:     review.text,
+      });
+      showToast('Review saved — thanks!', 'success');
+      _currentMyRating = { score: review.score, review: review.text };
+      renderOrderActions(_currentStatus);
+    } catch (err) {
+      showToast(err.message || 'Could not save review', 'error');
+    }
+  };
+
+  // ── Custom modals (decline / submit / revision / review) ───────────────────
+  const _openModalShell = (innerHtml) => {
+    const root = document.createElement('div');
+    root.className = '_brandly-form-modal';
+    root.innerHTML = `<div class="modal-overlay"><div class="modal-box request-modal">${innerHtml}</div></div>`;
+    document.body.appendChild(root);
+    return {
+      root,
+      cleanup: () => root.remove(),
+      box: root.querySelector('.modal-box'),
+      overlay: root.querySelector('.modal-overlay'),
+    };
+  };
+
+  const openDeclineModal = () => new Promise((resolve) => {
+    const reasons = ['Budget too low', 'Not relevant to my niche', 'No availability', 'Brand or product not a fit', 'Other'];
+    const html = `
+      <div class="request-modal-hdr">
+        <div class="request-modal-eyebrow" style="color:var(--c-red);background:var(--c-red-soft)">Decline request</div>
+        <h3>Why are you declining?</h3>
+        <p>Pick the closest reason. The brand will see this so they can refine their next request.</p>
+      </div>
+      <div class="decline-reasons">
+        ${reasons.map((r, i) =>
+          `<label class="decline-reason"><input type="radio" name="declineReason" value="${escHtml(r)}"${i===0?' checked':''}><span>${escHtml(r)}</span></label>`
+        ).join('')}
+      </div>
+      <div class="form-group" style="margin-top:14px;margin-bottom:0">
+        <label for="declineNote">Note <span class="label-hint">optional</span></label>
+        <textarea id="declineNote" rows="2" placeholder="Add a short note for the brand"></textarea>
+      </div>
+      <div class="request-modal-footer">
+        <button type="button" class="btn btn-ghost" data-cancel>Cancel</button>
+        <button type="button" class="btn btn-danger" data-confirm>Decline request</button>
+      </div>`;
+    const { root, cleanup, overlay, box } = _openModalShell(html);
+    const onKey = (e) => { if (e.key === 'Escape') { document.removeEventListener('keydown', onKey); cleanup(); resolve(null); } };
+    document.addEventListener('keydown', onKey);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) { document.removeEventListener('keydown', onKey); cleanup(); resolve(null); } });
+    box.querySelector('[data-cancel]').addEventListener('click', () => { document.removeEventListener('keydown', onKey); cleanup(); resolve(null); });
+    box.querySelector('[data-confirm]').addEventListener('click', () => {
+      const reason = box.querySelector('input[name="declineReason"]:checked').value;
+      const note   = box.querySelector('#declineNote').value.trim();
+      document.removeEventListener('keydown', onKey);
+      cleanup();
+      resolve(note ? `${reason} — ${note}` : reason);
+    });
+  });
+
+  const openSubmitModal = () => new Promise((resolve) => {
+    const html = `
+      <div class="request-modal-hdr">
+        <div class="request-modal-eyebrow" style="color:var(--c-cyan);background:var(--c-cyan-soft)">Submit work</div>
+        <h3>Send your deliverable</h3>
+        <p>Share the link to your finished work and any access notes for the brand.</p>
+      </div>
+      <div id="_submitAlert"></div>
+      <div class="form-group">
+        <label for="submitLink">Link to your work <span style="color:var(--c-red)">*</span></label>
+        <input type="url" id="submitLink" placeholder="https://..." required>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label for="submitNote">Notes <span class="label-hint">optional</span></label>
+        <textarea id="submitNote" rows="3" placeholder="Access details, password, delivery notes, etc."></textarea>
+      </div>
+      <div class="request-modal-footer">
+        <button type="button" class="btn btn-ghost" data-cancel>Cancel</button>
+        <button type="button" class="btn btn-primary" data-confirm>Submit work</button>
+      </div>`;
+    const { root, cleanup, overlay, box } = _openModalShell(html);
+    const onKey = (e) => { if (e.key === 'Escape') { document.removeEventListener('keydown', onKey); cleanup(); resolve(null); } };
+    document.addEventListener('keydown', onKey);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) { document.removeEventListener('keydown', onKey); cleanup(); resolve(null); } });
+    box.querySelector('[data-cancel]').addEventListener('click', () => { document.removeEventListener('keydown', onKey); cleanup(); resolve(null); });
+    setTimeout(() => box.querySelector('#submitLink').focus(), 50);
+    box.querySelector('[data-confirm]').addEventListener('click', () => {
+      const link = box.querySelector('#submitLink').value.trim();
+      const note = box.querySelector('#submitNote').value.trim();
+      if (!link) { showAlert('_submitAlert', 'Please paste a link to your work.'); return; }
+      document.removeEventListener('keydown', onKey);
+      cleanup();
+      resolve({ link, note });
+    });
+  });
+
+  const openRevisionModal = () => new Promise((resolve) => {
+    const html = `
+      <div class="request-modal-hdr">
+        <div class="request-modal-eyebrow" style="color:var(--c-orange);background:var(--c-orange-soft)">Request revision</div>
+        <h3>What needs to be revised?</h3>
+        <p>Be specific so the creator knows exactly what to change. The order will go back to In progress.</p>
+      </div>
+      <div id="_revisionAlert"></div>
+      <div class="form-group" style="margin-bottom:0">
+        <label for="revisionReason">Revision details <span style="color:var(--c-red)">*</span></label>
+        <textarea id="revisionReason" rows="4" placeholder="Describe what should change in the deliverable" required></textarea>
+      </div>
+      <div class="request-modal-footer">
+        <button type="button" class="btn btn-ghost" data-cancel>Cancel</button>
+        <button type="button" class="btn btn-primary" data-confirm>Send revision request</button>
+      </div>`;
+    const { root, cleanup, overlay, box } = _openModalShell(html);
+    const onKey = (e) => { if (e.key === 'Escape') { document.removeEventListener('keydown', onKey); cleanup(); resolve(null); } };
+    document.addEventListener('keydown', onKey);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) { document.removeEventListener('keydown', onKey); cleanup(); resolve(null); } });
+    box.querySelector('[data-cancel]').addEventListener('click', () => { document.removeEventListener('keydown', onKey); cleanup(); resolve(null); });
+    setTimeout(() => box.querySelector('#revisionReason').focus(), 50);
+    box.querySelector('[data-confirm]').addEventListener('click', () => {
+      const reason = box.querySelector('#revisionReason').value.trim();
+      if (!reason) { showAlert('_revisionAlert', 'Please describe what needs to change.'); return; }
+      document.removeEventListener('keydown', onKey);
+      cleanup();
+      resolve(reason);
+    });
+  });
+
+  const openReviewModal = () => new Promise((resolve) => {
+    const html = `
+      <div class="request-modal-hdr">
+        <div class="request-modal-eyebrow" style="color:var(--c-amber);background:var(--c-amber-soft)">Leave a review</div>
+        <h3>Rate this collaboration</h3>
+        <p>Your honest feedback helps every future brand and creator.</p>
+      </div>
+      <div id="_reviewAlert"></div>
+      <div class="form-group">
+        <label>How was the collaboration? <span style="color:var(--c-red)">*</span></label>
+        <div class="star-picker" id="_reviewStars">
+          ${[1,2,3,4,5].map(i => `<button type="button" data-score="${i}"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:block"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>`).join('')}
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label for="reviewText">Comment <span class="label-hint">optional</span></label>
+        <textarea id="reviewText" rows="3" placeholder="Share your experience"></textarea>
+      </div>
+      <div class="request-modal-footer">
+        <button type="button" class="btn btn-ghost" data-cancel>Skip for now</button>
+        <button type="button" class="btn btn-primary" data-confirm>Submit review</button>
+      </div>`;
+    const { root, cleanup, overlay, box } = _openModalShell(html);
+    let score = 0;
+    const stars = box.querySelectorAll('#_reviewStars button');
+    stars.forEach(btn => {
+      btn.addEventListener('click', () => {
+        score = parseInt(btn.dataset.score);
+        stars.forEach((b, i) => b.classList.toggle('active', i < score));
+      });
+    });
+    const onKey = (e) => { if (e.key === 'Escape') { document.removeEventListener('keydown', onKey); cleanup(); resolve(null); } };
+    document.addEventListener('keydown', onKey);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) { document.removeEventListener('keydown', onKey); cleanup(); resolve(null); } });
+    box.querySelector('[data-cancel]').addEventListener('click', () => { document.removeEventListener('keydown', onKey); cleanup(); resolve(null); });
+    box.querySelector('[data-confirm]').addEventListener('click', () => {
+      if (!score) { showAlert('_reviewAlert', 'Please pick a star rating.'); return; }
+      const text = box.querySelector('#reviewText').value.trim();
+      document.removeEventListener('keydown', onKey);
+      cleanup();
+      resolve({ score, text });
+    });
   });
 
   // ── Boot ────────────────────────────────────────────────────────────────────

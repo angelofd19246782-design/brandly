@@ -167,7 +167,21 @@
 
         await api('POST', `/api/conversations/${conv.id}/messages`, { content });
 
-        // 3. Redirect to the order/chat page
+        // 3. Mark this order as Pending in client-side state
+        setOrderState(conv.id, {
+          status:    'pending',
+          createdAt: Date.now(),
+          title:     title,
+          format:    format || null,
+          budget:    budget ? parseInt(budget) : null,
+          deadline:  deadline || null,
+          brandId:   user.id,
+          bloggerId: parseInt(userId),
+        });
+
+        showToast('Request sent — opening the order thread', 'success');
+
+        // 4. Redirect to the order/chat page
         window.location.href = `/chat.html?id=${conv.id}`;
       } catch (err) {
         showAlert('reqAlert', err.message || 'Could not send the request.');

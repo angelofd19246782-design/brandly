@@ -275,6 +275,72 @@ const clearAlert = (containerId) => {
   if (el) el.innerHTML = '';
 };
 
+// ── Order state — frontend-only (localStorage) ────────────────────────────────
+// Schema can't change, so order status / decline reason / submission / revision
+// are stored client-side, keyed by conversation id.
+const ORDER_STATE_KEY = 'brandly_orders_v1';
+
+const _readOrderState = () => {
+  try { return JSON.parse(localStorage.getItem(ORDER_STATE_KEY) || '{}'); }
+  catch (_) { return {}; }
+};
+const _writeOrderState = (state) => {
+  try { localStorage.setItem(ORDER_STATE_KEY, JSON.stringify(state)); } catch (_) {}
+};
+
+function getOrderState(convId) {
+  const all = _readOrderState();
+  return all[String(convId)] || null;
+}
+
+function setOrderState(convId, patch) {
+  const all = _readOrderState();
+  const cur = all[String(convId)] || {};
+  all[String(convId)] = { ...cur, ...patch, updatedAt: Date.now() };
+  _writeOrderState(all);
+  return all[String(convId)];
+}
+
+// Compute effective status from localStorage + message stream + rating presence
+function computeOrderStatus(convId, messages, hasRating) {
+  const ls = getOrderState(convId);
+  if (ls && ls.status) return ls.status;
+  if (hasRating) return 'completed';
+  if (!messages || !messages.length) return 'pending';
+  const senders = new Set(messages.map(m => m.sender_id));
+  return senders.size >= 2 ? 'in_progress' : 'pending';
+}
+
+const STATUS_LABELS = {
+  pending:            'Pending',
+  accepted:           'Accepted',
+  in_progress:        'In progress',
+  submitted:          'Submitted',
+  revision_requested: 'Revision requested',
+  completed:          'Completed',
+  declined:           'Declined',
+};
+function orderStatusLabel(s) { return STATUS_LABELS[s] || 'Pending'; }
+
+// ── Toast helper ──────────────────────────────────────────────────────────────
+function showToast(msg, type = 'info') {
+  let host = document.getElementById('_brandlyToastHost');
+  if (!host) {
+    host = document.createElement('div');
+    host.id = '_brandlyToastHost';
+    document.body.appendChild(host);
+  }
+  const el = document.createElement('div');
+  el.className = 'brandly-toast brandly-toast-' + type;
+  el.textContent = msg;
+  host.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 280);
+  }, 3500);
+}
+
 // ── Modal system (notify + confirmAction) ─────────────────────────────────────
 let _modalRoot = null;
 
