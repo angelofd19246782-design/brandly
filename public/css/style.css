@@ -12356,3 +12356,312 @@ time,
 /* Make sure no element ends up with `color: var(--c-ink-5)` (older spec
    token if it exists) defaulting to invisible. Patch to muted readable. */
 :root { --c-ink-5: rgba(255, 255, 255, .50); }
+
+/* ==========================================================================
+   LAYER SEPARATION FIX
+   Two root causes of "everything blending together":
+   1. Glass cards used .05 alpha + .10 border — the body gradient already
+      shows as a similar-luminance navy/purple, so cards blended into it.
+   2. Sub-components (inputs, chips, sub-cards) inside cards used the SAME
+      .05 alpha → no visible boundary between container and content.
+   This pass establishes a clear depth ramp:
+      body 0%  →  card .08  →  nested card .12  →  input .04
+   plus stronger borders (.16-.22) and clearer text-color minimums.
+   ========================================================================== */
+
+/* 1. Top-level cards — slightly brighter than body, clearly bordered. */
+.card,
+.creator-card,
+.blogger-card,
+.stat-tile,
+.insight-card,
+.testimonial-card,
+.feature-card,
+.resource-card,
+.pricing-card,
+.profile-card-sticky,
+.faq-item,
+.about-card,
+.admin-activity,
+.conv-item,
+.modal-box,
+.drawer-panel,
+.profile-dashboard-hero,
+.profile-dashboard-identity,
+.card-stat,
+.review-item,
+.activity-item,
+.how-step,
+.step-card,
+.flow-card {
+  background: rgba(255, 255, 255, .075) !important;
+  border: 1px solid rgba(255, 255, 255, .16) !important;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, .45),
+    0 0 1px rgba(255, 255, 255, .08) inset,
+    0 0 40px rgba(124, 92, 255, .14) !important;
+}
+
+/* 2. Nested glass — when a card lives INSIDE another card (e.g. modal
+      content row, drawer field, profile card inner block) it must read
+      darker / lighter than its parent. We use a darker tint to push the
+      child *back*, creating depth. */
+.card .card,
+.modal-box .card,
+.drawer-panel .card,
+.modal-box .form-group > .card,
+.drawer-panel .form-group > .card,
+.modal-box .review-item,
+.drawer-panel .review-item,
+.profile-card-sticky .review-item,
+.creator-card .review-item,
+.blogger-card .review-item,
+.admin-activity .activity-item,
+.activity-item,
+.review-item {
+  background: rgba(255, 255, 255, .045) !important;
+  border: 1px solid rgba(255, 255, 255, .12) !important;
+  box-shadow: none !important;
+}
+
+/* 3. Inputs — must be DARKER than their surrounding card so the field
+      reads as a recess. Stronger border so the edge is clear. */
+input, textarea, select,
+.form-control,
+.cs-trigger,
+.filter-search input,
+.filter-field input,
+.filter-field .cs-trigger {
+  background: rgba(0, 0, 0, .25) !important;
+  border: 1px solid rgba(255, 255, 255, .18) !important;
+  color: rgba(255, 255, 255, .98) !important;
+}
+input:focus, textarea:focus, select:focus,
+.cs-trigger:focus,
+.cs-open .cs-trigger {
+  background: rgba(0, 0, 0, .35) !important;
+  border-color: rgba(124, 92, 255, .65) !important;
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, .25) !important;
+}
+input::placeholder,
+textarea::placeholder { color: rgba(255, 255, 255, .50) !important; }
+
+/* 4. Chips, pills, badges — strong border so they don't merge with cards. */
+.tag,
+.tag-chip,
+.platform-chip,
+.platform-link,
+.status-chip,
+.catalog-chip,
+.profile-meta .tag,
+.conv-preview-tag,
+.creator-card .tag,
+.blogger-card .tag,
+.activity-status,
+.chat-status-pill,
+.badge,
+.badge-gray {
+  background: rgba(124, 92, 255, .18) !important;
+  border: 1px solid rgba(124, 92, 255, .42) !important;
+  color: #e9defd !important;
+  font-weight: 600;
+}
+
+/* 5. Avatar borders — ensure visible against any background. */
+.creator-card-avatar img,
+.blogger-card .blogger-avatar img,
+.profile-dashboard-identity img,
+.conv-av img,
+.review-author-avatar img,
+.sp-avatar,
+.sc-chat-head img,
+.sc-rating-avs img,
+.sc-av-stack img {
+  border: 2px solid rgba(255, 255, 255, .35) !important;
+}
+
+/* 6. Dividers — visible enough to be a border, soft enough to not be loud. */
+hr,
+.divider,
+.section-divider,
+.creator-card-banner,
+.profile-identity-cover,
+.admin-activity-hdr,
+.activity-item:not(:last-child),
+.review-item:not(:last-child) {
+  border-color: rgba(255, 255, 255, .15) !important;
+}
+
+/* 7. Text contrast minimums — bump everything that was on the borderline. */
+:root {
+  --c-ink-3: rgba(255, 255, 255, .75);   /* was .72; safer for body copy */
+  --c-ink-4: rgba(255, 255, 255, .58);   /* was .52; muted but still legible */
+}
+
+/* Body / paragraph text bumped */
+body p,
+.section p,
+section p,
+main p,
+.card p,
+.feature-card p,
+.testimonial-card p,
+.resource-card p,
+.pricing-card p,
+.creator-card-bio,
+.blogger-card-bio,
+.review-body,
+.activity-text {
+  color: rgba(255, 255, 255, .90) !important;
+}
+
+/* Secondary metadata: still muted, but no longer near-invisible. */
+.activity-meta,
+.activity-meta *,
+.review-meta,
+.review-date,
+.profile-meta,
+.profile-location,
+.conv-time,
+.sc-niche,
+.sc-stat span,
+.sc-rating-line span,
+.sc-price > span,
+.sp-niche,
+.results-count,
+small,
+.muted,
+.text-muted,
+.help-text,
+.field-help,
+.label-hint,
+.date,
+time,
+.timestamp,
+.timeago,
+.posted-at {
+  color: rgba(255, 255, 255, .68) !important;
+}
+
+/* Strong-emphasis numbers and names — pure white. */
+strong,
+.creator-card-stats strong,
+.blogger-card-stats strong,
+.profile-stat-row strong,
+.stat-tile .num,
+.stat-tile strong,
+.review-author,
+.conv-name,
+.activity-text strong,
+.insight-value strong,
+.sc-name-text,
+.sp-name {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+/* 8. Buttons — text-color invariants restated so no later rule fades them. */
+.btn-primary,
+.btn-primary *,
+.btn-hero-primary,
+.btn-hero-primary *,
+.btn-danger,
+.btn-danger *,
+.sc-cta,
+.sc-cta * {
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+.btn-secondary,
+.btn-outline,
+.btn-ghost,
+.btn:not(.btn-primary):not(.btn-hero-primary):not(.btn-danger) {
+  color: rgba(255, 255, 255, .95) !important;
+}
+
+/* 9. Glass cards on their HOVER state — bump bg/border further so the
+      lift reads as actual elevation, not a brightness shimmer. */
+.creator-card:hover,
+.blogger-card:hover,
+.stat-tile:hover,
+.insight-card:hover,
+.testimonial-card:hover,
+.feature-card:hover,
+.resource-card:hover,
+.pricing-card:hover,
+.conv-item:hover {
+  background: rgba(255, 255, 255, .10) !important;
+  border-color: rgba(255, 255, 255, .26) !important;
+}
+
+/* 10. Modal & drawer surfaces — clearly separated from page bg. */
+.modal-box,
+.drawer-panel {
+  background: rgba(28, 18, 64, .92) !important;
+  border: 1px solid rgba(255, 255, 255, .18) !important;
+  box-shadow:
+    0 40px 100px rgba(0, 0, 0, .65),
+    0 0 60px rgba(124, 92, 255, .25) !important;
+}
+.modal-overlay,
+.drawer-backdrop {
+  background: rgba(2, 1, 8, .72) !important;
+}
+
+/* 11. Empty/loading states — readable instead of disappearing. */
+.loading,
+.empty-state,
+.empty-list,
+.empty-msg,
+.no-results,
+.no-rating {
+  color: rgba(255, 255, 255, .70) !important;
+}
+
+/* 12. SVG icons inside cards — explicit currentColor so they inherit
+       readable white instead of legacy slate hex. */
+.card svg,
+.creator-card svg,
+.blogger-card svg,
+.stat-tile svg,
+.insight-card svg,
+.activity-icon svg,
+.btn svg,
+.nav-link svg,
+.review-item svg,
+.profile-card-sticky svg {
+  color: currentColor;
+  fill: currentColor;
+  stroke: currentColor;
+}
+/* Decorative-fill SVGs (stars, brand logos) keep their explicit fill */
+.sc-rating-line svg[fill],
+.sc-rating-icon svg[fill],
+.review-stars svg[fill],
+.star-picker svg[fill],
+.sc-pill-rated svg[fill] {
+  fill: #fbbf24 !important;
+  stroke: none !important;
+}
+
+/* 13. Card title vs subtitle — make sure they're never the same color. */
+.card h1, .card h2, .card h3, .card h4,
+.creator-card h3, .creator-card h4,
+.blogger-card h3, .blogger-card h4,
+.feature-card h3, .feature-card h4,
+.insight-card h3, .insight-card h4,
+.testimonial-card h3, .testimonial-card h4,
+.review-item h3, .review-item h4,
+.pricing-card h3, .pricing-card h4 {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+.card .subtitle,
+.card .lead,
+.creator-card .subtitle,
+.blogger-card .subtitle,
+.review-item .subtitle,
+.feature-card .subtitle {
+  color: rgba(255, 255, 255, .72) !important;
+  font-weight: 500;
+}
