@@ -11535,3 +11535,382 @@ h1, h2, h3, h4, h5, h6 {
 .testimonial-card:hover::before {
   left: 130%;
 }
+
+/* ==========================================================================
+   READABILITY FIX — high-contrast text site-wide
+   The global pass set generic colors but missed page-specific class names
+   (.activity-text, .review-body, .insight-value, .lbl, .num, etc.). Also
+   re-asserts opacity:1 on every card descendant so any inherited fade
+   from older rules is wiped.
+   ========================================================================== */
+
+/* Defensive: nothing inside any glass card should carry opacity */
+.card *,
+.creator-card *,
+.blogger-card *,
+.stat-tile *,
+.insight-card *,
+.testimonial-card *,
+.feature-card *,
+.resource-card *,
+.pricing-card *,
+.profile-card-sticky *,
+.faq-item *,
+.about-card *,
+.admin-activity *,
+.activity-item *,
+.review-item *,
+.modal-box *,
+.drawer-panel *,
+.conv-item * {
+  opacity: 1 !important;
+}
+
+/* Primary readable text everywhere inside cards and containers */
+.card,
+.creator-card,
+.blogger-card,
+.stat-tile,
+.insight-card,
+.testimonial-card,
+.feature-card,
+.resource-card,
+.pricing-card,
+.profile-card-sticky,
+.faq-item,
+.about-card,
+.admin-activity,
+.activity-item,
+.review-item,
+.modal-box,
+.drawer-panel,
+.conv-item,
+.profile-dashboard,
+.profile-layout,
+.bio-section,
+.about-section {
+  color: rgba(255, 255, 255, .95) !important;
+}
+
+/* ─── Profile page ────────────────────────────────────────────────────── */
+/* About / bio body text */
+.bio-section,
+.about-section,
+.about-card,
+.profile-bio,
+.bio-text,
+.about-text,
+.blogger-about,
+.blogger-bio,
+.creator-about p,
+.about-card p,
+.about-section p,
+.bio-section p {
+  color: rgba(255, 255, 255, .85) !important;
+}
+
+/* Profile stats (rows of label + value) */
+.profile-stat-row,
+.profile-stat-row > * {
+  color: rgba(255, 255, 255, .92) !important;
+}
+.profile-stat-row .label,
+.profile-stat-row .key,
+.profile-stat-row dt {
+  color: rgba(255, 255, 255, .60) !important;
+}
+.profile-stat-row .value,
+.profile-stat-row .val,
+.profile-stat-row dd,
+.profile-stat-row strong {
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+
+/* Profile meta / location / niche labels */
+.profile-meta,
+.profile-meta span,
+.profile-location,
+.profile-location span {
+  color: rgba(255, 255, 255, .72) !important;
+}
+
+/* Reviews list on profile */
+.review-item {
+  background: rgba(255, 255, 255, .04) !important;
+  border: 1px solid rgba(255, 255, 255, .10) !important;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.review-author {
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+.review-date,
+.review-meta,
+.review-meta * {
+  color: rgba(255, 255, 255, .60) !important;
+}
+.review-body,
+.review-text,
+.review-content {
+  color: rgba(255, 255, 255, .90) !important;
+}
+.star-picker svg,
+.star-rating svg {
+  color: #fbbf24 !important;
+  fill: #fbbf24 !important;
+}
+
+/* Insight cards (Audience Match / Response Time / Collaboration Fit) */
+.insight-card { color: rgba(255, 255, 255, .95) !important; }
+.insight-label {
+  color: rgba(255, 255, 255, .68) !important;
+  font-weight: 600 !important;
+}
+.insight-value {
+  color: #fff !important;
+}
+.insight-value strong {
+  color: #fff !important;
+  font-weight: 800 !important;
+}
+.insight-footnote {
+  color: rgba(255, 255, 255, .60) !important;
+}
+.insight-icon-badge {
+  background: rgba(124, 92, 255, .20) !important;
+  border: 1px solid rgba(124, 92, 255, .35) !important;
+  color: #c4b5fd !important;
+}
+.insight-bar {
+  background: rgba(255, 255, 255, .08) !important;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.insight-bar > span {
+  background: linear-gradient(90deg, #7c5cff, #ff6ec7) !important;
+  display: block;
+  height: 100%;
+}
+
+/* ─── Admin page (Recent activity + stat tiles) ───────────────────────── */
+.admin-activity { padding: 18px 20px !important; }
+.admin-activity-hdr h3 {
+  color: #fff !important;
+  font-weight: 800 !important;
+}
+.admin-activity-hdr {
+  border-bottom: 1px solid rgba(255, 255, 255, .08) !important;
+}
+.activity-item {
+  border-bottom: 1px solid rgba(255, 255, 255, .06) !important;
+  padding: 12px 0 !important;
+}
+.activity-item:last-child { border-bottom: none !important; }
+.activity-text {
+  color: rgba(255, 255, 255, .94) !important;
+  line-height: 1.45;
+}
+.activity-text strong {
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+.activity-meta,
+.activity-meta * {
+  color: rgba(255, 255, 255, .62) !important;
+}
+.activity-meta strong { color: rgba(255, 255, 255, .85) !important; }
+.activity-icon {
+  background: rgba(124, 92, 255, .20) !important;
+  color: #c4b5fd !important;
+  border: 1px solid rgba(124, 92, 255, .30) !important;
+}
+.activity-icon.ai-cyan   { background: rgba(6,182,212,.20) !important; border-color: rgba(6,182,212,.35) !important; color: #67e8f9 !important; }
+.activity-icon.ai-mint   { background: rgba(52,211,153,.20) !important; border-color: rgba(52,211,153,.35) !important; color: #6ee7b7 !important; }
+.activity-icon.ai-amber  { background: rgba(251,191,36,.20) !important; border-color: rgba(251,191,36,.35) !important; color: #fcd34d !important; }
+.activity-icon.ai-orange { background: rgba(251,146,60,.20) !important; border-color: rgba(251,146,60,.35) !important; color: #fdba74 !important; }
+.activity-icon.ai-pink   { background: rgba(255,77,157,.20) !important; border-color: rgba(255,77,157,.35) !important; color: #f9a8d4 !important; }
+
+/* Activity status pills — keep visible & contrasted */
+.activity-status,
+.chat-status-pill {
+  background: rgba(255, 255, 255, .08) !important;
+  border: 1px solid rgba(255, 255, 255, .14) !important;
+  color: rgba(255, 255, 255, .92) !important;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: .75em;
+  font-weight: 600;
+}
+.chat-status-pending     { background: rgba(251,191,36,.22) !important; color: #fde68a !important; border-color: rgba(251,191,36,.40) !important; }
+.chat-status-in_progress { background: rgba(124,92,255,.22) !important; color: #c4b5fd !important; border-color: rgba(124,92,255,.40) !important; }
+.chat-status-submitted   { background: rgba(0,180,255,.22)  !important; color: #93c5fd !important; border-color: rgba(0,180,255,.40)  !important; }
+.chat-status-completed   { background: rgba(52,211,153,.22) !important; color: #6ee7b7 !important; border-color: rgba(52,211,153,.40) !important; }
+.chat-status-declined    { background: rgba(244,63,94,.22)  !important; color: #fda4af !important; border-color: rgba(244,63,94,.40)  !important; }
+
+/* Stat tiles on admin */
+.stat-tile { padding: 18px 20px !important; }
+.stat-tile .num {
+  color: #fff !important;
+  font-weight: 800 !important;
+}
+.stat-tile .lbl {
+  color: rgba(255, 255, 255, .65) !important;
+  font-weight: 600 !important;
+}
+.stat-tile .stat-delta {
+  color: rgba(52, 211, 153, .95) !important;
+  font-weight: 600 !important;
+}
+.stat-tile .icon {
+  background: rgba(124, 92, 255, .18) !important;
+  border: 1px solid rgba(124, 92, 255, .30) !important;
+  color: #c4b5fd !important;
+}
+.stat-tile .icon.icon-accent-cyan   { background: rgba(6,182,212,.20) !important; border-color: rgba(6,182,212,.35) !important; color: #67e8f9 !important; }
+.stat-tile .icon.icon-accent-mint   { background: rgba(52,211,153,.20) !important; border-color: rgba(52,211,153,.35) !important; color: #6ee7b7 !important; }
+.stat-tile .icon.icon-accent-amber  { background: rgba(251,191,36,.20) !important; border-color: rgba(251,191,36,.35) !important; color: #fcd34d !important; }
+.stat-tile .icon.icon-accent-pink   { background: rgba(255,77,157,.20) !important; border-color: rgba(255,77,157,.35) !important; color: #f9a8d4 !important; }
+.stat-tile .icon.icon-accent-orange { background: rgba(251,146,60,.20) !important; border-color: rgba(251,146,60,.35) !important; color: #fdba74 !important; }
+.stat-tile .icon.icon-accent-purple { background: rgba(124,92,255,.20) !important; border-color: rgba(124,92,255,.35) !important; color: #c4b5fd !important; }
+
+/* ─── Catalog cards (creator-card / blogger-card body) ────────────────── */
+.creator-card-bio,
+.blogger-card-bio {
+  color: rgba(255, 255, 255, .80) !important;
+  line-height: 1.5;
+}
+.creator-card-stats,
+.blogger-card-stats {
+  color: rgba(255, 255, 255, .92) !important;
+}
+.creator-stat strong,
+.blogger-card-stats strong,
+.creator-card-stats strong {
+  color: #fff !important;
+  font-weight: 800 !important;
+}
+.creator-stat span,
+.blogger-card-stats span:not(strong) {
+  color: rgba(255, 255, 255, .60) !important;
+}
+.blogger-status-row {
+  color: rgba(255, 255, 255, .80) !important;
+}
+
+/* Card section labels (small uppercase headings inside cards) */
+.section-label-sm,
+.card-label,
+.muted-label {
+  color: rgba(255, 255, 255, .55) !important;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
+/* Generic <p> inside any card — readable body */
+.card p,
+.creator-card p,
+.blogger-card p,
+.insight-card p,
+.testimonial-card p,
+.feature-card p,
+.resource-card p,
+.pricing-card p,
+.profile-card-sticky p,
+.faq-item p,
+.about-card p,
+.modal-box p,
+.drawer-panel p {
+  color: rgba(255, 255, 255, .85) !important;
+}
+
+/* Generic small / muted text */
+small,
+.muted,
+.text-muted,
+.help-text,
+.field-help {
+  color: rgba(255, 255, 255, .58) !important;
+}
+
+/* Links inside cards stay visible */
+.card a,
+.creator-card a,
+.blogger-card a,
+.insight-card a,
+.review-item a,
+.activity-item a,
+.profile-card-sticky a,
+.modal-box a,
+.drawer-panel a {
+  color: #c4b5fd !important;
+  text-decoration: none;
+}
+.card a:hover,
+.creator-card a:hover,
+.blogger-card a:hover,
+.insight-card a:hover,
+.review-item a:hover,
+.activity-item a:hover,
+.profile-card-sticky a:hover,
+.modal-box a:hover,
+.drawer-panel a:hover {
+  color: #ff6ec7 !important;
+}
+
+/* Tag chips (better than pure white pills) */
+.tag-chip,
+.platform-chip,
+.platform-link,
+.catalog-chip {
+  background: rgba(124, 92, 255, .15) !important;
+  border: 1px solid rgba(124, 92, 255, .28) !important;
+  color: #c4b5fd !important;
+}
+
+/* Form labels */
+label,
+.form-label,
+.form-group label {
+  color: rgba(255, 255, 255, .82) !important;
+  font-weight: 600;
+}
+
+/* Modal copy */
+.modal-box h2,
+.modal-box h3,
+.modal-box .request-modal-eyebrow {
+  color: #fff !important;
+}
+.modal-box label { color: rgba(255, 255, 255, .82) !important; }
+.modal-box .field-help,
+.modal-box .help-text {
+  color: rgba(255, 255, 255, .60) !important;
+}
+
+/* Drawer copy */
+.drawer-hdr h2,
+.drawer-hdr h3,
+.drawer-hdr strong { color: #fff !important; }
+.drawer-body label { color: rgba(255, 255, 255, .82) !important; }
+
+/* Conv items (chat list) */
+.conv-name { color: #fff !important; font-weight: 700 !important; }
+.conv-preview { color: rgba(255, 255, 255, .68) !important; }
+.conv-time { color: rgba(255, 255, 255, .55) !important; }
+.conv-campaign-title { color: rgba(255, 255, 255, .85) !important; }
+.conv-campaign-title-empty { color: rgba(255, 255, 255, .50) !important; }
+
+/* Empty / loading states */
+.loading,
+.empty-state,
+.empty-msg {
+  color: rgba(255, 255, 255, .65) !important;
+}
+
+/* Back-link arrow */
+.back-link {
+  color: rgba(255, 255, 255, .75) !important;
+}
+.back-link:hover { color: #fff !important; }
