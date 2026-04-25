@@ -10217,3 +10217,144 @@ section[class*="section-"], .marketing-hero { position: relative; z-index: 1; }
   .hv-scene * { animation: none !important; }
   .scene-slot { transition: none !important; }
 }
+
+/* ==========================================================================
+   HERO — NEON PORTAL "WOW" PASS
+   Big rotating neon ring (purple→pink→blue) behind the main card, with a
+   soft radial bloom, two slow-drifting light-mist blobs, a focused
+   vignette, and a directional inner glow on the main card biased toward
+   the portal. Atmosphere only — no layout change.
+   ========================================================================== */
+
+/* 1. NEON RING — the core visual hook.
+      Conic-gradient circle masked into a 4px-wide ring, blurred so the
+      colors bleed into a soft halo. Slowly rotating + breathing. */
+.hv-portal {
+  position: absolute;
+  width: 540px;
+  height: 540px;
+  top: -10px;
+  right: -120px;          /* asymmetric — not centered behind card */
+  border-radius: 50%;
+  background: conic-gradient(from 90deg,
+    #7c5cff 0%,
+    #a855f7 25%,
+    #ff4d9d 50%,
+    #00b4ff 75%,
+    #7c5cff 100%);
+  -webkit-mask: radial-gradient(circle, transparent 56%, #000 58%, #000 60.5%, transparent 63%);
+          mask: radial-gradient(circle, transparent 56%, #000 58%, #000 60.5%, transparent 63%);
+  filter: blur(10px) saturate(140%);
+  opacity: .65;
+  z-index: 0;
+  pointer-events: none;
+  animation: hv-portal-spin 30s linear infinite,
+             hv-portal-breathe 8s ease-in-out infinite;
+}
+@keyframes hv-portal-spin    { to { transform: rotate(360deg); } }
+@keyframes hv-portal-breathe { 0%,100% { opacity: .55; } 50% { opacity: .8; } }
+
+/* 2. PORTAL BLOOM — soft radial glow filling the inside of the ring,
+      blends with the existing scene background. */
+.hv-portal-bloom {
+  position: absolute;
+  width: 620px;
+  height: 620px;
+  top: -50px;
+  right: -160px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(124, 92, 255, .35) 0%, rgba(255, 77, 157, .12) 40%, transparent 70%);
+  filter: blur(40px);
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: hv-portal-bloom-breathe 7s ease-in-out infinite;
+}
+@keyframes hv-portal-bloom-breathe {
+  0%,100% { opacity: .85; transform: scale(1); }
+  50%     { opacity: 1;   transform: scale(1.04); }
+}
+
+/* 3. LIGHT MIST — extra blurred shapes that drift very slowly. */
+.hv-mist {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  filter: blur(110px);
+  opacity: .18;
+  mix-blend-mode: screen;
+  z-index: 0;
+  pointer-events: none;
+}
+.hv-mist-1 {
+  background: radial-gradient(circle, #ff4d9d 0%, transparent 70%);
+  top: 240px;
+  left: -100px;
+  animation: hv-mist-drift-1 18s ease-in-out infinite;
+}
+.hv-mist-2 {
+  background: radial-gradient(circle, #00b4ff 0%, transparent 70%);
+  bottom: -60px;
+  right: -60px;
+  opacity: .14;
+  animation: hv-mist-drift-2 22s ease-in-out infinite;
+}
+@keyframes hv-mist-drift-1 {
+  0%,100% { transform: translate(0, 0); }
+  50%     { transform: translate(18px, -22px); }
+}
+@keyframes hv-mist-drift-2 {
+  0%,100% { transform: translate(0, 0); }
+  50%     { transform: translate(-16px, 14px); }
+}
+
+/* 6. FOCUSED VIGNETTE — dark edges around the scene so the center
+      (where the portal + main card live) feels brighter. Sits at z:1,
+      ABOVE the z:0 atmosphere layers (portal/bloom/mist) but BELOW the
+      cards (z:3+), so it darkens edge-bleed without dimming the cards. */
+.hv-vignette {
+  position: absolute;
+  inset: -30px;
+  border-radius: 40px;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse at 60% 45%,
+    transparent 38%,
+    rgba(8, 4, 24, .25) 65%,
+    rgba(8, 4, 24, .55) 90%,
+    rgba(4, 2, 14, .70) 100%);
+}
+
+/* 5. DIRECTIONAL CARD GLOW — boost the upper-right edge of the main card
+      to read as if lit by the portal that sits there.
+      ::before is already used for the top light reflection on .scene-card,
+      so we use ::after on the .scene-creator subclass. */
+.scene-creator::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 75%;
+  height: 75%;
+  border-radius: 26px 26px 50% 26px;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 100% 0%,
+    rgba(255, 77, 157, .30) 0%,
+    rgba(124, 92, 255, .18) 35%,
+    transparent 65%);
+  mix-blend-mode: screen;
+  z-index: 1;
+  filter: blur(2px);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hv-portal,
+  .hv-portal-bloom,
+  .hv-mist,
+  .scene-creator::after {
+    animation: none !important;
+  }
+}
