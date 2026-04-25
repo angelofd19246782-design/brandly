@@ -10833,3 +10833,168 @@ section[class*="section-"], .marketing-hero { position: relative; z-index: 1; }
 /* Main card stays dominant via the existing scale 1.22, brighter inner
    gradient (.085 white base), 0.25 border, focal halo, and the brighter
    pink/purple CTA — none of which involve opacity or content-fade. */
+
+/* ==========================================================================
+   HERO — REFERENCE-MATCH GLASS PASS
+   Match the reference image: razor-sharp text, no halo around glyphs,
+   clean translucent glass, only the avatar has a neon ring glow.
+   Strip the white inner overlays that wash content; remove text-shadow
+   halos; tighten backdrop-filter; restate solid RGBA text colors.
+   ========================================================================== */
+
+/* Tighter backdrop-filter, no saturate boost (was contributing to muddy
+   look) — pure separation blur only. */
+.hv-scene .scene-card {
+  -webkit-backdrop-filter: blur(10px) !important;
+          backdrop-filter: blur(10px) !important;
+}
+
+/* Kill the strong upper-half white reflection that washes the avatar/name
+   area. Keep a tiny rim hint at the very top so the card still reads as
+   glass — but small enough to never haze content. */
+.hv-scene .scene-card::before {
+  height: 1px !important;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 255, 255, .28) 30%,
+    rgba(255, 255, 255, .28) 70%,
+    transparent 100%) !important;
+  opacity: 1 !important;
+  border-radius: 22px 22px 0 0 !important;
+}
+
+/* Main card: drop the heavy 160deg white inner gradient (was hazing
+   content). Use a flat translucent base + the spec border + spec shadow,
+   matching iOS/SaaS glass exactly. */
+.hv-scene .scene-creator {
+  background: rgba(255, 255, 255, .055) !important;
+  border: 1px solid rgba(255, 255, 255, .14) !important;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, .45),
+    0 0 60px rgba(140, 80, 255, .35),
+    0 0 120px rgba(255, 110, 199, .18) !important;
+}
+.hv-scene .scene-creator::before {
+  height: 1px !important;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 255, 255, .35) 30%,
+    rgba(255, 255, 255, .35) 70%,
+    transparent 100%) !important;
+  opacity: 1 !important;
+}
+
+/* Strip every text-shadow on glass-card content (halos read as blur). */
+.hv-scene .scene-card,
+.hv-scene .scene-card * {
+  text-shadow: none !important;
+}
+
+/* Solid RGBA text colors per spec — primary 0.95+, secondary ~0.65. */
+.hv-scene .scene-card {
+  color: rgba(255, 255, 255, .96);
+}
+.hv-scene .scene-card .sc-niche,
+.hv-scene .scene-card .sc-stat span,
+.hv-scene .scene-card .sc-rating-line span,
+.hv-scene .scene-card .sc-price > span,
+.hv-scene .scene-card .sc-card-label,
+.hv-scene .scene-card .sc-budget-sub,
+.hv-scene .scene-card .sc-rating-label,
+.hv-scene .scene-card .sc-av-text > span,
+.hv-scene .scene-card .sc-chat-head span,
+.hv-scene .scene-card .sc-rating-more,
+.hv-scene .scene-card .sc-av-more {
+  color: rgba(255, 255, 255, .65) !important;
+}
+.hv-scene .scene-card strong,
+.hv-scene .scene-card .sc-name-text {
+  color: rgba(255, 255, 255, 1) !important;
+  font-weight: 800 !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 1) !important;
+  background: none !important;
+  filter: none !important;
+}
+
+/* Avatar — crystal sharp + the spec neon ring glow.
+   The avatar ::before (blurred gradient) and ::after (spinning conic)
+   already exist; keep them but ensure the actual <img> is fully crisp. */
+.hv-scene .scene-creator .sc-avatar img {
+  border: 2px solid rgba(255, 255, 255, .28) !important;
+  filter: none !important;
+  opacity: 1 !important;
+  box-shadow: 0 0 30px rgba(255, 120, 255, .60) !important;
+}
+.hv-scene .scene-creator .sc-avatar::before {
+  filter: blur(14px) !important;
+  opacity: .9 !important;
+}
+
+/* Secondary cards — same flat translucent treatment, lower alpha + smaller
+   color halo. Sharp content in all of them. */
+.hv-scene .scene-chat,
+.hv-scene .scene-rating,
+.hv-scene .scene-budget {
+  background: rgba(255, 255, 255, .04) !important;
+  border: 1px solid rgba(255, 255, 255, .12) !important;
+}
+.hv-scene .scene-chat    { box-shadow:
+    0 20px 60px rgba(0, 0, 0, .40),
+    0 0 40px rgba(0, 180, 255, .25) !important; }
+.hv-scene .scene-rating  { box-shadow:
+    0 20px 60px rgba(0, 0, 0, .40),
+    0 0 40px rgba(255, 200, 60, .25) !important; }
+.hv-scene .scene-budget  { box-shadow:
+    0 20px 60px rgba(0, 0, 0, .40),
+    0 0 40px rgba(60, 220, 140, .25) !important; }
+.hv-scene .scene-avatars {
+  background: rgba(255, 255, 255, .035) !important;
+  border: 1px solid rgba(255, 255, 255, .10) !important;
+  box-shadow:
+    0 18px 52px rgba(0, 0, 0, .38),
+    0 0 36px rgba(255, 77, 157, .20) !important;
+}
+
+/* Inner numeric icons (TikTok / YouTube circle backgrounds) — keep
+   the colorful gradient but disable any inherited filter. */
+.hv-scene .scene-card .sc-stat-icon,
+.hv-scene .scene-card .sc-rating-icon,
+.hv-scene .scene-card .sc-budget-icon,
+.hv-scene .scene-card .sc-pill {
+  filter: none !important;
+}
+
+/* CTA — clean gradient, sharp text, strong contrast. Already gradient
+   from earlier passes; reinforce with explicit clean values. */
+.hv-scene .scene-creator .sc-cta {
+  background: linear-gradient(90deg, #7c5cff 0%, #a855f7 50%, #ff6ec7 100%) !important;
+  background-size: 100% 100% !important;
+  animation: none !important;
+  color: #fff !important;
+  text-shadow: none !important;
+  filter: none !important;
+  border: 1px solid rgba(255, 255, 255, .14) !important;
+  box-shadow:
+    0 12px 32px rgba(124, 92, 255, .55),
+    0 0 50px rgba(255, 110, 199, .35) !important;
+}
+.hv-scene .scene-creator .sc-cta:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    0 16px 44px rgba(124, 92, 255, .65),
+    0 0 70px rgba(255, 110, 199, .50) !important;
+}
+
+/* Top-rated pill — keep gold tone but remove any gradient overlay haze. */
+.hv-scene .scene-creator .sc-pill-rated {
+  color: #fcd34d !important;
+  background: rgba(20, 12, 52, .85) !important;
+  border: 1px solid rgba(252, 211, 77, .35) !important;
+  text-shadow: none !important;
+}
+
+/* Padding bump on main card so the content doesn't sit too close to the
+   bright border (improves perceived readability without layout change). */
+.hv-scene .scene-creator {
+  padding: 24px 22px 20px !important;
+}
