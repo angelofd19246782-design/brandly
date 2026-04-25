@@ -12193,3 +12193,166 @@ main,
 
 /* 17. Defensive: any element with var(--c-ink-3) that the global pass set
        to .68 should be readable. Already handled by token override above. */
+
+/* ==========================================================================
+   FINAL READABILITY SWEEP — kill remaining hardcoded white backgrounds
+   ========================================================================== */
+
+/* All known dropdowns / popovers / chips that still had hardcoded #fff bg */
+.cs-menu,
+.nav-menu,
+.nav-user-menu,
+.user-menu,
+.dropdown-menu,
+.popover,
+.tooltip,
+.context-menu,
+.suggest-menu,
+.autocomplete-menu,
+.check-creator-search,
+.check-result,
+.notif-menu,
+.notif-item {
+  background: rgba(20, 12, 52, .92) !important;
+  border: 1px solid rgba(255, 255, 255, .12) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+          backdrop-filter: blur(20px) !important;
+  color: rgba(255, 255, 255, .95) !important;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, .55) !important;
+}
+.cs-menu *,
+.nav-menu *,
+.dropdown-menu *,
+.popover *,
+.user-menu *,
+.notif-menu *,
+.check-result *,
+.check-creator-search * {
+  color: rgba(255, 255, 255, .92) !important;
+}
+
+/* Nav user chip hover — was hardcoded white */
+.nav-user-chip {
+  background: rgba(255, 255, 255, .04) !important;
+  border: 1px solid rgba(255, 255, 255, .12) !important;
+  color: rgba(255, 255, 255, .92) !important;
+}
+.nav-user-chip:hover {
+  background: rgba(255, 255, 255, .08) !important;
+  border-color: rgba(255, 255, 255, .22) !important;
+}
+
+/* Bump the secondary text minimum slightly for safer readability */
+:root {
+  --c-ink-3: rgba(255, 255, 255, .72);
+}
+
+/* Force pure white on every heading site-wide */
+h1, h2, h3, h4, h5, h6,
+.page-hero h1,
+.page-hero h2 {
+  color: #ffffff !important;
+}
+
+/* Page hero copy (small section heros above lists) */
+.page-hero p,
+.page-hero .subtitle,
+.page-hero .lead {
+  color: rgba(255, 255, 255, .80) !important;
+}
+
+/* Body paragraph default — readable on dark gradient body */
+body p,
+.section p,
+section p,
+main p {
+  color: rgba(255, 255, 255, .82);
+}
+
+/* Native list bullets and table cells fallback */
+li, dt, dd {
+  color: rgba(255, 255, 255, .88);
+}
+
+/* Login page subtitle was bound to var(--c-ink-3) — already redefined,
+   but ensure no other rule fades it further */
+.auth-form-inner .subtitle,
+.auth-form-inner .lead,
+.auth-footer,
+.label-hint {
+  color: rgba(255, 255, 255, .75) !important;
+  opacity: 1 !important;
+}
+
+/* Buttons text = always white on the gradient, dark on light pills */
+.btn-primary,
+.btn-hero-primary,
+.btn-primary span,
+.btn-primary svg,
+.btn-hero-primary span,
+.btn-hero-primary svg {
+  color: #ffffff !important;
+  fill: currentColor;
+}
+
+/* The btn-hero-primary used to be `background: #fff; color: var(--c-primary);`
+   (white pill with purple text). Convert to gradient for consistency. */
+.btn-hero-primary {
+  background: linear-gradient(90deg, #7c5cff 0%, #a855f7 50%, #ff6ec7 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, .14) !important;
+  box-shadow: 0 12px 30px rgba(124, 92, 255, .45) !important;
+}
+
+/* Anything still using --c-bg as a literal background — already redefined
+   to glass alpha — but make sure text on top is readable */
+[class*="card"],
+[class*="panel"],
+[class*="tile"],
+[class*="sheet"],
+[class*="box"]:not([class*="modal-overlay"]):not([class*="check"]),
+[class*="row-item"],
+[class*="list-item"] {
+  color: rgba(255, 255, 255, .94);
+}
+
+/* Specific wide patterns that might have light bg leftover */
+.results-count,
+.empty-state,
+.empty-list,
+.no-results,
+.empty-msg {
+  color: rgba(255, 255, 255, .72) !important;
+}
+
+/* Timeline / step dots that had hardcoded white — keep white for visibility
+   on the purple gradient, but ensure surrounding text reads dark glass. */
+.timeline-step,
+.timeline-step .label,
+.timeline-step .date {
+  color: rgba(255, 255, 255, .85) !important;
+}
+
+/* CSS custom-select option text */
+.cs-option {
+  color: rgba(255, 255, 255, .92) !important;
+}
+.cs-option[aria-selected="true"],
+.cs-option.cs-active,
+.cs-option:hover {
+  background: rgba(124, 92, 255, .25) !important;
+  color: #ffffff !important;
+}
+
+/* Date / time / timestamps (typically fade) */
+.date,
+time,
+.timestamp,
+.timeago,
+.posted-at {
+  color: rgba(255, 255, 255, .58) !important;
+}
+
+/* Make sure no element ends up with `color: var(--c-ink-5)` (older spec
+   token if it exists) defaulting to invisible. Patch to muted readable. */
+:root { --c-ink-5: rgba(255, 255, 255, .50); }
