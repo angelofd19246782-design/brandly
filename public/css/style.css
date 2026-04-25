@@ -12665,3 +12665,60 @@ strong,
   color: rgba(255, 255, 255, .72) !important;
   font-weight: 500;
 }
+
+/* ==========================================================================
+   "How it works" flow columns — fix white-pink gradient bg with white text
+   ========================================================================== */
+.flow-column {
+  background: rgba(255, 255, 255, .075) !important;
+  border: 1px solid rgba(255, 255, 255, .16) !important;
+  color: rgba(255, 255, 255, .94) !important;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, .45),
+    0 0 40px rgba(124, 92, 255, .14) !important;
+}
+.flow-column-creator {
+  background: rgba(255, 255, 255, .075) !important;
+  border: 1px solid rgba(255, 77, 157, .28) !important;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, .45),
+    0 0 40px rgba(255, 77, 157, .22) !important;
+}
+.flow-column-hdr h3,
+.flow-step-body strong {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+.flow-step-body p {
+  color: rgba(255, 255, 255, .80) !important;
+}
+.flow-tag {
+  background: rgba(124, 92, 255, .22) !important;
+  color: #d8c8ff !important;
+  border: 1px solid rgba(124, 92, 255, .42) !important;
+}
+.flow-tag-pink {
+  background: rgba(255, 77, 157, .22) !important;
+  color: #ffc8e3 !important;
+  border: 1px solid rgba(255, 77, 157, .42) !important;
+}
+.flow-steps .step-num {
+  background: linear-gradient(135deg, #7c5cff, #a855f7) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 14px rgba(124, 92, 255, .45) !important;
+}
+.flow-column-creator .step-num {
+  background: linear-gradient(135deg, #ec4899, #f43f5e) !important;
+  box-shadow: 0 6px 14px rgba(236, 72, 153, .45) !important;
+}
+/* "Join as a creator" outline button → readable on dark glass */
+.flow-column-creator .btn-outline {
+  background: rgba(255, 77, 157, .14) !important;
+  border: 1px solid rgba(255, 77, 157, .42) !important;
+  color: #ffc8e3 !important;
+}
+.flow-column-creator .btn-outline:hover {
+  background: rgba(255, 77, 157, .22) !important;
+  border-color: rgba(255, 77, 157, .55) !important;
+  color: #fff !important;
+}
