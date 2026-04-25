@@ -6402,6 +6402,43 @@ input[type=number] {
   margin-bottom: 14px !important;
 }
 
+/* Decorative glow curves behind the hero cards */
+.hero-decor-curves {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+}
+
+/* Top Rated pill — richer golden tone matching reference */
+.hv-creator-v2 .hv-top-rated {
+  background: rgba(20,12,52,.9);
+  border: 1px solid rgba(251,191,36,.45);
+  color: #fde68a;
+  padding: 4px 11px 4px 9px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 4px 14px rgba(251,191,36,.25);
+}
+.hv-creator-v2 .hv-top-rated svg {
+  color: #fbbf24;
+  filter: drop-shadow(0 0 4px rgba(251,191,36,.6));
+}
+
+/* Verified badge — slight glow so the new blue badge pops */
+.hv-creator-v2 .hv-verify {
+  filter: drop-shadow(0 0 8px rgba(91,141,239,.55));
+  flex-shrink: 0;
+}
+
+/* YouTube play triangle — slight pad inside the icon circle */
+.hv-creator-v2 .hv-icon-youtube svg {
+  margin-left: 1px;  /* optical centering of the asymmetric play shape */
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    CATALOG HERO BAND (replaces the plain page-hero on discovery)
 ───────────────────────────────────────────────────────────────────────────── */
