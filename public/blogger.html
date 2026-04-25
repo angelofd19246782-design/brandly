@@ -60,7 +60,7 @@
       window.location.href = `/chat.html?id=${conv.id}`;
     } catch (err) {
       await notify(err.message, { title: 'Could not open chat' });
-      btn.disabled = false; btn.textContent = 'Contact Blogger';
+      btn.disabled = false; btn.textContent = 'Start a conversation';
     }
   };
 
@@ -134,6 +134,23 @@
            <span style="color:var(--c-ink-4);font-size:.8rem">(${blogger.rating_count} review${blogger.rating_count!==1?'s':''})</span>`
         : `<span style="color:var(--c-ink-4);font-size:.82rem;font-style:italic">No reviews yet</span>`;
 
+      // ── Best-for tags (category-driven, demo only) ─────────────────────────
+      const bestForByCat = {
+        'Fashion & Beauty':            ['Seasonal launches', 'Product reveals', 'Style content'],
+        'Beauty & Skincare':            ['Product launches', 'Tutorials', 'Ingredient deep-dives'],
+        'Health & Fitness':             ['Program launches', 'Recovery brands', 'Activewear'],
+        'Food & Cooking':               ['Recipe integrations', 'Kitchenware', 'Pantry brands'],
+        'Food & Travel':                ['Travel sponsorships', 'Editorial campaigns', 'Food brands'],
+        'Travel':                       ['Destination campaigns', 'Gear reviews', 'Hospitality'],
+        'Technology':                   ['Product reviews', 'Developer audiences', 'SaaS launches'],
+        'Gaming':                       ['Game launches', 'Hardware sponsors', 'Stream integrations'],
+        'Lifestyle':                    ['Brand storytelling', 'Home & living', 'Sustainable brands'],
+        'Business & Entrepreneurship':  ['SaaS tools', 'Finance products', 'Online courses'],
+        'Outdoors & Adventure':         ['Gear reviews', 'Adventure brands', 'Sustainable outdoor'],
+        'Entertainment':                ['Streaming sponsorships', 'Event campaigns', 'Apps'],
+      };
+      const bestForTags = bestForByCat[blogger.category] || ['Brand collaborations', 'Product launches', 'Editorial content'];
+
       // ── Insight cards (demo analytics derived from existing data) ──────────
       const rating = blogger.avg_rating ? Number(blogger.avg_rating) : 0;
       const reviews = parseInt(blogger.rating_count || 0);
@@ -175,11 +192,11 @@
 
       let ctaHtml = '';
       if (!user) {
-        ctaHtml = `<a href="/login.html?redirect=${encodeURIComponent(window.location.href)}" class="btn btn-primary btn-lg" style="width:100%">Log in to Contact</a>`;
+        ctaHtml = `<a href="/login.html?redirect=${encodeURIComponent(window.location.href)}" class="btn btn-primary btn-lg" style="width:100%">Sign in to start a conversation</a>`;
       } else if (user.role === 'advertiser') {
-        ctaHtml = `<button id="contactBtn" class="btn btn-primary btn-lg" style="width:100%" onclick="contactBlogger()">Contact Blogger</button>`;
+        ctaHtml = `<button id="contactBtn" class="btn btn-primary btn-lg" style="width:100%" onclick="contactBlogger()">Start a conversation</button>`;
       } else if (user.role === 'blogger' && String(user.id) === String(userId)) {
-        ctaHtml = `<a href="/edit-profile.html" class="btn btn-outline btn-lg" style="width:100%">Edit My Profile</a>`;
+        ctaHtml = `<a href="/edit-profile.html" class="btn btn-outline btn-lg" style="width:100%">Edit my profile</a>`;
       }
 
       let ratingFormHtml = '';
@@ -237,6 +254,13 @@
                 </div>` : ''}
 
                 ${platformLinks ? `<div class="platform-links">${platformLinks}</div>` : ''}
+
+                <div class="best-for-block">
+                  <div class="section-label-sm" style="margin-bottom:8px">Best for brands</div>
+                  <div class="best-for-tags">
+                    ${bestForTags.map(t => `<span class="best-for-tag">${escHtml(t)}</span>`).join('')}
+                  </div>
+                </div>
               </div>
 
               ${ctaHtml ? `<div>${ctaHtml}</div>` : ''}

@@ -35,8 +35,8 @@
       <div class="chat-placeholder-icon">
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
       </div>
-      <h3>Select a conversation</h3>
-      <p class="text-muted text-sm">Choose a chat from the list to open it</p>
+      <h3>Pick a conversation</h3>
+      <p class="text-muted text-sm">Choose a thread from the list — or start a new one from any creator's profile.</p>
     </div>
 
     <div id="chatActive" class="chat-active" style="display:none">
@@ -87,11 +87,12 @@
       if (!conversations.length) {
         list.innerHTML = `
           <div class="no-convs">
-            <div class="no-convs-icon">${icon('msgCircle', 38)}</div>
+            <div class="no-convs-icon">${icon('msgCircle', 28)}</div>
             <p class="no-convs-title">No conversations yet</p>
             ${currentUser.role === 'advertiser'
-              ? `<a href="/catalog.html" class="no-convs-link">Browse influencers →</a>`
-              : `<p class="no-convs-sub">Advertisers will reach out to you here.</p>`}
+              ? `<p class="no-convs-sub">Find a creator and click Contact to start your first thread.</p>
+                 <a href="/catalog.html" class="no-convs-link">Browse creators →</a>`
+              : `<p class="no-convs-sub">When advertisers reach out, their messages will land here. Make sure your profile is set up to attract the right brands.</p>`}
           </div>`;
         return;
       }
@@ -195,7 +196,7 @@
       const wasAtBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
 
       if (!data.messages.length) {
-        el.innerHTML = `<div class="chat-empty-convo">No messages yet. Say hello!</div>`;
+        el.innerHTML = `<div class="chat-empty-convo">No messages in this thread yet — send the first one to get the conversation going.</div>`;
         return;
       }
 

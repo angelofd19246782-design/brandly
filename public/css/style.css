@@ -1274,6 +1274,16 @@ footer.site-footer strong { color: #94a3b8; }
   gap: 6px;
   flex-wrap: wrap;
 }
+.creator-card-bio {
+  font-size: .8rem;
+  color: var(--c-ink-3);
+  line-height: 1.55;
+  margin-bottom: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 .creator-card-stats {
   display: flex;
   gap: 0;
@@ -4705,6 +4715,29 @@ input[type=number] {
   box-shadow: 0 10px 24px rgba(15,23,42,.12);
 }
 .profile-identity.has-cover { padding-top: 0; }
+
+/* Best for brands — sidebar tag cluster */
+.best-for-block {
+  padding: 14px 0 4px;
+  border-top: 1px solid var(--c-border-soft);
+  margin-top: 16px;
+}
+.best-for-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.best-for-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--c-ink-2);
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-full);
+  letter-spacing: .01em;
+}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    ADMIN STAT TILE DELTA BADGE (small trend line — real-dashboard feel)
