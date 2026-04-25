@@ -11090,3 +11090,448 @@ section[class*="section-"], .marketing-hero { position: relative; z-index: 1; }
 /* Defensive: also kill the old 3-strip background that might have been set
    on the visual via earlier !important rules. */
 .hv-scene { background: none !important; }
+
+/* ==========================================================================
+   GLOBAL DARK NEON THEME — every page matches the hero
+   Body gradient + ambient glow blobs, glass cards everywhere,
+   gradient primary buttons, dark glass inputs, glass nav/footer.
+   ========================================================================== */
+
+/* ─── Body & ambient atmosphere ───────────────────────────────────────── */
+body {
+  background:
+    radial-gradient(ellipse at 15% 18%, rgba(124, 92, 255, .18), transparent 50%),
+    radial-gradient(ellipse at 88% 22%, rgba(255, 100, 200, .14), transparent 50%),
+    radial-gradient(ellipse at 50% 92%, rgba(0, 180, 255, .10), transparent 55%),
+    linear-gradient(180deg, #0b0f2a 0%, #15123a 35%, #1a0f3c 70%, #0d0824 100%) !important;
+  background-attachment: fixed !important;
+  color: rgba(255, 255, 255, .92) !important;
+}
+
+/* Sections must be transparent so the body gradient shows through.
+   Exclude .hero and .hero-v2 — those keep their own background passes. */
+section:not(.hero):not(.hero-v2),
+.section:not(.hero):not(.hero-v2),
+.section-testimonials,
+.section-features,
+.section-resources,
+.section-pricing,
+.section-faq,
+.section-cta,
+.feature-section,
+.testimonials-section,
+.resources-section,
+.pricing-section,
+.cta-section,
+.catalog-hero,
+.profile-dashboard,
+.profile-layout,
+.page-hero:not(.hero):not(.hero-v2) {
+  background: transparent !important;
+}
+
+/* ─── Navbar ──────────────────────────────────────────────────────────── */
+.navbar {
+  background: rgba(8, 4, 24, .55) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .06) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
+          backdrop-filter: blur(16px) saturate(140%) !important;
+}
+.navbar-brand,
+.nav-link,
+.navbar a {
+  color: rgba(255, 255, 255, .92) !important;
+}
+.nav-link:hover { color: #fff !important; }
+.nav-link.active {
+  color: #fff !important;
+  background: rgba(255, 255, 255, .08) !important;
+}
+
+/* ─── Universal card glass ────────────────────────────────────────────── */
+.card,
+.creator-card,
+.blogger-card,
+.stat-tile,
+.insight-card,
+.testimonial-card,
+.feature-card,
+.resource-card,
+.pricing-card,
+.profile-card-sticky,
+.faq-item,
+.about-card,
+.admin-activity,
+.conv-item,
+.modal-box,
+.drawer-panel,
+.profile-dashboard-hero,
+.profile-dashboard-identity,
+.card-stat {
+  background: rgba(255, 255, 255, .05) !important;
+  border: 1px solid rgba(255, 255, 255, .10) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+          backdrop-filter: blur(10px) !important;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, .40),
+    0 0 40px rgba(124, 92, 255, .18) !important;
+  color: rgba(255, 255, 255, .95) !important;
+}
+
+/* Hover lift on interactive cards */
+.creator-card,
+.blogger-card,
+.stat-tile,
+.insight-card,
+.testimonial-card,
+.feature-card,
+.resource-card,
+.pricing-card,
+.conv-item {
+  transition:
+    transform .3s ease,
+    box-shadow .3s ease,
+    border-color .3s ease !important;
+}
+.creator-card:hover,
+.blogger-card:hover,
+.stat-tile:hover,
+.insight-card:hover,
+.testimonial-card:hover,
+.feature-card:hover,
+.resource-card:hover,
+.pricing-card:hover,
+.conv-item:hover {
+  transform: translateY(-3px) scale(1.02) !important;
+  border-color: rgba(255, 255, 255, .18) !important;
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, .55),
+    0 0 60px rgba(124, 92, 255, .30) !important;
+}
+
+/* Card text hierarchy */
+.card *,
+.creator-card *,
+.blogger-card *,
+.stat-tile *,
+.insight-card *,
+.feature-card *,
+.testimonial-card *,
+.resource-card *,
+.pricing-card *,
+.profile-card-sticky *,
+.conv-item *,
+.modal-box *,
+.drawer-panel * {
+  color: inherit;
+}
+.creator-card h1, .creator-card h2, .creator-card h3, .creator-card h4,
+.blogger-card h3, .blogger-card h4,
+.insight-card h3, .insight-card h4,
+.testimonial-card h3, .testimonial-card h4,
+.feature-card h3, .feature-card h4,
+.pricing-card h3, .pricing-card h4 {
+  color: rgba(255, 255, 255, .98) !important;
+  font-weight: 800 !important;
+}
+.creator-card-bio,
+.blogger-card-bio,
+.insight-label,
+.feature-card p,
+.testimonial-card p,
+.resource-card p,
+.pricing-card p,
+.faq-q + .faq-a,
+.profile-meta,
+.profile-location,
+.profile-stat-row span,
+.creator-stat span,
+.stat-tile small,
+.conv-preview {
+  color: rgba(255, 255, 255, .68) !important;
+}
+
+/* Card avatars — glow ring */
+.creator-card-avatar,
+.creator-card-avatar img,
+.blogger-card .blogger-avatar img,
+.profile-dashboard-identity img,
+.conv-av img {
+  border: 2px solid rgba(255, 255, 255, .28) !important;
+  box-shadow: 0 0 22px rgba(255, 120, 255, .40) !important;
+}
+
+/* ─── Inputs / form controls / custom selects ─────────────────────────── */
+.form-control,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="url"],
+input[type="tel"],
+textarea,
+select,
+.filter-search input,
+.filter-field input,
+.filter-field .cs-trigger,
+.cs-trigger {
+  background: rgba(255, 255, 255, .04) !important;
+  border: 1px solid rgba(255, 255, 255, .12) !important;
+  color: rgba(255, 255, 255, .95) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+          backdrop-filter: blur(8px) !important;
+  transition: border-color .25s ease, box-shadow .25s ease !important;
+}
+.form-control::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 255, 255, .42) !important;
+}
+.form-control:focus,
+input:focus,
+textarea:focus,
+select:focus,
+.cs-trigger:focus,
+.cs-open .cs-trigger {
+  border-color: rgba(124, 92, 255, .55) !important;
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, .22) !important;
+  outline: none !important;
+}
+
+/* Custom-select menu (dropdown) — glass */
+.cs-menu {
+  background: rgba(20, 12, 52, .92) !important;
+  border: 1px solid rgba(255, 255, 255, .12) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+          backdrop-filter: blur(20px) !important;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, .55) !important;
+  color: rgba(255, 255, 255, .92) !important;
+}
+.cs-option { color: rgba(255, 255, 255, .92) !important; }
+.cs-option:hover,
+.cs-option.cs-active {
+  background: rgba(124, 92, 255, .25) !important;
+  color: #fff !important;
+}
+
+/* Filter bar wrapper — glass strip */
+.filter-bar {
+  background: rgba(255, 255, 255, .04) !important;
+  border: 1px solid rgba(255, 255, 255, .10) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+          backdrop-filter: blur(10px) !important;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .35) !important;
+}
+
+/* ─── Buttons ─────────────────────────────────────────────────────────── */
+.btn-primary,
+.btn-hero-primary {
+  background: linear-gradient(90deg, #7c5cff 0%, #a855f7 50%, #ff6ec7 100%) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, .14) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .30),
+    0 12px 30px rgba(124, 92, 255, .45) !important;
+  text-shadow: none !important;
+  transition: transform .25s ease, box-shadow .25s ease, filter .25s ease !important;
+}
+.btn-primary:hover,
+.btn-hero-primary:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .40),
+    0 16px 40px rgba(124, 92, 255, .55),
+    0 0 50px rgba(255, 110, 199, .30) !important;
+}
+.btn-secondary,
+.btn-outline,
+.btn-ghost,
+.btn:not(.btn-primary):not(.btn-hero-primary):not(.btn-danger) {
+  background: rgba(255, 255, 255, .06) !important;
+  border: 1px solid rgba(255, 255, 255, .14) !important;
+  color: rgba(255, 255, 255, .92) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+          backdrop-filter: blur(10px) !important;
+  transition: transform .25s ease, background .25s ease, border-color .25s ease !important;
+}
+.btn-secondary:hover,
+.btn-outline:hover,
+.btn-ghost:hover,
+.btn:not(.btn-primary):not(.btn-hero-primary):not(.btn-danger):hover {
+  background: rgba(255, 255, 255, .10) !important;
+  border-color: rgba(255, 255, 255, .22) !important;
+  transform: translateY(-1px);
+  color: #fff !important;
+}
+.btn-danger {
+  background: linear-gradient(90deg, #f43f5e 0%, #ef4444 100%) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, .14) !important;
+  box-shadow: 0 10px 28px rgba(244, 63, 94, .45) !important;
+}
+
+/* ─── Trust bar (dark site-wide) ──────────────────────────────────────── */
+.trust-bar {
+  background: transparent !important;
+  border-top: 1px solid rgba(255, 255, 255, .08) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .08) !important;
+}
+.trust-bar .trust-bar-label {
+  color: rgba(255, 255, 255, .55) !important;
+}
+.trust-bar .trust-brand {
+  color: rgba(255, 255, 255, .50) !important;
+}
+
+/* ─── Footer ──────────────────────────────────────────────────────────── */
+.footer,
+footer.footer,
+.site-footer {
+  background: rgba(8, 4, 24, .80) !important;
+  border-top: 1px solid rgba(255, 255, 255, .08) !important;
+  color: rgba(255, 255, 255, .80) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+          backdrop-filter: blur(14px) !important;
+}
+.footer a,
+footer a {
+  color: rgba(255, 255, 255, .68) !important;
+  transition: color .2s ease;
+}
+.footer a:hover,
+footer a:hover { color: #fff !important; }
+.footer-col-title,
+.footer-rich .brand {
+  color: rgba(255, 255, 255, .95) !important;
+}
+
+/* ─── Modals & drawers ────────────────────────────────────────────────── */
+.modal-overlay,
+.drawer-backdrop {
+  background: rgba(4, 2, 14, .65) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+          backdrop-filter: blur(8px) !important;
+}
+.modal-box,
+.drawer-panel {
+  background: rgba(20, 12, 52, .85) !important;
+  border: 1px solid rgba(255, 255, 255, .12) !important;
+  color: rgba(255, 255, 255, .95) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
+          backdrop-filter: blur(24px) saturate(150%) !important;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, .60) !important;
+}
+.drawer-hdr,
+.drawer-footer {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, .08) !important;
+}
+
+/* ─── Tabs (admin / drawer) ───────────────────────────────────────────── */
+.admin-tab,
+.drawer-tab {
+  color: rgba(255, 255, 255, .65) !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  transition: all .25s ease !important;
+}
+.admin-tab.active,
+.drawer-tab.active {
+  color: #fff !important;
+  background: rgba(124, 92, 255, .22) !important;
+  border-color: rgba(124, 92, 255, .35) !important;
+}
+
+/* ─── Chips, tags, status pills ───────────────────────────────────────── */
+.status-chip,
+.catalog-chip,
+.conv-preview-tag,
+.profile-meta .tag,
+.tag-chip,
+.platform-chip {
+  background: rgba(255, 255, 255, .06) !important;
+  border: 1px solid rgba(255, 255, 255, .12) !important;
+  color: rgba(255, 255, 255, .85) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+          backdrop-filter: blur(8px) !important;
+}
+
+/* ─── Dividers / borders ──────────────────────────────────────────────── */
+hr,
+.divider,
+.creator-card-banner,
+.profile-identity-cover {
+  border-color: rgba(255, 255, 255, .08) !important;
+}
+
+/* ─── Conversation list / chat page ───────────────────────────────────── */
+.conv-list { background: transparent !important; }
+.conv-section-hdr {
+  background: rgba(255, 255, 255, .04) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .08) !important;
+  color: rgba(255, 255, 255, .80) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+          backdrop-filter: blur(10px) !important;
+}
+.conv-section-title { color: rgba(255, 255, 255, .85) !important; }
+.conv-section-count {
+  background: rgba(255, 255, 255, .08) !important;
+  color: rgba(255, 255, 255, .85) !important;
+}
+
+/* ─── Headings ────────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  color: rgba(255, 255, 255, .96) !important;
+}
+
+/* ─── Scrollbar (webkit) ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: rgba(255, 255, 255, .02); }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, .10);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, .20); }
+
+/* ─── Hero protection ─────────────────────────────────────────────────── */
+/* The hero's own background must NOT be overridden by section { background: transparent }
+   above — restore via the hero-specific cascade we already have. */
+.hero,
+.hero-v2 {
+  /* keep whatever the hero passes set */
+}
+
+/* ─── Card shimmer effect on hover (subtle premium touch) ────────────── */
+.creator-card,
+.blogger-card,
+.stat-tile,
+.feature-card,
+.testimonial-card {
+  position: relative;
+  overflow: hidden;
+}
+.creator-card::before,
+.blogger-card::before,
+.stat-tile::before,
+.feature-card::before,
+.testimonial-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(110deg,
+    transparent 0%,
+    rgba(255, 255, 255, .07) 50%,
+    transparent 100%);
+  transition: left .9s ease;
+  pointer-events: none;
+}
+.creator-card:hover::before,
+.blogger-card:hover::before,
+.stat-tile:hover::before,
+.feature-card:hover::before,
+.testimonial-card:hover::before {
+  left: 130%;
+}
