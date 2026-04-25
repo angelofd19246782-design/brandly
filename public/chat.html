@@ -52,6 +52,7 @@
             <span id="chatHdrStatus" class="chat-status-pill chat-status-pending" style="display:none">Pending</span>
           </div>
           <div class="chat-hdr-sub" id="chatHdrSub"></div>
+          <div class="chat-hdr-meta-row" id="chatHdrMeta" style="display:none"></div>
         </div>
         <a id="chatProfileLink" href="#" class="btn btn-ghost btn-sm" style="display:none">View profile</a>
       </div>
@@ -82,6 +83,17 @@
 
   const initials = (n) =>
     n ? n.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase() : '?';
+
+  // ── Seen-state (frontend-only unread tracking) ────────────────────────────
+  const SEEN_KEY = 'brandly_seen_v1';
+  const _readSeen = () => { try { return JSON.parse(localStorage.getItem(SEEN_KEY) || '{}'); } catch (_) { return {}; } };
+  const _writeSeen = (s) => { try { localStorage.setItem(SEEN_KEY, JSON.stringify(s)); } catch (_) {} };
+  const markSeen = (convId) => { const s = _readSeen(); s[String(convId)] = Date.now(); _writeSeen(s); };
+  const isUnread = (convId, lastAt) => {
+    if (!lastAt) return false;
+    const seen = _readSeen()[String(convId)] || 0;
+    return new Date(lastAt).getTime() > seen;
+  };
 
   // Parse a structured campaign request out of a message body. Returns
   // { isRequest, title, format, budget, deadline, body } or null if the
@@ -131,39 +143,109 @@
         return;
       }
 
-      list.innerHTML = conversations.map(c => {
+      // Section config — same 5 buckets, role-aware labels
+      const sectionsConfig = currentUser.role === 'blogger'
+        ? [
+            { key: 'pending',   label: 'Incoming requests',  empty: 'No new requests right now',          statuses: ['pending'] },
+            { key: 'active',    label: 'Active work',        empty: 'No active orders',                   statuses: ['accepted','in_progress','revision_requested'] },
+            { key: 'submitted', label: 'Awaiting brand review', empty: 'Nothing waiting for review',      statuses: ['submitted'] },
+            { key: 'completed', label: 'Completed',          empty: 'No completed orders yet',            statuses: ['completed'] },
+            { key: 'declined',  label: 'Declined',           empty: 'No declined requests',               statuses: ['declined'] },
+          ]
+        : [
+            { key: 'pending',   label: 'Pending requests',   empty: 'No requests waiting on a creator',   statuses: ['pending'] },
+            { key: 'active',    label: 'Active campaigns',   empty: 'No active campaigns yet',            statuses: ['accepted','in_progress','revision_requested'] },
+            { key: 'submitted', label: 'Submitted work',     empty: 'No work waiting for your review',    statuses: ['submitted'] },
+            { key: 'completed', label: 'Completed',          empty: 'No completed campaigns yet',         statuses: ['completed'] },
+            { key: 'declined',  label: 'Declined',           empty: 'No declined requests',               statuses: ['declined'] },
+          ];
+
+      // Compute status for each conversation (LS wins, otherwise heuristic)
+      const enriched = conversations.map(c => {
+        const ls = getOrderState(c.id);
+        let status;
+        if (ls && ls.status)         status = ls.status;
+        else if (c.last_message)     status = 'in_progress';
+        else                         status = 'pending';
+        const title = ls && ls.title ? ls.title : (parseRequest(c.last_message || '') || {}).title || '';
+        return { ...c, _status: status, _title: title, _ls: ls };
+      });
+
+      // Bucket
+      const buckets = {};
+      sectionsConfig.forEach(s => { buckets[s.key] = []; });
+      enriched.forEach(c => {
+        const section = sectionsConfig.find(s => s.statuses.includes(c._status));
+        if (section) buckets[section.key].push(c);
+        else         buckets.active.push(c);
+      });
+
+      // Sort each bucket — newest activity first
+      Object.values(buckets).forEach(arr => {
+        arr.sort((a, b) => {
+          const ta = a.last_at ? new Date(a.last_at).getTime() : 0;
+          const tb = b.last_at ? new Date(b.last_at).getTime() : 0;
+          return tb - ta;
+        });
+      });
+
+      const renderConvItem = (c) => {
         const avHtml = c.other_avatar
           ? `<img src="${escHtml(c.other_avatar)}" alt="">`
           : initials(c.other_name);
         const isActive = c.id === activeConvId;
+        const unread = isUnread(c.id, c.last_at) && !isActive;
 
         let preview = c.last_message ? escHtml(c.last_message) : 'No messages yet';
         const parsed = parseRequest(c.last_message || '');
-        if (parsed && parsed.title) {
-          preview = '<span class="conv-preview-tag">Request:</span> ' + escHtml(parsed.title);
-        } else if (parsed && parsed.body) {
-          preview = escHtml(parsed.body.slice(0, 80));
-        }
+        if (parsed && parsed.title) preview = '<span class="conv-preview-tag">Request:</span> ' + escHtml(parsed.title);
+        else if (parsed && parsed.body) preview = escHtml(parsed.body.slice(0, 80));
 
-        // Show status pill — derived from localStorage if present, else from
-        // message-thread heuristic (no rating context here yet)
-        const ls = getOrderState(c.id);
-        const status = ls && ls.status ? ls.status : (c.last_message ? 'in_progress' : 'pending');
-        const statusHtml = `<span class="chat-status-pill chat-status-${status} chat-status-pill-sm">${orderStatusLabel(status)}</span>`;
+        const titleLine = c._title
+          ? `<div class="conv-campaign-title">${escHtml(c._title)}</div>`
+          : `<div class="conv-campaign-title-empty">Direct thread</div>`;
 
         return `
-          <div class="conv-item ${isActive ? 'active' : ''}" data-conv-id="${c.id}">
+          <div class="conv-item ${isActive ? 'active' : ''} ${unread ? 'unread' : ''}" data-conv-id="${c.id}">
             <div class="conv-av">${avHtml}</div>
             <div class="conv-item-body">
               <div class="conv-top-row">
-                <div class="conv-name">${escHtml(c.other_name)}</div>
+                <div class="conv-name">${escHtml(c.other_name)}${unread ? '<span class="conv-unread-dot"></span>' : ''}</div>
                 <span class="conv-time">${c.last_at ? formatTime(c.last_at) : ''}</span>
               </div>
-              <div class="conv-status-row">${statusHtml}</div>
+              <div class="conv-campaign-row">
+                ${titleLine}
+                <span class="chat-status-pill chat-status-${c._status} chat-status-pill-sm">${orderStatusLabel(c._status)}</span>
+              </div>
               <div class="conv-preview">${preview}</div>
             </div>
           </div>`;
+      };
+
+      list.innerHTML = sectionsConfig.map(section => {
+        const items = buckets[section.key] || [];
+        const cls = items.length === 0 ? ' collapsed' : ' has-items';
+        const itemsHtml = items.length
+          ? items.map(renderConvItem).join('')
+          : `<div class="conv-section-empty">${section.empty}</div>`;
+        return `
+          <div class="conv-section${cls}" data-section="${section.key}">
+            <button type="button" class="conv-section-hdr">
+              <span class="conv-section-title">${section.label}</span>
+              <span class="conv-section-count">${items.length}</span>
+              <svg class="conv-section-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="conv-section-items">${itemsHtml}</div>
+          </div>`;
       }).join('');
+
+      // Wire up section collapse toggles
+      list.querySelectorAll('.conv-section-hdr').forEach(h => {
+        h.addEventListener('click', (e) => {
+          e.stopPropagation();
+          h.parentElement.classList.toggle('collapsed');
+        });
+      });
     } catch (_) {
       list.innerHTML = `<div class="no-convs">Failed to load conversations.</div>`;
     }
@@ -187,6 +269,8 @@
     _currentStatus   = 'pending';
     const actionsBar = document.getElementById('chatOrderActions');
     if (actionsBar) { actionsBar.innerHTML = ''; actionsBar.style.display = 'none'; }
+    const metaEl = document.getElementById('chatHdrMeta');
+    if (metaEl) { metaEl.innerHTML = ''; metaEl.style.display = 'none'; }
     if (pollTimer) clearInterval(pollTimer);
     history.replaceState(null, '', `/chat.html?id=${convId}`);
 
@@ -226,6 +310,7 @@
 
     lastMsgCount = 0;
     await loadMessages();
+    markSeen(convId);
     pollTimer = setInterval(loadMessages, 4000);
     loadConversations(); // refresh sidebar preview/timestamps
   };
@@ -278,13 +363,28 @@
       // Render action buttons appropriate to role + status
       renderOrderActions(status);
 
-      // If the first message is a structured request, surface the campaign
-      // title in the chat header sub
+      // Surface campaign title + meta row from order state OR parsed first
+      // structured message. Falls back gracefully on legacy plain threads.
       const first = data.messages[0];
       const firstParsed = first && parseRequest(first.content);
-      const subEl = document.getElementById('chatHdrSub');
-      if (firstParsed && firstParsed.title) {
-        subEl.textContent = firstParsed.title;
+      const ls = getOrderState(activeConvId) || {};
+      const subEl  = document.getElementById('chatHdrSub');
+      const metaEl = document.getElementById('chatHdrMeta');
+
+      const title    = ls.title   || (firstParsed && firstParsed.title);
+      const budget   = ls.budget  || (firstParsed && firstParsed.budget);
+      const deadline = ls.deadline|| (firstParsed && firstParsed.deadline);
+      const format   = ls.format  || (firstParsed && firstParsed.format);
+
+      if (title) subEl.textContent = title;
+
+      const metaParts = [];
+      if (budget)   metaParts.push(`<span class="chat-hdr-meta-item budget">$${typeof budget === 'number' ? budget.toLocaleString() : escHtml(String(budget))}</span>`);
+      if (format)   metaParts.push(`<span class="chat-hdr-meta-item">${escHtml(String(format))}</span>`);
+      if (deadline) metaParts.push(`<span class="chat-hdr-meta-item">Due ${escHtml(String(deadline))}</span>`);
+      if (metaEl) {
+        metaEl.innerHTML = metaParts.join('<span class="chat-hdr-meta-sep">·</span>');
+        metaEl.style.display = metaParts.length ? 'flex' : 'none';
       }
 
       el.innerHTML = data.messages.map((m, idx) => {

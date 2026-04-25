@@ -5202,7 +5202,7 @@ input[type=number] {
   background: var(--c-primary-soft);
 }
 
-/* Conv-item sidebar status row */
+/* Conv-item sidebar status row (legacy + new campaign-row) */
 .conv-status-row {
   display: flex;
   align-items: center;
@@ -5215,6 +5215,149 @@ input[type=number] {
   letter-spacing: .04em;
 }
 .chat-status-pill-sm::before { width: 5px; height: 5px; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SIDEBAR DASHBOARD — sections, campaign rows, unread indicator, header meta
+───────────────────────────────────────────────────────────────────────────── */
+.conv-list { padding: 0; }
+
+.conv-section {
+  border-bottom: 1px solid var(--c-border);
+}
+.conv-section:last-child { border-bottom: none; }
+
+.conv-section-hdr {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background .12s, color .12s;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--c-bg);
+}
+.conv-section-hdr:hover { background: var(--c-surface); }
+.conv-section-title {
+  font-size: .68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--c-ink-3);
+  flex: 1;
+}
+.conv-section-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 7px;
+  font-size: .68rem;
+  font-weight: 800;
+  color: var(--c-ink-3);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 99px;
+  letter-spacing: .02em;
+}
+.conv-section.has-items .conv-section-count {
+  color: var(--c-primary);
+  background: var(--c-primary-soft);
+  border-color: var(--c-primary-mid);
+}
+.conv-section-chev {
+  color: var(--c-ink-4);
+  flex-shrink: 0;
+  transition: transform .2s;
+}
+.conv-section.collapsed .conv-section-chev { transform: rotate(-90deg); }
+.conv-section.collapsed .conv-section-items { display: none; }
+
+.conv-section-empty {
+  padding: 14px 18px;
+  font-size: .76rem;
+  color: var(--c-ink-4);
+  font-style: italic;
+  background: var(--c-surface);
+}
+
+/* Campaign row inside conv-item */
+.conv-campaign-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 3px 0 4px;
+}
+.conv-campaign-title {
+  font-size: .76rem;
+  font-weight: 600;
+  color: var(--c-ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+.conv-campaign-title-empty {
+  font-size: .74rem;
+  color: var(--c-ink-4);
+  font-style: italic;
+  flex: 1;
+}
+.conv-campaign-row .chat-status-pill-sm { flex-shrink: 0; }
+
+/* Unread indicator */
+.conv-item.unread .conv-name { color: var(--c-ink); font-weight: 700; }
+.conv-item.unread .conv-preview { color: var(--c-ink-2); font-weight: 500; }
+.conv-unread-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--c-primary);
+  margin-left: 6px;
+  vertical-align: middle;
+  box-shadow: 0 0 0 3px rgba(79,70,229,.18);
+  animation: unreadPulse 1.8s ease-in-out infinite;
+}
+@keyframes unreadPulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(79,70,229,.18); }
+  50%      { box-shadow: 0 0 0 5px rgba(79,70,229,.06); }
+}
+
+/* Chat header meta row (budget · deadline · format) */
+.chat-hdr-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: .72rem;
+  color: var(--c-ink-4);
+  flex-wrap: wrap;
+}
+.chat-hdr-meta-item {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+}
+.chat-hdr-meta-item.budget {
+  color: var(--c-green);
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+.chat-hdr-meta-sep {
+  color: var(--c-ink-5);
+  font-size: .8rem;
+  line-height: 1;
+}
 
 /* ─────────────────────────────────────────────────────────────────────────────
    TOAST NOTIFICATIONS
