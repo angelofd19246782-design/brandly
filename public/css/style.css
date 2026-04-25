@@ -6440,6 +6440,113 @@ input[type=number] {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   MAIN CREATOR CARD — LAYOUT FIX
+   Restructured into flex-column with a dedicated .card-footer that pushes
+   rating + price + button to the bottom with consistent vertical rhythm.
+   Button width is content-sized and never overlaps the card edge.
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Card becomes a flex container so footer can pin to the bottom */
+.hv-creator-v2 {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  padding: 24px !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  height: 490px !important;  /* +10 to absorb the new bottom gap cleanly */
+}
+
+/* Avatar wrapper still margin-auto centered inside flex column */
+.hv-creator-v2 .hv-avatar-glow {
+  flex-shrink: 0;
+}
+
+/* Footer — group rating / price / button together at the bottom */
+.hv-creator-v2 .card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 18px;
+  position: relative;
+  align-items: flex-start;  /* left-align all children */
+  text-align: left;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+/* Decorative gradient hairline above the footer */
+.hv-creator-v2 .card-footer::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(167,139,250,.32), transparent);
+  pointer-events: none;
+}
+
+/* Rating line — left-aligned now (was justify-content:center earlier) */
+.hv-creator-v2 .card-footer .hv-rating-line {
+  margin: 0 !important;
+  justify-content: flex-start !important;
+}
+
+/* Price block — left-aligned, label above value */
+.hv-creator-v2 .card-footer .hv-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  margin: 0;
+}
+.hv-creator-v2 .card-footer .hv-price span {
+  font-size: .66rem;
+  color: rgba(255,255,255,.55);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-weight: 700;
+}
+.hv-creator-v2 .card-footer .hv-price strong {
+  font-size: 1.5rem;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  line-height: 1.1;
+  margin-top: 2px;
+}
+
+/* Button — content-sized, left-aligned, never overflows card edge */
+.hv-creator-v2 .card-footer .hv-view-btn-v2 {
+  width: fit-content;
+  align-self: flex-start;
+  padding: 11px 22px !important;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Mobile (kept for safety even though visual is desktop-only) — full-width
+   button when the card itself collapses to a narrow surface */
+@media (max-width: 600px) {
+  .hv-creator-v2 .card-footer .hv-view-btn-v2 {
+    width: 100%;
+    align-self: stretch;
+  }
+}
+
+/* Re-pin position properties (the layout-fix block earlier set right:30,
+   top:30 — this !important set keeps them after the display:flex override) */
+.hv-creator-v2 {
+  top: 30px !important;
+  right: 30px !important;
+  left: auto !important;
+  bottom: auto !important;
+  width: 350px !important;
+  z-index: 5 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    CATALOG HERO BAND (replaces the plain page-hero on discovery)
 ───────────────────────────────────────────────────────────────────────────── */
 .catalog-hero {
