@@ -118,140 +118,157 @@
           <path d="M 80 100 Q 280 160 460 80 T 740 120" stroke="url(#hcurve-grad-purple)" stroke-width="1.5" fill="none" filter="url(#hcurve-blur)" opacity=".7"/>
         </svg>
 
-        <!-- Main creator card -->
-        <div class="hv-creator-v2">
-          <div class="hv-top-rated">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            Top Rated
-          </div>
+        <!-- ───── Decorative scene (NOT functional UI) ─────────────────────
+             Pure design composition — fake floating cards, controlled chaos,
+             colored bloom, parallax on mouse. Not consumed by any real flow. -->
+        <div class="hv-scene">
 
-          <div class="hv-avatar-glow">
-            <div class="hv-avatar-img">
-              <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sophie Laurent">
+          <!-- Ambient colored bloom blobs inside the scene -->
+          <span class="hv-bloom hv-bloom-purple"></span>
+          <span class="hv-bloom hv-bloom-pink"></span>
+          <span class="hv-bloom hv-bloom-blue"></span>
+
+          <!-- Back-layer ghost (blurred soft shape for depth) -->
+          <div class="scene-ghost"></div>
+
+          <!-- Chat card -->
+          <div class="scene-slot scene-slot-chat" data-depth="9">
+            <div class="scene-card scene-chat">
+              <div class="sc-chat-head">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
+                <div>
+                  <strong>Brand Manager</strong>
+                  <span>10:30 AM</span>
+                </div>
+              </div>
+              <div class="sc-chat-bubble">Hey Sophie — let's collaborate on the launch.</div>
+              <div class="sc-chat-typing"><i></i><i></i><i></i></div>
             </div>
-            <div class="hv-avatar-online"><span></span> Online</div>
           </div>
 
-          <h3 class="hv-name-v2">
-            Sophie Laurent
-            <svg class="hv-verify" width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M12 1L14.39 3.39L17.66 2L19.07 6.59L23 8L20.41 10.59L23 14L18.41 15.41L19.66 19L15.07 18.07L12 21L8.93 18.07L4.34 19L5.59 15.41L1 14L3.59 10.59L1 8L4.93 6.59L6.34 2L9.61 3.39L12 1Z" fill="#5b8def"/>
-              <path d="M8.5 12L11 14.5L15.5 9.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </h3>
-          <div class="hv-niche-v2">Fashion &amp; Beauty</div>
-
-          <div class="hv-platform-stats">
-            <div class="hv-platform">
-              <span class="hv-platform-icon hv-icon-tiktok">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.13"/></svg>
-              </span>
-              <div>
-                <strong>2.1M</strong>
-                <span>Followers</span>
+          <!-- Rating card -->
+          <div class="scene-slot scene-slot-rating" data-depth="13">
+            <div class="scene-card scene-rating">
+              <div class="sc-rating-top">
+                <div class="sc-rating-icon">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <div class="sc-rating-num">4.9</div>
+                <div class="sc-rating-label">Overall rating</div>
+              </div>
+              <div class="sc-rating-avs">
+                <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="">
+                <img src="https://randomuser.me/api/portraits/men/28.jpg" alt="">
+                <img src="https://randomuser.me/api/portraits/women/50.jpg" alt="">
+                <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="">
+                <span class="sc-rating-more">+120</span>
               </div>
             </div>
-            <div class="hv-platform">
-              <span class="hv-platform-icon hv-icon-youtube">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+
+          <!-- MAIN creator card — front, sharp, big glow -->
+          <div class="scene-slot scene-slot-creator" data-depth="18">
+            <div class="scene-card scene-creator">
+              <span class="sc-pill sc-pill-rated">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Top Rated
               </span>
-              <div>
-                <strong>850K</strong>
-                <span>Subscribers</span>
+
+              <div class="sc-avatar">
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="">
+                <span class="sc-avatar-online"></span>
+              </div>
+
+              <h3 class="sc-name">
+                <span class="sc-name-text">Sophie Laurent</span>
+                <svg class="sc-verify" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 1L14.39 3.39L17.66 2L19.07 6.59L23 8L20.41 10.59L23 14L18.41 15.41L19.66 19L15.07 18.07L12 21L8.93 18.07L4.34 19L5.59 15.41L1 14L3.59 10.59L1 8L4.93 6.59L6.34 2L9.61 3.39L12 1Z" fill="#5b8def"/>
+                  <path d="M8.5 12L11 14.5L15.5 9.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </h3>
+              <div class="sc-niche">Fashion &amp; Beauty</div>
+
+              <div class="sc-stats">
+                <div class="sc-stat">
+                  <span class="sc-stat-icon sc-icon-tt">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.13"/></svg>
+                  </span>
+                  <strong>2.1M</strong>
+                  <span>Followers</span>
+                </div>
+                <div class="sc-stat">
+                  <span class="sc-stat-icon sc-icon-yt">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                  </span>
+                  <strong>850K</strong>
+                  <span>Subs</span>
+                </div>
+              </div>
+
+              <div class="sc-meta">
+                <div class="sc-rating-line">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="#fbbf24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <strong>4.9</strong>
+                  <span>(124)</span>
+                </div>
+                <div class="sc-price">
+                  <span>From</span>
+                  <strong>$500</strong>
+                </div>
+              </div>
+
+              <button type="button" class="sc-cta">
+                View profile
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Budget card -->
+          <div class="scene-slot scene-slot-budget" data-depth="15">
+            <div class="scene-card scene-budget">
+              <div class="sc-budget-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+              </div>
+              <span class="sc-card-label">CAMPAIGN BUDGET</span>
+              <strong class="sc-budget-num">$500</strong>
+              <span class="sc-budget-sub">Product Launch</span>
+            </div>
+          </div>
+
+          <!-- Avatars group (online creators) -->
+          <div class="scene-slot scene-slot-avatars" data-depth="20">
+            <div class="scene-card scene-avatars">
+              <div class="sc-av-stack">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
+                <img src="https://randomuser.me/api/portraits/women/91.jpg" alt="">
+                <img src="https://randomuser.me/api/portraits/men/14.jpg" alt="">
+                <img src="https://randomuser.me/api/portraits/women/79.jpg" alt="">
+                <span class="sc-av-more">+9</span>
+              </div>
+              <div class="sc-av-text">
+                <span class="sc-av-pulse"></span>
+                <strong>12 creators</strong>
+                <span>online now</span>
               </div>
             </div>
           </div>
 
-          <div class="card-footer">
-            <div class="hv-rating-line">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="#fbbf24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <strong>4.9</strong>
-              <span class="hv-reviews">(124 reviews)</span>
-            </div>
-            <div class="hv-price">
-              <span>Starting from</span>
-              <strong>$500</strong>
-            </div>
-            <button type="button" class="hv-view-btn-v2">View profile</button>
+          <!-- Floating badges (controlled chaos, overlap card edges) -->
+          <div class="scene-slot scene-slot-trend" data-depth="24">
+            <span class="scene-badge scene-badge-trend">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 6 6 9 6 13a6 6 0 0 0 12 0c0-2-1-4-3-6 0 2-1 3-2 3 0-3-1-6-1-8z"/></svg>
+              Trending
+            </span>
           </div>
-        </div>
+          <div class="scene-slot scene-slot-grow" data-depth="22">
+            <span class="scene-badge scene-badge-grow">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l10-10"/><path d="M8 7h9v9"/></svg>
+              +12% this week
+            </span>
+          </div>
 
-        <!-- Chat card -->
-        <div class="hv-chat-v2">
-          <div class="hv-chat-head-v2">
-            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
-            <div>
-              <strong>Brand Manager</strong>
-              <span>10:30 AM</span>
-            </div>
-          </div>
-          <div class="hv-chat-bubble-v2">
-            Hey Sophie! 👋<br>
-            We'd love to collaborate on our new product launch. Are you available?
-          </div>
-          <div class="hv-chat-typing"><span></span><span></span><span></span></div>
-        </div>
-
-        <!-- Rating card -->
-        <div class="hv-rating-v2">
-          <div class="hv-rating-icon-v2">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          </div>
-          <div class="hv-rating-text">
-            <strong>4.9</strong>
-            <span>Overall rating</span>
-          </div>
-          <div class="hv-rating-avs">
-            <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="">
-            <img src="https://randomuser.me/api/portraits/men/28.jpg" alt="">
-            <img src="https://randomuser.me/api/portraits/women/50.jpg" alt="">
-            <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="">
-            <span class="hv-rating-more">+120</span>
-          </div>
-        </div>
-
-        <!-- Status card -->
-        <div class="hv-status-v2">
-          <span class="hv-card-label">CAMPAIGN STATUS</span>
-          <strong>IN PROGRESS</strong>
-          <div class="hv-status-timeline">
-            <span class="hv-tl-dot done"></span>
-            <span class="hv-tl-line done"></span>
-            <span class="hv-tl-dot done"></span>
-            <span class="hv-tl-line done"></span>
-            <span class="hv-tl-dot active"></span>
-            <span class="hv-tl-line"></span>
-            <span class="hv-tl-dot"></span>
-          </div>
-        </div>
-
-        <!-- Budget card -->
-        <div class="hv-budget-v2">
-          <div class="hv-budget-icon-v2">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
-          </div>
-          <div class="hv-budget-text">
-            <span class="hv-card-label">CAMPAIGN BUDGET</span>
-            <strong>$500</strong>
-            <span class="hv-budget-sub-v2">Product Launch</span>
-          </div>
-        </div>
-
-        <!-- Online creators -->
-        <div class="hv-online-v2">
-          <div class="hv-online-stack-v2">
-            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
-            <img src="https://randomuser.me/api/portraits/women/91.jpg" alt="">
-            <img src="https://randomuser.me/api/portraits/men/14.jpg" alt="">
-            <img src="https://randomuser.me/api/portraits/women/79.jpg" alt="">
-            <span class="hv-online-more-v2">+9</span>
-          </div>
-          <div class="hv-online-text-v2">
-            <strong>12 creators</strong>
-            <span class="hv-online-dot-v2"></span>
-            <span>online now</span>
-          </div>
-        </div>
+        </div><!-- /.hv-scene -->
 
       </div>
 
@@ -772,5 +789,34 @@
 </footer>
 
 <script src="/js/app.js"></script>
+
+<!-- Hero scene parallax — tiny mouse-driven offset on the decorative cards -->
+<script>
+(function () {
+  const scene = document.querySelector('.hv-scene');
+  if (!scene) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const hv = scene.parentElement;
+  let raf = 0;
+  let tx = 0, ty = 0;
+  function onMove(e) {
+    const r = hv.getBoundingClientRect();
+    tx = (e.clientX - (r.left + r.width  / 2)) / r.width;
+    ty = (e.clientY - (r.top  + r.height / 2)) / r.height;
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      scene.style.setProperty('--mx', tx.toFixed(3));
+      scene.style.setProperty('--my', ty.toFixed(3));
+      raf = 0;
+    });
+  }
+  function onLeave() {
+    scene.style.setProperty('--mx', 0);
+    scene.style.setProperty('--my', 0);
+  }
+  window.addEventListener('mousemove', onMove, { passive: true });
+  window.addEventListener('mouseleave', onLeave, { passive: true });
+})();
+</script>
 </body>
 </html>
