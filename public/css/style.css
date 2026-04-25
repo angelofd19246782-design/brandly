@@ -10754,14 +10754,82 @@ section[class*="section-"], .marketing-hero { position: relative; z-index: 1; }
   height: 520px !important;
 }
 
-/* 8. Secondary cards downgrade — reduce brightness so the main pops. */
+/* 8. Secondary cards downgrade — done WITHOUT opacity/filter
+      (those would fade content). See "GLASS CONTENT FIX" pass below. */
+
+/* ==========================================================================
+   HERO — GLASS CONTENT FIX
+   Glass = blurred BACKGROUND only. Content (text, icons, avatar, button)
+   must be fully sharp. Wipe every opacity/filter that hits a whole card
+   container, and downgrade secondaries via background/border/shadow alpha
+   so the main card still leads visually without dimming readability.
+   ========================================================================== */
+
+/* 1+2. Reset: no card or its descendants may carry opacity or any filter
+        (blur/brightness/saturate) that would dim/fuzz content.
+        Backdrop-filter is the ONLY allowed blur, applied to the card itself. */
+.hv-scene .scene-card,
+.hv-scene .scene-card * {
+  opacity: 1 !important;
+  filter: none !important;
+}
+.hv-scene .scene-card {
+  -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+          backdrop-filter: blur(12px) saturate(160%) !important;
+}
+
+/* Force the cards above the noise/atmosphere layers so backdrop-filter
+   has well-defined content to blur (no ambiguity from earlier z:0). */
+.hv-scene .scene-slot { will-change: auto; }
+
+/* 3+5. Readability — small text-shadow on glass (allowed because it
+        sharpens contrast against translucent bg without softening glyphs). */
+.hv-scene .scene-card {
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, .40);
+}
+.hv-scene .scene-card strong {
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .45);
+}
+
+/* 8. Secondary cards downgrade — via translucent background, weaker
+      border + smaller shadow halo. NEVER via opacity or filter. */
 .hv-scene .scene-chat,
 .hv-scene .scene-rating,
 .hv-scene .scene-budget {
-  opacity: .85 !important;
-  filter: brightness(.92) !important;
+  background: rgba(255, 255, 255, .05) !important;
+  border: 1px solid rgba(255, 255, 255, .14) !important;
 }
+.hv-scene .scene-chat    { box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 22px 60px rgba(0,0,0,.45),
+    0 0 36px rgba(0,180,255,.32) !important; }
+.hv-scene .scene-rating  { box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 22px 60px rgba(0,0,0,.45),
+    0 0 36px rgba(255,200,60,.32) !important; }
+.hv-scene .scene-budget  { box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 22px 60px rgba(0,0,0,.45),
+    0 0 36px rgba(60,220,140,.32) !important; }
 .hv-scene .scene-avatars {
-  opacity: .80 !important;
-  filter: brightness(.88) !important;
+  background: rgba(255, 255, 255, .045) !important;
+  border: 1px solid rgba(255, 255, 255, .12) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 20px 52px rgba(0,0,0,.42),
+    0 0 30px rgba(255,77,157,.25) !important;
 }
+
+/* 6. Buttons — 100% sharp. No filter (overrides earlier brightness/saturate
+      passes), no inherited text-shadow softness. */
+.hv-scene .scene-card .sc-cta,
+.hv-scene .scene-card button {
+  text-shadow: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Main card stays dominant via the existing scale 1.22, brighter inner
+   gradient (.085 white base), 0.25 border, focal halo, and the brighter
+   pink/purple CTA — none of which involve opacity or content-fade. */
