@@ -10998,3 +10998,95 @@ section[class*="section-"], .marketing-hero { position: relative; z-index: 1; }
 .hv-scene .scene-creator {
   padding: 24px 22px 20px !important;
 }
+
+/* ==========================================================================
+   HERO — CLEAN BACKGROUND PASS (premium, atmospheric, no streaks)
+   Eliminate every "streak / line / tube" artifact:
+   - .hero-decor-curves SVG (the three blurred gradient line paths)
+   - The three diagonal linear-gradient strips painted onto
+     .hero-visual-v2 in the environment pass
+   - The rotating conic-gradient neon ring (.hv-portal) — replaced by
+     pure radial blooms (no sharp ring shape).
+   Then restate the base gradient with the spec deep navy + purple stack
+   and let the existing soft blobs + stars do the atmosphere work.
+   ========================================================================== */
+
+/* 1. Remove the streak sources entirely. */
+.hero-v2 .hero-decor-curves { display: none !important; }
+.hero-v2 .hero-visual-v2 { background: none !important; }
+.hv-portal { display: none !important; }
+
+/* 2. Base gradient — spec colors. Deep navy → deep purple diagonal,
+      with three large soft glow blobs as radials, plus a centered focal
+      bloom under the main card area. */
+.hero-v2 {
+  background:
+    radial-gradient(circle at 20% 25%, rgba(120, 80, 255, .30), transparent 55%),
+    radial-gradient(circle at 78% 22%, rgba(255, 100, 200, .22), transparent 55%),
+    radial-gradient(circle at 60% 85%, rgba(0, 180, 255, .16), transparent 60%),
+    linear-gradient(135deg, #0b0f2a 0%, #1a0f3c 50%, #2a0f4f 100%) !important;
+  box-shadow:
+    inset 0 0 240px rgba(0, 0, 0, .55),
+    inset 0 -160px 120px -80px rgba(0, 0, 0, .85) !important;
+}
+
+/* 3. Center slightly brighter behind main card — soft radial bloom that
+      lives in .hv-portal-bloom (already in markup), tuned to be a smooth
+      atmospheric glow with no visible ring or edge. */
+.hv-portal-bloom {
+  display: block !important;
+  width: 640px !important;
+  height: 640px !important;
+  top: -40px !important;
+  right: -120px !important;
+  background: radial-gradient(circle,
+    rgba(124, 92, 255, .35) 0%,
+    rgba(255, 110, 199, .12) 38%,
+    transparent 70%) !important;
+  filter: blur(60px) !important;
+  opacity: .80 !important;
+  mix-blend-mode: screen;
+  animation: hv-portal-bloom-breathe 8s ease-in-out infinite !important;
+}
+
+/* 4. Soft drift blobs already exist as .hv-mist-1, .hv-mist-2 inside
+      .hv-scene plus .hero-orb-* on .hero-v2. Tune them to the spec range
+      (opacity .2–.4, blur 120–200px). */
+.hero-v2 .hero-orb {
+  width: 480px !important;
+  height: 480px !important;
+  filter: blur(160px) !important;
+  opacity: .32 !important;
+  mix-blend-mode: screen;
+}
+.hv-scene .hv-mist-1 {
+  width: 380px !important;
+  height: 380px !important;
+  filter: blur(140px) !important;
+  opacity: .28 !important;
+}
+.hv-scene .hv-mist-2 {
+  width: 380px !important;
+  height: 380px !important;
+  filter: blur(140px) !important;
+  opacity: .22 !important;
+}
+.hv-scene .hv-bloom {
+  width: 360px !important;
+  height: 360px !important;
+  filter: blur(130px) !important;
+  opacity: .28 !important;
+  mix-blend-mode: screen !important;
+}
+
+/* 5. Particles — keep .hero-stars but cap their max opacity to .6 per spec
+      and keep them subtle. The SVG dots inside use SMIL <animate> on opacity;
+      override via CSS animation that cannot exceed the cap. */
+.hero-v2 .hero-stars {
+  opacity: .55 !important;
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, .45)) !important;
+}
+
+/* Defensive: also kill the old 3-strip background that might have been set
+   on the visual via earlier !important rules. */
+.hv-scene { background: none !important; }
