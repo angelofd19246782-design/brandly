@@ -156,7 +156,8 @@
           <div class="empty-state">
             <div class="empty-state-icon">${icon('search', 28)}</div>
             <h3>No creators match these filters</h3>
-            <p>Try widening your follower range, removing a country filter, or searching by a different niche. We have 12,000+ creators waiting.</p>
+            <p>Try widening your follower range, removing a country filter, or searching by a different niche.</p>
+            <button type="button" class="btn btn-primary mt-4" onclick="resetCatalogFilters()">Reset filters</button>
           </div>`;
         return;
       }
@@ -192,11 +193,11 @@
     // Status chips — derived from rating / review-count, purely visual
     const rating  = Number(b.avg_rating || 0);
     const reviews = parseInt(b.rating_count || 0);
-    const chips = [];
-    if (rating >= 4.8)                chips.push('<span class="status-chip status-top"><span class="dot"></span>Top rated</span>');
-    if (reviews >= 3)                 chips.push('<span class="status-chip status-fast"><span class="dot"></span>Fast response</span>');
-    if (reviews >= 1 && reviews < 3)  chips.push('<span class="status-chip status-rising"><span class="dot"></span>Rising</span>');
-    const statusRow = chips.length ? `<div class="blogger-status-row">${chips.join('')}</div>` : '';
+    const statusChips = [];
+    if (rating >= 4.8)                statusChips.push('<span class="status-chip status-top"><span class="dot"></span>Top rated</span>');
+    if (reviews >= 3)                 statusChips.push('<span class="status-chip status-fast"><span class="dot"></span>Fast response</span>');
+    if (reviews >= 1 && reviews < 3)  statusChips.push('<span class="status-chip status-rising"><span class="dot"></span>Rising</span>');
+    const statusRow = statusChips.length ? `<div class="blogger-status-row">${statusChips.join('')}</div>` : '';
 
     return `
       <div class="blogger-card">
@@ -243,6 +244,20 @@
   ['category','platform','country','sort'].forEach(k =>
     filterEls[k].addEventListener('change', loadBloggers)
   );
+
+  // Exposed for the empty-state Reset filters button
+  window.resetCatalogFilters = () => {
+    filterEls.search.value = '';
+    filterEls.category.value = '';
+    filterEls.platform.value = '';
+    filterEls.country.value = '';
+    filterEls.sort.value = 'followers';
+    // Sync any custom dropdowns wrapping these <select> elements
+    ['category','platform','country','sort'].forEach(k =>
+      filterEls[k].dispatchEvent(new Event('change', { bubbles: true }))
+    );
+    loadBloggers();
+  };
 
   loadBloggers();
 </script>
