@@ -12722,3 +12722,242 @@ strong,
   border-color: rgba(255, 77, 157, .55) !important;
   color: #fff !important;
 }
+
+/* ==========================================================================
+   FIX BATCH — chat page layout, admin badges/buttons, catalog underline,
+   profile header buttons. All page-specific bugs from the latest screenshots.
+   ========================================================================== */
+
+/* 1. CHAT page — .chat-layout had a hardcoded LIGHT cream gradient (line 8338).
+      Replace with dark gradient so sidebar + main area + placeholder text
+      all read correctly. */
+.chat-layout {
+  background:
+    radial-gradient(ellipse 50% 30% at 0% 0%, rgba(124, 92, 255, .14), transparent 60%),
+    radial-gradient(ellipse 50% 35% at 100% 100%, rgba(255, 77, 157, .12), transparent 60%),
+    linear-gradient(135deg, #0b0f2a 0%, #15123a 50%, #1a0f3c 100%) !important;
+}
+.chat-sidebar {
+  background: rgba(255, 255, 255, .04) !important;
+  border-right: 1px solid rgba(255, 255, 255, .10) !important;
+}
+.chat-sidebar-hdr {
+  border-bottom: 1px solid rgba(255, 255, 255, .10) !important;
+}
+.chat-sidebar-hdr h2 {
+  color: #fff !important;
+}
+.chat-sidebar-hdr p {
+  color: rgba(255, 255, 255, .65) !important;
+}
+.chat-main { background: transparent !important; }
+.chat-hdr {
+  background: rgba(255, 255, 255, .04) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .10) !important;
+}
+.chat-hdr-name { color: #fff !important; font-weight: 700 !important; }
+.chat-hdr-sub,
+.chat-hdr-meta-row,
+.chat-hdr-meta-item { color: rgba(255, 255, 255, .68) !important; }
+.chat-messages { background: transparent !important; }
+.chat-placeholder {
+  background: transparent !important;
+  color: rgba(255, 255, 255, .80) !important;
+}
+.chat-placeholder h3 {
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+.chat-placeholder-icon {
+  background: rgba(124, 92, 255, .18) !important;
+  color: #c4b5fd !important;
+  border-radius: 50%;
+}
+.chat-placeholder-icon svg { color: #c4b5fd !important; }
+.no-convs {
+  color: rgba(255, 255, 255, .65) !important;
+}
+
+/* Message bubbles — readable on the dark chat */
+.msg-row:not(.mine) .msg-bubble {
+  background: rgba(255, 255, 255, .08) !important;
+  color: rgba(255, 255, 255, .96) !important;
+  border: 1px solid rgba(255, 255, 255, .14) !important;
+}
+.msg-row.mine .msg-bubble {
+  background: linear-gradient(135deg, #7c5cff, #a855f7) !important;
+  color: #fff !important;
+}
+.msg-time { color: rgba(255, 255, 255, .55) !important; }
+
+/* Conv item active state */
+.conv-item:hover { background: rgba(255, 255, 255, .06) !important; }
+.conv-item.active {
+  background: rgba(124, 92, 255, .18) !important;
+  border-right: 2px solid #a855f7 !important;
+}
+.conv-item.active .conv-name { color: #fff !important; }
+
+/* 2. ADMIN — Role / Status pills + table headers + Block/Delete buttons */
+
+/* All .badge variants — readable colored glass pills */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  background: rgba(124, 92, 255, .22) !important;
+  color: #d8c8ff !important;
+  border: 1px solid rgba(124, 92, 255, .42) !important;
+}
+.badge-gray {
+  background: rgba(255, 255, 255, .10) !important;
+  color: rgba(255, 255, 255, .92) !important;
+  border: 1px solid rgba(255, 255, 255, .18) !important;
+}
+.badge-green {
+  background: rgba(52, 211, 153, .22) !important;
+  color: #6ee7b7 !important;
+  border: 1px solid rgba(52, 211, 153, .42) !important;
+}
+.badge-red {
+  background: rgba(244, 63, 94, .22) !important;
+  color: #fda4af !important;
+  border: 1px solid rgba(244, 63, 94, .42) !important;
+}
+.badge-amber,
+.badge-yellow {
+  background: rgba(251, 191, 36, .22) !important;
+  color: #fde68a !important;
+  border: 1px solid rgba(251, 191, 36, .42) !important;
+}
+.badge-blue {
+  background: rgba(0, 180, 255, .22) !important;
+  color: #93c5fd !important;
+  border: 1px solid rgba(0, 180, 255, .42) !important;
+}
+
+/* Admin table header row — readable */
+table thead th,
+.admin-tab-panel table thead th {
+  color: rgba(255, 255, 255, .85) !important;
+  background: rgba(255, 255, 255, .04) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .12) !important;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+/* Action buttons (Block/Unblock + Delete) inside admin table */
+.action-btns {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+.action-btns .btn-ghost,
+.btn-ghost.btn-sm {
+  background: rgba(255, 255, 255, .06) !important;
+  border: 1px solid rgba(255, 255, 255, .18) !important;
+  color: rgba(255, 255, 255, .95) !important;
+}
+.action-btns .btn-ghost:hover,
+.btn-ghost.btn-sm:hover {
+  background: rgba(255, 255, 255, .12) !important;
+  border-color: rgba(255, 255, 255, .30) !important;
+  color: #fff !important;
+}
+.action-btns .btn-danger,
+.btn-danger.btn-sm {
+  background: linear-gradient(90deg, #f43f5e, #ef4444) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, .18) !important;
+  box-shadow: 0 6px 16px rgba(244, 63, 94, .35) !important;
+}
+
+/* Top-right admin "Refresh" buttons (action zones above panels) */
+.admin-tab-panel .btn-ghost,
+.admin-tab-panel .btn:not(.btn-primary):not(.btn-danger) {
+  background: rgba(255, 255, 255, .06) !important;
+  border: 1px solid rgba(255, 255, 255, .18) !important;
+  color: rgba(255, 255, 255, .95) !important;
+}
+
+/* 3. CATALOG card — strip the underline from bio paragraph
+      (the entire card is wrapped in <a> so the bio inherits text-decoration). */
+.creator-card,
+.creator-card *,
+.blogger-card,
+.blogger-card *,
+.creator-card a,
+.blogger-card a {
+  text-decoration: none !important;
+}
+.creator-card-bio,
+.blogger-card-bio {
+  text-decoration: none !important;
+}
+
+/* 4. PROFILE page — all "View profile & send request" / header buttons
+      inherit brand gradient with sharp white text. */
+.profile-card-sticky .btn-primary,
+.profile-card-sticky .btn-lg,
+.profile-dashboard .btn-primary,
+.profile-dashboard .btn-lg,
+.profile-identity .btn,
+.profile-identity .btn-primary {
+  background: linear-gradient(90deg, #7c5cff 0%, #a855f7 50%, #ff6ec7 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, .14) !important;
+  box-shadow: 0 12px 30px rgba(124, 92, 255, .45) !important;
+  text-shadow: none !important;
+}
+
+/* Defensive: any visible "View" button next to a profile name */
+.profile-identity .btn,
+.profile-card-sticky .btn,
+.profile-dashboard-actions .btn {
+  color: #ffffff !important;
+}
+
+/* 5. PROFILE bio / about / location text — solid contrast */
+.profile-identity .name,
+.profile-identity h1,
+.profile-identity h2 {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+.profile-identity .location,
+.profile-location,
+.profile-meta {
+  color: rgba(255, 255, 255, .72) !important;
+}
+
+/* 6. Stat-tile values were appearing faded — force pure white */
+.stat-tile .num {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .35);
+}
+
+/* 7. Edit-profile native <select> options inside a dropdown — readable */
+select option,
+.drawer-panel select option {
+  background: #1a0f3c !important;
+  color: #ffffff !important;
+}
+
+/* 8. Action buttons in chat (Accept / Decline / Submit / Complete etc.) */
+.chat-order-actions .btn,
+.chat-order-actions .btn-primary,
+.chat-order-actions .btn-ghost,
+.chat-order-actions .btn-danger {
+  font-weight: 700 !important;
+}
+.chat-order-actions .btn-primary {
+  background: linear-gradient(90deg, #7c5cff, #ff6ec7) !important;
+  color: #fff !important;
+}
