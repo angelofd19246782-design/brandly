@@ -11914,3 +11914,282 @@ label,
   color: rgba(255, 255, 255, .75) !important;
 }
 .back-link:hover { color: #fff !important; }
+
+/* ==========================================================================
+   CONTRAST AUDIT — final readability pass
+   The codebase used light design tokens (--c-bg: #f7f9fc, --c-surface: #fff)
+   in dozens of components. Dark theme overrode their TEXT to white but left
+   those LIGHT backgrounds in place — producing white-on-white in places.
+   This pass redefines the tokens to dark equivalents so every var() use
+   resolves correctly, and patches the few hardcoded white backgrounds.
+   ========================================================================== */
+
+/* 1. Redefine design tokens to dark theme equivalents.
+      Every component still uses var(--c-bg), var(--c-surface), var(--c-ink-*)
+      — they now resolve to dark glass values. */
+:root {
+  --c-bg:       rgba(255, 255, 255, .04);
+  --c-surface:  rgba(255, 255, 255, .06);
+  --c-border:   rgba(255, 255, 255, .12);
+  --c-ink:      rgba(255, 255, 255, .96);
+  --c-ink-1:    #ffffff;
+  --c-ink-2:    rgba(255, 255, 255, .92);
+  --c-ink-3:    rgba(255, 255, 255, .68);
+  --c-ink-4:    rgba(255, 255, 255, .52);
+}
+
+/* 2. Auth pages (login/register) — convert the white right panel to dark
+      glass, headings/subtitles/labels readable. */
+.auth-form-panel {
+  background: transparent !important;
+  color: rgba(255, 255, 255, .92) !important;
+}
+.auth-form-inner h1 {
+  color: #ffffff !important;
+}
+.auth-form-inner .subtitle,
+.auth-form-inner p {
+  color: rgba(255, 255, 255, .68) !important;
+}
+.auth-footer,
+.auth-footer * {
+  color: rgba(255, 255, 255, .72) !important;
+}
+.auth-footer a {
+  color: #c4b5fd !important;
+}
+.auth-footer a:hover { color: #ff6ec7 !important; }
+.role-option label {
+  background: rgba(255, 255, 255, .04) !important;
+  border: 1px solid rgba(255, 255, 255, .12) !important;
+  color: rgba(255, 255, 255, .92) !important;
+}
+.role-option label:hover {
+  background: rgba(255, 255, 255, .08) !important;
+  border-color: rgba(124, 92, 255, .40) !important;
+}
+.role-option input:checked + label {
+  background: rgba(124, 92, 255, .18) !important;
+  border-color: rgba(124, 92, 255, .55) !important;
+  color: #fff !important;
+}
+.role-option .role-sub {
+  color: rgba(255, 255, 255, .60) !important;
+}
+.label-hint {
+  color: rgba(255, 255, 255, .55) !important;
+}
+
+/* 3. Patch any remaining hardcoded white backgrounds on cards/panels. */
+.card,
+.modal-box,
+.drawer-panel,
+.feature-card,
+.testimonial-card,
+.pricing-card,
+.resource-card,
+.profile-card-sticky {
+  background: rgba(255, 255, 255, .05) !important;
+  color: rgba(255, 255, 255, .95) !important;
+}
+
+/* 4. Tables (admin / chat / orders) */
+table {
+  color: rgba(255, 255, 255, .92) !important;
+}
+thead tr,
+thead th {
+  background: rgba(255, 255, 255, .04) !important;
+  color: rgba(255, 255, 255, .80) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .10) !important;
+}
+tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, .06) !important;
+}
+tbody td {
+  color: rgba(255, 255, 255, .90) !important;
+}
+
+/* 5. Badges that used pale gray backgrounds — make them dark glass */
+.badge-gray {
+  background: rgba(255, 255, 255, .08) !important;
+  color: rgba(255, 255, 255, .85) !important;
+  border: 1px solid rgba(255, 255, 255, .12) !important;
+}
+
+/* 6. How-it-works section — make sure step cards are glass with readable text. */
+.section-how,
+.section-features,
+.how-it-works,
+.how-flow,
+.section-resources,
+.section-pricing,
+.section-faq,
+.section-cta {
+  background: transparent !important;
+}
+.how-step,
+.step-card,
+.how-card,
+.flow-card,
+.feature-card {
+  background: rgba(255, 255, 255, .05) !important;
+  border: 1px solid rgba(255, 255, 255, .10) !important;
+  color: rgba(255, 255, 255, .95) !important;
+}
+.how-step h3, .how-step h4,
+.step-card h3, .step-card h4,
+.how-card h3, .how-card h4,
+.feature-card h3, .feature-card h4 {
+  color: #ffffff !important;
+}
+.how-step p,
+.step-card p,
+.how-card p,
+.feature-card p,
+.flow-card p {
+  color: rgba(255, 255, 255, .80) !important;
+}
+
+/* 7. Catalog cards — bio / stats / price / button readable. */
+.creator-card,
+.blogger-card {
+  color: rgba(255, 255, 255, .95) !important;
+}
+.creator-card .name,
+.blogger-card .name,
+.creator-card h3,
+.blogger-card h3 {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+.creator-card .price,
+.blogger-card .price,
+.creator-card-price,
+.blogger-card-price {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+.creator-card .price-label,
+.blogger-card .price-label {
+  color: rgba(255, 255, 255, .55) !important;
+}
+.creator-card .platform-chip,
+.blogger-card .platform-chip,
+.creator-card .platform-link,
+.blogger-card .platform-link {
+  background: rgba(124, 92, 255, .18) !important;
+  border: 1px solid rgba(124, 92, 255, .32) !important;
+  color: #c4b5fd !important;
+}
+
+/* 8. Buttons inside catalog/profile cards must remain readable. */
+.btn-primary,
+.btn-hero-primary,
+.btn-primary *,
+.btn-hero-primary * {
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+/* The "View profile & send request" full-width primary CTA */
+.btn.btn-primary.btn-lg,
+.btn-primary.btn-lg {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+/* 9. Pills, tags, status everywhere — never white-on-pale */
+.tag,
+.tag-chip,
+.platform-chip,
+.platform-link,
+.status-chip,
+.catalog-chip,
+.profile-meta .tag,
+.conv-preview-tag,
+.creator-card .tag,
+.blogger-card .tag {
+  background: rgba(124, 92, 255, .15) !important;
+  border: 1px solid rgba(124, 92, 255, .28) !important;
+  color: #d8c8ff !important;
+}
+
+/* Status-chip color variants */
+.status-chip.is-active,
+.status-chip.is-completed { background: rgba(52,211,153,.20) !important; border-color: rgba(52,211,153,.40) !important; color: #6ee7b7 !important; }
+.status-chip.is-pending   { background: rgba(251,191,36,.22) !important; border-color: rgba(251,191,36,.40) !important; color: #fde68a !important; }
+.status-chip.is-declined  { background: rgba(244,63,94,.22)  !important; border-color: rgba(244,63,94,.40)  !important; color: #fda4af !important; }
+
+/* 10. Inputs — must NEVER have white background after this pass.
+       Restate to be safe. */
+input, textarea, select, .cs-trigger, .form-control {
+  background: rgba(255, 255, 255, .04) !important;
+  color: rgba(255, 255, 255, .96) !important;
+  border-color: rgba(255, 255, 255, .12) !important;
+}
+input::placeholder,
+textarea::placeholder { color: rgba(255, 255, 255, .42) !important; }
+
+/* 11. Disabled/loading buttons — readable disabled state */
+button:disabled,
+.btn:disabled,
+.btn.is-disabled {
+  background: rgba(255, 255, 255, .06) !important;
+  color: rgba(255, 255, 255, .40) !important;
+  border-color: rgba(255, 255, 255, .08) !important;
+  cursor: not-allowed;
+}
+
+/* 12. Borders and dividers — use white-with-low-alpha so they read on dark */
+hr,
+.divider,
+.section-divider {
+  border-color: rgba(255, 255, 255, .10) !important;
+  background-color: rgba(255, 255, 255, .10) !important;
+}
+
+/* 13. Native <a> link default everywhere — keep brand purple */
+a {
+  color: #c4b5fd;
+}
+a:hover { color: #ff6ec7; }
+/* But preserve buttons and nav-styled links */
+.btn,
+.nav-link,
+.navbar-brand,
+.footer a,
+.auth-footer a {
+  color: inherit;
+}
+
+/* 14. Strong values in stats — pure white */
+.stat-tile strong,
+.stat-tile .num,
+.creator-stat strong,
+.blogger-card-stats strong,
+.profile-stat-row strong,
+.insight-value strong,
+.activity-text strong,
+.review-author,
+.conv-name {
+  color: #ffffff !important;
+}
+
+/* 15. Generic body text on the body element (in case any orphan text
+       sits outside cards) */
+body, body * {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 16. Make sure inherited `color: inherit` rules don't pull a dark legacy
+       color through — final fallback. */
+.page-wrap,
+.container,
+main,
+.main-content {
+  color: rgba(255, 255, 255, .92);
+}
+
+/* 17. Defensive: any element with var(--c-ink-3) that the global pass set
+       to .68 should be readable. Already handled by token override above. */
