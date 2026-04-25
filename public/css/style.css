@@ -9386,3 +9386,188 @@ section[class*="section-"], .marketing-hero { position: relative; z-index: 1; }
     animation: none !important;
   }
 }
+
+/* ==========================================================================
+   HERO — PREMIUM ENVIRONMENT PASS
+   Multi-layer light system, distant-light particles, connection lines,
+   intensified main card glow + simplified float, color-coded side-card
+   glows, button shine sweep, bottom depth fade. Layout untouched.
+   ========================================================================== */
+
+/* 1. MULTI-LAYER LIGHT SYSTEM — three radials blended over the existing base.
+      Stack new color spots BEFORE the deep navy gradient so depth reads. */
+.hero-v2 {
+  background:
+    radial-gradient(circle at 70% 40%, rgba(124, 92, 255, .25), transparent 60%),
+    radial-gradient(circle at 40% 70%, rgba(255, 77, 157, .20), transparent 60%),
+    radial-gradient(circle at 60% 80%, rgba(0, 180, 255, .15), transparent 60%),
+    radial-gradient(circle at 20% 30%, rgba(120, 80, 255, .35), transparent 45%),
+    radial-gradient(circle at 80% 20%, rgba(255, 100, 200, .25), transparent 45%),
+    linear-gradient(135deg, #0a0a1a 0%, #120a2a 50%, #1a0f3d 100%) !important;
+}
+
+/* 2. DISTANT-LIGHT PARTICLES — soft blurred dots, layered as a fixed bg
+      pattern via box-shadow trick on a single pseudo of .hero-visual-v2.
+      These read as distant lights, not sharp stars. */
+.hero-v2 .hero-visual-v2::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 10% 18%, rgba(255,255,255,.30), transparent 60%),
+    radial-gradient(1.2px 1.2px at 24% 62%, rgba(255,255,255,.18), transparent 60%),
+    radial-gradient(2px   2px   at 38% 28%, rgba(255,255,255,.22), transparent 60%),
+    radial-gradient(1.5px 1.5px at 52% 80%, rgba(255,255,255,.16), transparent 60%),
+    radial-gradient(1.5px 1.5px at 66% 12%, rgba(255,255,255,.24), transparent 60%),
+    radial-gradient(1px   1px   at 74% 46%, rgba(255,255,255,.14), transparent 60%),
+    radial-gradient(2px   2px   at 84% 70%, rgba(255,255,255,.20), transparent 60%),
+    radial-gradient(1.5px 1.5px at 92% 30%, rgba(255,255,255,.18), transparent 60%),
+    radial-gradient(1.2px 1.2px at 14% 88%, rgba(255,255,255,.16), transparent 60%),
+    radial-gradient(1.5px 1.5px at 46% 8%,  rgba(255,255,255,.12), transparent 60%);
+  filter: blur(.6px);
+  animation: hero-particles-drift 22s ease-in-out infinite;
+}
+@keyframes hero-particles-drift {
+  0%, 100% { transform: translate(0, 0); opacity: .85; }
+  50%      { transform: translate(6px, -8px); opacity: 1; }
+}
+
+/* 3. LIGHT CONNECTION LINES — three almost-invisible diagonal glow strips
+      threading between the floating cards. Drawn via gradient strips on
+      .hero-visual-v2::before WITHOUT replacing the focal halo behind the
+      main card — append as additional background layers. */
+.hero-v2 .hero-visual-v2::before {
+  background:
+    /* original focal halo behind main card — preserved */
+    radial-gradient(circle,
+      rgba(120, 80, 255, .42) 0%,
+      rgba(255, 110, 199, .18) 35%,
+      rgba(167, 139, 250, .10) 55%,
+      transparent 72%) !important;
+}
+.hero-v2 .hero-visual-v2 {
+  /* a second decorative layer for connection lines */
+  background:
+    linear-gradient(115deg, transparent 18%, rgba(255,255,255,.07) 19%, rgba(255,255,255,.10) 19.5%, rgba(255,255,255,.07) 20%, transparent 21%),
+    linear-gradient(70deg,  transparent 38%, rgba(255,255,255,.06) 39%, rgba(255,255,255,.09) 39.5%, rgba(255,255,255,.06) 40%, transparent 41%),
+    linear-gradient(155deg, transparent 64%, rgba(255,255,255,.06) 65%, rgba(255,255,255,.09) 65.5%, rgba(255,255,255,.06) 66%, transparent 67%);
+  filter: blur(.4px);
+}
+
+/* 4. MAIN CARD — inner shine + stronger outer glow + simpler -3deg float
+      (overrides the previous -4deg float keyframe). */
+@keyframes hero-card-float-v5 {
+  0%   { transform: translateY(0)    rotate(-3deg); }
+  50%  { transform: translateY(-10px) rotate(-2deg); }
+  100% { transform: translateY(0)    rotate(-3deg); }
+}
+.hero-v2 .hv-creator-v2 {
+  animation: hero-card-float-v5 7s ease-in-out infinite !important;
+  transform: rotate(-3deg) !important;
+  box-shadow:
+    inset 0 0 40px rgba(255, 255, 255, .08),
+    inset 0 1px 0 rgba(255, 255, 255, .22),
+    0 0 120px rgba(124, 92, 255, .35),
+    0 40px 120px rgba(0, 0, 0, .60) !important;
+}
+.hero-v2 .hv-creator-v2:hover {
+  transform: rotate(0deg) translateY(-8px) !important;
+  animation: none !important;
+  box-shadow:
+    inset 0 0 50px rgba(255, 255, 255, .10),
+    inset 0 1px 0 rgba(255, 255, 255, .28),
+    0 0 180px rgba(124, 92, 255, .45),
+    0 50px 140px rgba(0, 0, 0, .65) !important;
+}
+
+/* 5. AVATAR — double ring: solid inner gradient + blurred outer neon halo.
+      The existing ::after on .hv-avatar-glow already provides the blurred
+      outer halo; add a sharper solid gradient ring via a separate inset
+      box-shadow stack with a soft pulse. */
+@keyframes hero-avatar-pulse-v2 {
+  0%, 100% {
+    box-shadow:
+      0 0 0 2px rgba(255, 255, 255, .14),
+      0 0 0 5px rgba(124, 92, 255, .55),
+      0 0 30px rgba(255, 77, 157, .55),
+      0 0 60px rgba(124, 92, 255, .45),
+      0 14px 40px rgba(0, 0, 0, .55);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px rgba(255, 255, 255, .22),
+      0 0 0 5px rgba(124, 92, 255, .75),
+      0 0 42px rgba(255, 77, 157, .70),
+      0 0 84px rgba(124, 92, 255, .55),
+      0 18px 52px rgba(0, 0, 0, .60);
+  }
+}
+.hero-v2 .hv-creator-v2 .hv-avatar-glow {
+  animation: hero-avatar-pulse-v2 3.6s ease-in-out infinite !important;
+}
+
+/* 6. SIDE CARDS — opacity, blur, color-coded glows per spec
+      (rating=yellow, chat=blue, budget=green). */
+.hero-v2 .hv-chat-v2,
+.hero-v2 .hv-rating-v2,
+.hero-v2 .hv-budget-v2,
+.hero-v2 .hv-status-v2,
+.hero-v2 .hv-online-v2 {
+  opacity: .92 !important;
+  -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+  backdrop-filter: blur(16px) saturate(160%) !important;
+}
+.hero-v2 .hv-chat-v2 {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .25),
+    0 24px 60px rgba(0, 0, 0, .55),
+    0 0 60px rgba(0, 180, 255, .55) !important;
+}
+.hero-v2 .hv-rating-v2 {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .25),
+    0 24px 60px rgba(0, 0, 0, .55),
+    0 0 60px rgba(255, 200, 60, .55) !important;
+}
+.hero-v2 .hv-budget-v2 {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .25),
+    0 24px 60px rgba(0, 0, 0, .55),
+    0 0 60px rgba(60, 220, 140, .55) !important;
+}
+
+/* 7. BUTTON — moving gradient shine sweep on the primary CTA. */
+.hero-v2 .btn-hero-pri-v2 {
+  background: linear-gradient(90deg, #7c5cff 0%, #a855f7 35%, #ff4d9d 70%, #7c5cff 100%) !important;
+  background-size: 200% 100% !important;
+  animation: hero-cta-gradient-shift 3s linear infinite !important;
+}
+@keyframes hero-cta-gradient-shift {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.hero-v2 .hv-creator-v2 .hv-view-btn-v2 {
+  background: linear-gradient(90deg, #7c5cff 0%, #a855f7 35%, #ff4d9d 70%, #7c5cff 100%) !important;
+  background-size: 200% 100% !important;
+  animation: hero-cta-gradient-shift 3.5s linear infinite !important;
+}
+
+/* 8. BOTTOM FADE — depth transition into the next section. Achieved with
+      a strong inset bottom shadow on the hero (no DOM additions). */
+.hero-v2 {
+  box-shadow:
+    inset 0 0 200px rgba(0, 0, 0, .60),
+    inset 0 -160px 120px -80px rgba(0, 0, 0, .85) !important;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-v2 .hero-visual-v2::after,
+  .hero-v2 .hv-creator-v2 .hv-avatar-glow,
+  .hero-v2 .btn-hero-pri-v2,
+  .hero-v2 .hv-creator-v2 .hv-view-btn-v2 {
+    animation: none !important;
+  }
+}
