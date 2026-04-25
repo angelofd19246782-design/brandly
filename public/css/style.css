@@ -6860,6 +6860,213 @@ input[type=number] {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   HERO V2 — MAX WOW POLISH
+   Rotating conic ring around avatar, drifting orbs, shimmer on gradient
+   text, pulsing Top Rated badge, sparkle stars, button shine.
+───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Sparkle stars layer ─────────────────────────────────────────── */
+.hero-stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,.6));
+}
+
+/* ── Animated drifting orbs ──────────────────────────────────────── */
+@keyframes orb-drift-purple {
+  0%, 100% { transform: translate(0, 0); }
+  33%      { transform: translate(35px, 25px); }
+  66%      { transform: translate(-15px, 40px); }
+}
+@keyframes orb-drift-pink {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(-40px, -30px); }
+}
+@keyframes orb-drift-blue {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(25px, -45px); }
+}
+.hero-v2 .hero-orb-purple { animation: orb-drift-purple 22s ease-in-out infinite; }
+.hero-v2 .hero-orb-pink   { animation: orb-drift-pink   28s ease-in-out infinite; }
+.hero-v2 .hero-orb-blue   { animation: orb-drift-blue   25s ease-in-out infinite; }
+
+/* ── Avatar — rotating conic gradient ring (THE wow effect) ─────── */
+.hv-creator-v2 .hv-avatar-img {
+  position: relative;
+  overflow: hidden;
+}
+.hv-creator-v2 .hv-avatar-img::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg,
+    #c084fc 0deg,
+    #ec4899 90deg,
+    #f472b6 180deg,
+    #a855f7 270deg,
+    #c084fc 360deg);
+  animation: avatar-conic-spin 4.5s linear infinite;
+  z-index: 0;
+}
+.hv-creator-v2 .hv-avatar-img img {
+  position: relative;
+  z-index: 1;
+}
+@keyframes avatar-conic-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Gradient text shimmer ───────────────────────────────────────── */
+@keyframes text-gradient-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+.hero-v2 .text-accent-purple {
+  background: linear-gradient(115deg,
+    #ddd6fe 0%, #c4b5fd 25%, #a78bfa 50%, #c4b5fd 75%, #ddd6fe 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: text-gradient-shimmer 6s ease-in-out infinite;
+}
+.hero-v2 .text-accent-pink {
+  background: linear-gradient(115deg,
+    #fbcfe8 0%, #f9a8d4 25%, #ec4899 50%, #f9a8d4 75%, #fbcfe8 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: text-gradient-shimmer 6s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
+
+/* ── Top Rated pulse — gold breathing glow ──────────────────────── */
+@keyframes top-rated-pulse {
+  0%, 100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.08),
+      0 0 14px rgba(251,191,36,.25);
+    border-color: rgba(251,191,36,.35);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.14),
+      0 0 26px rgba(251,191,36,.55),
+      0 0 50px rgba(251,191,36,.15);
+    border-color: rgba(251,191,36,.6);
+  }
+}
+.hv-creator-v2 .hv-top-rated {
+  animation: top-rated-pulse 3.5s ease-in-out infinite;
+}
+.hv-creator-v2 .hv-top-rated svg {
+  animation: star-glow 3.5s ease-in-out infinite;
+}
+@keyframes star-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(251,191,36,.6)); }
+  50%      { filter: drop-shadow(0 0 8px rgba(251,191,36,.9)); }
+}
+
+/* ── Verified badge — subtle blue pulse ─────────────────────────── */
+@keyframes verified-pulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(91,141,239,.5)); }
+  50%      { filter: drop-shadow(0 0 12px rgba(91,141,239,.85)); }
+}
+.hv-creator-v2 .hv-verify {
+  animation: verified-pulse 3s ease-in-out infinite;
+}
+
+/* ── CTA buttons — sliding shine on hover ───────────────────────── */
+.hero-v2 .btn-hero-pri-v2,
+.hv-creator-v2 .hv-view-btn-v2 {
+  position: relative;
+  overflow: hidden;
+}
+.hero-v2 .btn-hero-pri-v2::before,
+.hv-creator-v2 .hv-view-btn-v2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(105deg,
+    transparent 0%,
+    rgba(255,255,255,.25) 50%,
+    transparent 100%);
+  transition: left .6s cubic-bezier(.22,.8,.28,1);
+  pointer-events: none;
+}
+.hero-v2 .btn-hero-pri-v2:hover::before,
+.hv-creator-v2 .hv-view-btn-v2:hover::before {
+  left: 150%;
+}
+
+/* Continuous very subtle shine on the View profile pill (nudges
+   the eye toward the primary in-card CTA) */
+@keyframes button-ambient-shine {
+  0%, 100% { left: -50%; }
+  50%      { left: 150%; }
+}
+.hv-creator-v2 .hv-view-btn-v2::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 35%;
+  height: 100%;
+  background: linear-gradient(105deg,
+    transparent 0%,
+    rgba(255,255,255,.15) 50%,
+    transparent 100%);
+  animation: button-ambient-shine 4.5s ease-in-out infinite;
+  animation-delay: 2s;
+  pointer-events: none;
+}
+
+/* ── Online status dot — keep pulsing (already had livePulse), bump ── */
+.hv-avatar-online span:first-child {
+  animation: livePulse 1.4s ease-in-out infinite !important;
+}
+
+/* ── Hero-decor curves — slow flow animation ────────────────────── */
+@keyframes curve-flow {
+  0%, 100% { opacity: .5; transform: translateY(0); }
+  50%      { opacity: .9; transform: translateY(-8px); }
+}
+.hero-decor-curves path {
+  animation: curve-flow 8s ease-in-out infinite;
+}
+.hero-decor-curves path:nth-child(2) { animation-delay: 2s; }
+.hero-decor-curves path:nth-child(3) { animation-delay: 4s; }
+
+/* ── Reduced motion — disable all wow animations ────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .hero-v2 .hero-orb-purple,
+  .hero-v2 .hero-orb-pink,
+  .hero-v2 .hero-orb-blue,
+  .hv-creator-v2 .hv-avatar-img::before,
+  .hero-v2 .text-accent-purple,
+  .hero-v2 .text-accent-pink,
+  .hv-creator-v2 .hv-top-rated,
+  .hv-creator-v2 .hv-top-rated svg,
+  .hv-creator-v2 .hv-verify,
+  .hv-creator-v2 .hv-view-btn-v2::after,
+  .hero-decor-curves path,
+  .hero-stars circle {
+    animation: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    CATALOG HERO BAND (replaces the plain page-hero on discovery)
 ───────────────────────────────────────────────────────────────────────────── */
 .catalog-hero {
