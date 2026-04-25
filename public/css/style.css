@@ -6860,6 +6860,90 @@ input[type=number] {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   HERO V2 — TRANSLUCENT GLASS CARDS (frosted, dramatic tilts)
+   Cards now ~30-35% opaque with strong backdrop-blur — you can see the
+   dark purple background through them, exactly like the reference.
+───────────────────────────────────────────────────────────────────────────── */
+
+/* MAIN CREATOR — very transparent dark glass */
+.hv-creator-v2 {
+  background:
+    linear-gradient(180deg, rgba(167,139,250,.10) 0%, transparent 30%),
+    linear-gradient(180deg, rgba(48,28,98,.28) 0%, rgba(20,12,52,.45) 100%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
+  backdrop-filter: blur(28px) saturate(160%) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+}
+
+/* SIDE CARDS — even more transparent */
+.hv-chat-v2,
+.hv-rating-v2,
+.hv-status-v2,
+.hv-budget-v2,
+.hv-online-v2 {
+  background: linear-gradient(180deg, rgba(48,28,98,.20) 0%, rgba(20,12,52,.32) 100%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(150%) !important;
+  backdrop-filter: blur(22px) saturate(150%) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+/* DRAMATIC TILTS — overrides previous float keyframes with deeper rotations */
+@keyframes hero-float-chat-v2    { 0%,100% { transform: rotate(-6deg) scale(.94) translateY(0); }   50% { transform: rotate(-6deg) scale(.94) translateY(-9px); } }
+@keyframes hero-float-status-v2  { 0%,100% { transform: rotate(5deg)  scale(.93) translateY(0); }   50% { transform: rotate(5deg)  scale(.93) translateY(-8px); } }
+@keyframes hero-float-budget-v2  { 0%,100% { transform: rotate(6deg)  scale(.92) translateY(0); }   50% { transform: rotate(6deg)  scale(.92) translateY(-10px); } }
+@keyframes hero-float-rating-v2  { 0%,100% { transform: rotate(-5deg) scale(.93) translateY(0); }   50% { transform: rotate(-5deg) scale(.93) translateY(-9px); } }
+@keyframes hero-float-online-v2  { 0%,100% { transform: rotate(2deg)  scale(.96) translateY(0); }   50% { transform: rotate(2deg)  scale(.96) translateY(-7px); } }
+
+.hv-chat-v2   { animation: hero-float-chat-v2   7s ease-in-out infinite !important; transform: rotate(-6deg) scale(.94) !important; }
+.hv-status-v2 { animation: hero-float-status-v2 8s ease-in-out infinite !important; transform: rotate(5deg)  scale(.93) !important; }
+.hv-budget-v2 { animation: hero-float-budget-v2 9s ease-in-out infinite !important; transform: rotate(6deg)  scale(.92) !important; }
+.hv-rating-v2 { animation: hero-float-rating-v2 7.5s ease-in-out infinite !important; transform: rotate(-5deg) scale(.93) !important; }
+.hv-online-v2 { animation: hero-float-online-v2 8.5s ease-in-out infinite !important; transform: rotate(2deg) scale(.96) !important; }
+
+/* Updated hover transforms with deeper tilts preserved */
+.hv-chat-v2:hover    { transform: rotate(-6deg) scale(.96) translateY(-12px) !important; }
+.hv-status-v2:hover  { transform: rotate(5deg)  scale(.95) translateY(-12px) !important; }
+.hv-budget-v2:hover  { transform: rotate(6deg)  scale(.94) translateY(-12px) !important; }
+.hv-rating-v2:hover  { transform: rotate(-5deg) scale(.95) translateY(-12px) !important; }
+.hv-online-v2:hover  { transform: rotate(2deg)  scale(.98) translateY(-12px) !important; }
+
+/* Main card — slight angle now (was perfectly vertical) for the same vibe */
+.hv-creator-v2 {
+  transform: rotate(-1deg) !important;
+}
+@keyframes hero-float-main-v2 {
+  0%,100% { transform: rotate(-1deg) translateY(0); }
+  50%     { transform: rotate(-1deg) translateY(-5px); }
+}
+.hv-creator-v2 { animation: hero-float-main-v2 6.5s ease-in-out infinite !important; }
+.hv-creator-v2:hover {
+  transform: rotate(-1deg) scale(1.015) translateY(-7px) !important;
+}
+
+/* Inner content shouldn't blur — only the card backdrop blurs the bg */
+
+/* Reduce the light-source overlay alpha now that cards are translucent */
+.hv-creator-v2::after,
+.hv-chat-v2::after,
+.hv-rating-v2::after,
+.hv-status-v2::after,
+.hv-budget-v2::after,
+.hv-online-v2::after {
+  background: linear-gradient(145deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 38%) !important;
+}
+
+/* Stronger top-edge highlight reflects light off the glass */
+.hv-chat-v2::before,
+.hv-rating-v2::before,
+.hv-status-v2::before,
+.hv-budget-v2::before,
+.hv-online-v2::before {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.4) 50%, transparent 100%) !important;
+  height: 1px !important;
+  top: 0 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    HERO V2 — MAX WOW POLISH
    Rotating conic ring around avatar, drifting orbs, shimmer on gradient
    text, pulsing Top Rated badge, sparkle stars, button shine.
