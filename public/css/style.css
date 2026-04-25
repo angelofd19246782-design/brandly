@@ -9235,3 +9235,154 @@ section[class*="section-"], .marketing-hero { position: relative; z-index: 1; }
     animation: none !important;
   }
 }
+
+/* ==========================================================================
+   HERO MAIN CARD — FLOATING GLASS PASS
+   Premium SaaS card: real glass base, pink+purple gradient ring on the
+   avatar, gradient CTA, top light reflection, depth shadow. Layout
+   untouched — visuals only.
+   ========================================================================== */
+
+/* 1. CARD BASE — true glass with soft inner gradient + 26px radius */
+.hero-v2 .hv-creator-v2 {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, .08) 0%, rgba(255, 255, 255, .02) 100%),
+    rgba(255, 255, 255, .05) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+  backdrop-filter: blur(20px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, .12) !important;
+  border-radius: 26px !important;
+  /* 2. Outer glow + deep shadow */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .18),
+    0 0 120px rgba(120, 80, 255, .25),
+    0 40px 120px rgba(0, 0, 0, .60) !important;
+}
+
+/* 2b. Subtle colored glow behind the card via ::before
+       (we already use ::after for the top reflection) */
+.hero-v2 .hv-creator-v2::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: -30px !important;
+  z-index: -1 !important;
+  border-radius: 36px !important;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(124, 92, 255, .35) 0%,
+    rgba(255, 77, 157, .18) 40%,
+    transparent 70%) !important;
+  filter: blur(40px) !important;
+  pointer-events: none !important;
+  opacity: .9 !important;
+}
+
+/* 3. FLOATING — base tilt -4deg, hover straightens + lifts */
+@keyframes hero-card-float-v4 {
+  0%, 100% { transform: rotate(-4deg) translateY(0); }
+  50%      { transform: rotate(-4deg) translateY(-6px); }
+}
+.hero-v2 .hv-creator-v2 {
+  animation: hero-card-float-v4 6.5s ease-in-out infinite !important;
+  transform: rotate(-4deg) !important;
+  transition: transform .35s ease, box-shadow .35s ease !important;
+}
+.hero-v2 .hv-creator-v2:hover {
+  animation: none !important;
+  transform: rotate(0deg) translateY(-6px) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .22),
+    0 0 160px rgba(120, 80, 255, .35),
+    0 50px 140px rgba(0, 0, 0, .65) !important;
+}
+
+/* 4. AVATAR — glowing pink+purple gradient ring via ::after on the wrapper
+       (::before on .hv-avatar-img is already used by an earlier conic ring). */
+.hero-v2 .hv-creator-v2 .hv-avatar-glow {
+  position: relative !important;
+}
+.hero-v2 .hv-creator-v2 .hv-avatar-glow::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: -6px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(45deg, #7c5cff, #ff4d9d) !important;
+  filter: blur(12px) !important;
+  opacity: .8 !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+}
+
+/* 5. TEXT DEPTH */
+.hero-v2 .hv-creator-v2 .hv-name-v2 {
+  font-weight: 800 !important;
+  letter-spacing: -.5px !important;
+  text-shadow: 0 0 14px rgba(255, 255, 255, .12) !important;
+}
+.hero-v2 .hv-creator-v2 .hv-niche-v2,
+.hero-v2 .hv-creator-v2 .hv-platform span,
+.hero-v2 .hv-creator-v2 .hv-reviews,
+.hero-v2 .hv-creator-v2 .hv-price > span {
+  opacity: .7 !important;
+}
+.hero-v2 .hv-creator-v2 .hv-platform strong,
+.hero-v2 .hv-creator-v2 .hv-rating-line strong,
+.hero-v2 .hv-creator-v2 .hv-price strong {
+  text-shadow: 0 0 10px rgba(255, 255, 255, .2) !important;
+}
+
+/* 6. BUTTON — pink-to-purple gradient with strong glow on hover */
+.hero-v2 .hv-creator-v2 .hv-view-btn-v2 {
+  background: linear-gradient(90deg, #7c5cff 0%, #ff4d9d 100%) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, .14) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .30),
+    0 10px 30px rgba(124, 92, 255, .40) !important;
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease !important;
+}
+.hero-v2 .hv-creator-v2 .hv-view-btn-v2:hover {
+  transform: scale(1.03) translateY(-1px) !important;
+  filter: brightness(1.08) saturate(1.05);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .40),
+    0 14px 40px rgba(124, 92, 255, .55),
+    0 0 60px rgba(255, 77, 157, .35) !important;
+}
+
+/* 7. TOP LIGHT REFLECTION — soft shine across the upper 40% of the card */
+.hero-v2 .hv-creator-v2::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 40% !important;
+  inset: auto auto auto auto !important;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, .15), transparent) !important;
+  opacity: .3 !important;
+  pointer-events: none !important;
+  border-radius: 26px 26px 0 0 !important;
+  z-index: 1 !important;
+}
+
+/* 8. SOFT SEPARATORS inside the card */
+.hero-v2 .hv-creator-v2 .card-footer {
+  border-top: 1px solid rgba(255, 255, 255, .10) !important;
+}
+.hero-v2 .hv-creator-v2 .hv-platform-stats {
+  border-top: 1px solid rgba(255, 255, 255, .08) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .08) !important;
+}
+
+/* Make sure card content (name, button, etc.) sits above the top-shine ::after */
+.hero-v2 .hv-creator-v2 > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Reduced motion — disable card float */
+@media (prefers-reduced-motion: reduce) {
+  .hero-v2 .hv-creator-v2 {
+    animation: none !important;
+  }
+}
