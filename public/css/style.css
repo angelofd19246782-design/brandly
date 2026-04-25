@@ -4864,6 +4864,76 @@ input[type=number] {
   margin-top: 6px;
 }
 
+/* ─── Creators online — avatar stack (bottom-right, social proof) ─── */
+.hv-online {
+  position: absolute;
+  bottom: 35px;
+  right: 0;
+  padding: 10px 14px;
+  border-radius: 14px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transform: rotate(2deg);
+  animation: hvDriftF 6.5s ease-in-out infinite;
+  transition: transform .35s cubic-bezier(.22,.8,.28,1), box-shadow .35s;
+}
+@keyframes hvDriftF {
+  0%, 100% { transform: rotate(2deg) translateY(0); }
+  50%      { transform: rotate(2deg) translateY(-6px); }
+}
+.hv-online:hover {
+  animation-play-state: paused;
+  transform: rotate(2deg) translateY(-5px) scale(1.04);
+  box-shadow: 0 30px 60px -16px rgba(15,23,42,.5), 0 0 0 1px rgba(255,255,255,.16) inset;
+}
+
+/* Overlapping avatar stack — left-most sits on top via flex direction */
+.hv-online-stack {
+  display: flex;
+  flex-direction: row-reverse;
+  flex-shrink: 0;
+}
+.hv-online-stack img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  object-fit: cover;
+  margin-left: -8px;
+  box-shadow: 0 2px 6px rgba(15,23,42,.18);
+  background: var(--c-bg);
+}
+.hv-online-stack img:first-child { margin-left: 0; }
+
+.hv-online-text strong {
+  display: block;
+  font-size: .82rem;
+  font-weight: 800;
+  color: var(--c-ink);
+  letter-spacing: -.02em;
+  line-height: 1.1;
+}
+.hv-online-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .62rem;
+  color: var(--c-green);
+  font-weight: 700;
+  margin-top: 2px;
+}
+.hv-online-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-green);
+  box-shadow: 0 0 0 3px rgba(5,150,105,.2);
+  animation: livePulse 1.8s ease-in-out infinite;
+}
+
 /* ─── Chat preview (bottom-left) ───────────────────────────────────── */
 .hv-chat {
   position: absolute;
