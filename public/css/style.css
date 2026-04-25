@@ -6662,6 +6662,204 @@ input[type=number] {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   HERO V2 — DEPTH, LAYERING & FLOATING POLISH
+   Cards now feel like floating layered elements in space (Linear/Stripe vibe)
+   not flat UI blocks.
+───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Z-index hierarchy: main is the visual anchor, others recede ───── */
+.hv-creator-v2  { z-index: 10 !important; }
+.hv-rating-badge,
+.hv-online-v2   { z-index: 8 !important; }
+.hv-status-v2,
+.hv-budget-v2   { z-index: 7 !important; }
+.hv-rating-v2   { z-index: 6 !important; }
+.hv-chat-v2     { z-index: 5 !important; }
+
+/* Hardware-accelerate */
+.hv-creator-v2,
+.hv-chat-v2,
+.hv-rating-v2,
+.hv-status-v2,
+.hv-budget-v2,
+.hv-online-v2 {
+  will-change: transform, box-shadow;
+  transition: box-shadow .4s ease;
+}
+
+/* ── Light-source gradient overlay — simulates light from top-left ── */
+.hv-creator-v2::after,
+.hv-chat-v2::after,
+.hv-rating-v2::after,
+.hv-status-v2::after,
+.hv-budget-v2::after,
+.hv-online-v2::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(145deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,0) 38%);
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* ── Background radial glow behind the main card (creates the "stage") ── */
+.hero-visual-v2::before {
+  content: '';
+  position: absolute;
+  top: 50px;
+  right: -40px;
+  width: 480px;
+  height: 480px;
+  background:
+    radial-gradient(ellipse at 50% 40%,
+      rgba(192,132,252,.32) 0%,
+      rgba(236,72,153,.18) 35%,
+      transparent 65%);
+  filter: blur(60px);
+  opacity: .7;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── PRESENCE SHADOWS — stronger, colored, layered ─────────────────── */
+
+/* Main creator — purple+pink halo */
+.hv-creator-v2 {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.25),
+    inset 0 0 0 1px rgba(255,255,255,.06),
+    0 0 0 1px rgba(167,139,250,.18),
+    0 25px 60px rgba(0,0,0,.55),
+    0 0 60px rgba(139,92,246,.38),
+    0 0 100px -10px rgba(236,72,153,.22) !important;
+}
+/* Inner edge glow on the main card */
+.hv-creator-v2 {
+  /* combined with above via override; using the !important block already set */
+}
+
+/* Chat — purple presence */
+.hv-chat-v2 {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 0 20px rgba(255,255,255,.025),
+    0 18px 50px rgba(0,0,0,.55),
+    0 0 35px rgba(139,92,246,.42) !important;
+}
+
+/* Status — cyan presence */
+.hv-status-v2 {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 0 20px rgba(255,255,255,.025),
+    0 18px 50px rgba(0,0,0,.55),
+    0 0 35px rgba(6,182,212,.42) !important;
+}
+
+/* Budget — green presence */
+.hv-budget-v2 {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 0 20px rgba(255,255,255,.025),
+    0 18px 50px rgba(0,0,0,.55),
+    0 0 35px rgba(74,222,128,.4) !important;
+}
+
+/* Rating — amber presence */
+.hv-rating-v2 {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 0 20px rgba(255,255,255,.025),
+    0 18px 50px rgba(0,0,0,.55),
+    0 0 35px rgba(251,191,36,.36) !important;
+}
+
+/* Online — green presence */
+.hv-online-v2 {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 0 20px rgba(255,255,255,.025),
+    0 18px 50px rgba(0,0,0,.55),
+    0 0 35px rgba(74,222,128,.4) !important;
+}
+
+/* ── FLOATING ANIMATION — different delays per card, each baked-in rotation ── */
+@keyframes hero-float-chat    { 0%,100% { transform: rotate(-4deg) scale(.96) translateY(0); } 50% { transform: rotate(-4deg) scale(.96) translateY(-7px); } }
+@keyframes hero-float-status  { 0%,100% { transform: rotate(3deg)  scale(.95) translateY(0); } 50% { transform: rotate(3deg)  scale(.95) translateY(-6px); } }
+@keyframes hero-float-budget  { 0%,100% { transform: rotate(4deg)  scale(.94) translateY(0); } 50% { transform: rotate(4deg)  scale(.94) translateY(-8px); } }
+@keyframes hero-float-rating  { 0%,100% { transform: rotate(-3deg) scale(.95) translateY(0); } 50% { transform: rotate(-3deg) scale(.95) translateY(-7px); } }
+@keyframes hero-float-online  { 0%,100% { transform: rotate(1deg)  scale(.97) translateY(0); } 50% { transform: rotate(1deg)  scale(.97) translateY(-6px); } }
+
+.hv-chat-v2   { animation: hero-float-chat   7s ease-in-out infinite !important; animation-delay: 0s   !important; transform: rotate(-4deg) scale(.96) !important; }
+.hv-status-v2 { animation: hero-float-status 8s ease-in-out infinite !important; animation-delay: .8s  !important; transform: rotate(3deg)  scale(.95) !important; }
+.hv-budget-v2 { animation: hero-float-budget 9s ease-in-out infinite !important; animation-delay: 1.6s !important; transform: rotate(4deg)  scale(.94) !important; }
+.hv-rating-v2 { animation: hero-float-rating 7.5s ease-in-out infinite !important; animation-delay: 1.2s !important; transform: rotate(-3deg) scale(.95) !important; }
+.hv-online-v2 { animation: hero-float-online 8.5s ease-in-out infinite !important; animation-delay: .4s !important; transform: rotate(1deg)  scale(.97) !important; }
+
+/* Pause animations on hover; lift the hovered card slightly */
+.hv-chat-v2:hover,
+.hv-status-v2:hover,
+.hv-budget-v2:hover,
+.hv-rating-v2:hover,
+.hv-online-v2:hover {
+  animation-play-state: paused !important;
+}
+.hv-chat-v2:hover    { transform: rotate(-4deg) scale(.97) translateY(-8px) !important; }
+.hv-status-v2:hover  { transform: rotate(3deg)  scale(.97) translateY(-8px) !important; }
+.hv-budget-v2:hover  { transform: rotate(4deg)  scale(.96) translateY(-8px) !important; }
+.hv-rating-v2:hover  { transform: rotate(-3deg) scale(.97) translateY(-8px) !important; }
+.hv-online-v2:hover  { transform: rotate(1deg)  scale(.99) translateY(-8px) !important; }
+
+/* Main creator: subtle vertical breathing, no rotation, no scale */
+@keyframes hero-float-main { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.hv-creator-v2 {
+  animation: hero-float-main 6.5s ease-in-out infinite !important;
+}
+.hv-creator-v2:hover {
+  animation-play-state: paused !important;
+  transform: translateY(-6px) scale(1.015) !important;
+}
+
+/* ── AVATAR PULSE — neon ring breathes ─────────────────────────────── */
+@keyframes avatar-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.15),
+      0 0 0 2px rgba(167,139,250,.18),
+      0 0 28px rgba(192,132,252,.7),
+      0 0 56px rgba(236,72,153,.42),
+      0 0 100px rgba(167,139,250,.25),
+      0 14px 40px rgba(0,0,0,.55);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.2),
+      0 0 0 2px rgba(167,139,250,.28),
+      0 0 36px rgba(192,132,252,.85),
+      0 0 72px rgba(236,72,153,.55),
+      0 0 120px rgba(167,139,250,.35),
+      0 14px 40px rgba(0,0,0,.55);
+  }
+}
+.hv-creator-v2 .hv-avatar-img {
+  animation: avatar-pulse 4s ease-in-out infinite;
+}
+
+/* Reduced-motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .hv-creator-v2,
+  .hv-chat-v2,
+  .hv-rating-v2,
+  .hv-status-v2,
+  .hv-budget-v2,
+  .hv-online-v2,
+  .hv-creator-v2 .hv-avatar-img {
+    animation: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    CATALOG HERO BAND (replaces the plain page-hero on discovery)
 ───────────────────────────────────────────────────────────────────────────── */
 .catalog-hero {
