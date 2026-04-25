@@ -10658,3 +10658,110 @@ section[class*="section-"], .marketing-hero { position: relative; z-index: 1; }
 /* The earlier hero-bg pass added an inline-SVG noise overlay on
    .hero-v2::after with opacity .06 — keep but verify it doesn't read
    as smudge over cards. Cards live above it via z-index, so they stay clean. */
+
+/* ==========================================================================
+   HERO — MAIN CARD DOMINANCE
+   Lift the focal creator card above the rest: bigger scale, brighter
+   inner gradient, sharper border + top-left reflection, stronger
+   purple+pink halo, juicier CTA. Secondaries dimmed to ~0.85 so the
+   eye lands on the main card first.
+   ========================================================================== */
+
+/* 6. Scale bump 1.18 → 1.22 (~+3%, kept under 8% per spec). */
+@keyframes scene-float-creator-v3 {
+  0%   { transform: translate3d(calc(var(--mx)*18px), calc(var(--my)*18px), 0) translateY(0)    rotate(-5deg) scale(1.22); }
+  50%  { transform: translate3d(calc(var(--mx)*18px), calc(var(--my)*18px), 0) translateY(-8px) rotate(-4deg) scale(1.22); }
+  100% { transform: translate3d(calc(var(--mx)*18px), calc(var(--my)*18px), 0) translateY(0)    rotate(-5deg) scale(1.22); }
+}
+.hv-scene .scene-slot-creator {
+  animation: scene-float-creator-v3 8s ease-in-out infinite !important;
+}
+
+/* 1. Inner gradient — top lighter, bottom darker. Slightly brighter base
+      than the secondaries so the card pops. */
+.hv-scene .scene-creator {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .14) 0%, rgba(255, 255, 255, .03) 55%, rgba(0, 0, 0, .12) 100%),
+    rgba(255, 255, 255, .085) !important;
+}
+
+/* 3. Edge highlight — brighter border + top-left light reflection.
+      The .scene-card::before is already a top shine; override it for
+      .scene-creator only with a top-LEFT bias and a touch more strength. */
+.hv-scene .scene-creator {
+  border-color: rgba(255, 255, 255, .25) !important;
+}
+.hv-scene .scene-creator::before {
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, .25) 0%,
+    rgba(255, 255, 255, .10) 25%,
+    rgba(255, 255, 255, 0) 60%) !important;
+  height: 55% !important;
+  opacity: .55 !important;
+  border-radius: 22px 22px 0 0 !important;
+}
+
+/* 2. Stronger purple+pink halo behind the main card — replaces the
+      previous focal halo with the spec values. */
+.hv-scene .scene-slot-creator::before {
+  inset: -90px !important;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(124, 92, 255, .55) 0%,
+    rgba(255, 110, 199, .35) 35%,
+    rgba(124, 92, 255, .12) 60%,
+    transparent 80%) !important;
+  filter: blur(120px) !important;
+  opacity: .85 !important;
+}
+
+/* 5. CTA — brighter gradient + stronger outer glow. */
+.hv-scene .scene-creator .sc-cta {
+  background: linear-gradient(90deg, #7c5cff 0%, #a855f7 45%, #ff6ec7 100%) !important;
+  background-size: 200% 100% !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .40),
+    0 12px 32px rgba(124, 92, 255, .55),
+    0 0 50px rgba(255, 110, 199, .40) !important;
+}
+.hv-scene .scene-creator .sc-cta:hover {
+  filter: brightness(1.10) saturate(1.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .50),
+    0 16px 44px rgba(124, 92, 255, .65),
+    0 0 70px rgba(255, 110, 199, .55) !important;
+}
+
+/* 4. Sharp content — defensive (crisp pass already covers it). */
+.hv-scene .scene-creator,
+.hv-scene .scene-creator * {
+  filter: none !important;
+}
+.hv-scene .scene-creator .sc-cta { filter: brightness(1.06) saturate(1.05) !important; }
+.hv-scene .scene-creator .sc-stat strong,
+.hv-scene .scene-creator .sc-rating-line strong,
+.hv-scene .scene-creator .sc-price strong {
+  text-shadow: 0 0 12px rgba(255, 255, 255, .28) !important;
+}
+
+/* 7. Slightly darken behind main card a little more. The crisp pass
+      already added .hv-scene::before — bump its strength. */
+.hv-scene::before {
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(6, 3, 20, .60) 0%,
+    rgba(6, 3, 20, .28) 50%,
+    transparent 80%) !important;
+  width: 440px !important;
+  height: 520px !important;
+}
+
+/* 8. Secondary cards downgrade — reduce brightness so the main pops. */
+.hv-scene .scene-chat,
+.hv-scene .scene-rating,
+.hv-scene .scene-budget {
+  opacity: .85 !important;
+  filter: brightness(.92) !important;
+}
+.hv-scene .scene-avatars {
+  opacity: .80 !important;
+  filter: brightness(.88) !important;
+}
