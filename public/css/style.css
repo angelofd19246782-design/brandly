@@ -5758,6 +5758,230 @@ input[type=number] {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   HERO V2 — LAYOUT FIX
+   Resolves the chaotic composition: pinned positions, controlled overflow,
+   solid dark navbar, full-viewport hero, no clipped trust items, no overlap
+   on important content.
+───────────────────────────────────────────────────────────────────────────── */
+
+/* Sharper navbar over the dark hero */
+.page-home .navbar {
+  background: rgba(10,4,32,.85) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+}
+.page-home .navbar-brand {
+  -webkit-text-fill-color: #fff !important;
+  color: #fff !important;
+  background: none !important;
+}
+.page-home .nav-link        { color: rgba(255,255,255,.78); font-weight: 500; }
+.page-home .nav-link.active  { color: #fff; background: rgba(255,255,255,.08); }
+.page-home .nav-auth .btn-ghost { color: #fff; border-color: rgba(255,255,255,.22); background: rgba(255,255,255,.06); }
+
+/* Full-viewport hero, vertically centered split, wider container */
+.hero-v2 {
+  min-height: calc(100vh - var(--nav-h));
+  padding: 60px 0 80px;
+  display: flex;
+  align-items: center;
+}
+.hero-v2 .container {
+  width: 100%;
+  max-width: 1280px;
+}
+
+/* 2-column 44/56 grid with fixed gap */
+.hero-v2 .hero-split {
+  display: block;
+}
+@media (min-width: 1100px) {
+  .hero-v2 .hero-split {
+    display: grid !important;
+    grid-template-columns: 44fr 56fr !important;
+    gap: 60px !important;
+    align-items: center !important;
+    min-height: auto !important;
+  }
+}
+
+/* Constrain headline + sub max-widths so they read cleanly */
+.hero-v2 .hero-copy {
+  min-width: 0;
+}
+.hero-h1-v2 { max-width: 620px; }
+.hero-sub-v2 { max-width: 560px; }
+
+/* ─── Visual container: fixed footprint, controlled overflow ──────── */
+.hero-visual-v2 {
+  position: relative;
+  width: 620px;
+  height: 560px;
+  margin-left: auto;
+  display: none;
+  overflow: visible;
+}
+@media (min-width: 1100px) {
+  .hero-visual-v2 { display: block; }
+}
+
+/* Reset all previous-pass card positioning so the overrides below are
+   the single source of truth for the v2 layout */
+.hv-creator-v2,
+.hv-chat-v2,
+.hv-status-v2,
+.hv-budget-v2,
+.hv-rating-v2,
+.hv-online-v2 {
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+}
+
+/* MAIN CREATOR CARD — center-right anchor, fully visible */
+.hv-creator-v2 {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  width: 350px;
+  height: 480px;
+  z-index: 5;
+}
+
+/* CHAT CARD — left of main */
+.hv-chat-v2 {
+  position: absolute;
+  top: 100px;
+  left: 0;
+  width: 260px;
+  z-index: 4;
+  transform: rotate(-4deg);
+}
+
+/* STATUS CARD — top-right, mostly outside main's right edge */
+.hv-status-v2 {
+  position: absolute;
+  top: 0;
+  right: -120px;
+  width: 240px;
+  z-index: 6;
+  transform: rotate(3deg);
+}
+
+/* BUDGET CARD — middle-right, also outside main */
+.hv-budget-v2 {
+  position: absolute;
+  top: 240px;
+  right: -130px;
+  width: 230px;
+  z-index: 6;
+  transform: rotate(4deg);
+}
+
+/* RATING CARD — lower-left */
+.hv-rating-v2 {
+  position: absolute;
+  bottom: 60px;
+  left: -10px;
+  width: 240px;
+  z-index: 6;
+  transform: rotate(-3deg);
+}
+
+/* ONLINE CREATORS — bottom-right, must be fully visible */
+.hv-online-v2 {
+  position: absolute;
+  bottom: 0;
+  right: -90px;
+  width: 260px;
+  z-index: 7;
+  transform: rotate(1deg);
+}
+
+/* Hover lift — subtle, no rotation change */
+.hv-chat-v2:hover    { transform: rotate(-4deg) translateY(-4px); }
+.hv-status-v2:hover  { transform: rotate(3deg) translateY(-4px); }
+.hv-budget-v2:hover  { transform: rotate(4deg) translateY(-4px); }
+.hv-rating-v2:hover  { transform: rotate(-3deg) translateY(-4px); }
+.hv-online-v2:hover  { transform: rotate(1deg) translateY(-4px); }
+.hv-creator-v2:hover { transform: translateX(-50%) translateY(-4px); }
+
+/* Fix the centered main card transform conflict — main is now right-anchored */
+.hv-creator-v2 { transform: none; }
+.hv-creator-v2:hover { transform: translateY(-4px); }
+
+/* Tablet — single-column stack with smaller mockup, hide some cards */
+@media (min-width: 1100px) {
+  .hero-v2 .hero-copy { text-align: left; }
+}
+@media (max-width: 1099px) {
+  .hero-v2 .hero-split { display: block; }
+  .hero-v2 .hero-copy { text-align: left; max-width: 720px; margin: 0 auto; }
+  .hero-h1-v2, .hero-sub-v2 { max-width: 720px; }
+  .hero-features-v2 { max-width: 720px; margin-left: auto; margin-right: auto; }
+}
+
+/* Mobile — completely hide the visual to avoid overflow / horizontal scroll */
+@media (max-width: 999px) {
+  .hero-visual-v2 { display: none !important; }
+}
+
+/* Make sure hero clips overflowing decorative orbs but not the cards
+   (cards live inside .hero-visual-v2 which has overflow:visible). The
+   hero itself keeps overflow:hidden from the base .hero rule, which
+   trims things only at viewport edges. */
+.hero-v2 { overflow: hidden; }
+
+/* Trust bar — make sure it doesn't get visually cropped against the hero */
+.trust-bar-dark { padding: 32px 0; }
+
+/* Platform stats: stack vertically so right side is empty padding only —
+   prevents the budget card from covering YouTube subscribers text */
+.hv-creator-v2 .hv-platform-stats {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+/* Online card: position at bottom-right entirely below main so View profile
+   button and price are never covered. Allow it to extend slightly past visual
+   bottom (hero has padding to absorb it). */
+.hv-online-v2 {
+  bottom: -30px !important;
+  right: 20px !important;
+  width: 260px !important;
+}
+
+/* Status / Budget — pull tighter so they don't drift too far past viewport
+   right edge on 1280px wide hero container. Width small enough that even
+   their visible-inside-main portion is just main's right padding zone. */
+.hv-status-v2 {
+  right: -90px !important;
+  width: 220px !important;
+}
+.hv-budget-v2 {
+  right: -100px !important;
+  width: 220px !important;
+  top: 250px !important;
+}
+
+/* Make sure rating doesn't visually conflict with chat above it */
+.hv-rating-v2 {
+  bottom: 70px !important;
+  left: 0 !important;
+  width: 235px !important;
+}
+
+/* Chat — pull a hair right so it sits just left of main without covering
+   the avatar's halo */
+.hv-chat-v2 {
+  top: 105px !important;
+  left: -5px !important;
+  width: 250px !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    CATALOG HERO BAND (replaces the plain page-hero on discovery)
 ───────────────────────────────────────────────────────────────────────────── */
 .catalog-hero {
