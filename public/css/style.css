@@ -6860,6 +6860,49 @@ input[type=number] {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   HERO V2 — DARK NEBULA BACKGROUND (matching reference photo)
+   Многослойные пурпурные radial glow spots по всему фону, без grid.
+───────────────────────────────────────────────────────────────────────────── */
+.hero-v2 {
+  background:
+    /* Большое пурпурное облако сверху-справа */
+    radial-gradient(ellipse 700px 500px at 95% 15%, rgba(139,92,246,.22) 0%, transparent 60%),
+    /* Среднее пурпурное у правого края */
+    radial-gradient(ellipse 500px 400px at 100% 50%, rgba(167,139,250,.18) 0%, transparent 65%),
+    /* Большое пурпурное снизу-справа */
+    radial-gradient(ellipse 650px 500px at 100% 100%, rgba(124,58,237,.20) 0%, transparent 60%),
+    /* Снизу по центру — лёгкий розовый намёк */
+    radial-gradient(ellipse 550px 350px at 60% 95%, rgba(192,132,252,.14) 0%, transparent 65%),
+    /* Снизу-слева пурпурное */
+    radial-gradient(ellipse 500px 400px at 5% 95%, rgba(139,92,246,.18) 0%, transparent 60%),
+    /* Слева в середине */
+    radial-gradient(ellipse 450px 350px at -5% 50%, rgba(124,58,237,.16) 0%, transparent 65%),
+    /* Сверху-слева мягкое */
+    radial-gradient(ellipse 550px 400px at 10% 10%, rgba(167,139,250,.16) 0%, transparent 65%),
+    /* Едва заметный центральный bloom */
+    radial-gradient(ellipse 400px 300px at 50% 45%, rgba(192,132,252,.06) 0%, transparent 70%),
+    /* Тёмная навигация база */
+    linear-gradient(180deg, #08031c 0%, #0a0524 30%, #0c0628 60%, #07021a 100%) !important;
+}
+
+/* Убираем dot grid — на фото его нет, фон чистый с одними glow spots */
+.hero-v2::after { display: none !important; }
+
+/* Existing hero-orbs остаются для дополнительной живости (с drift анимацией),
+   но снижаю их intensity, чтобы не перебивали новые glow spots */
+.hero-v2 .hero-orb-purple { opacity: .5; }
+.hero-v2 .hero-orb-pink   { opacity: .35; }
+.hero-v2 .hero-orb-blue   { opacity: .4; }
+
+/* Hero ::before тоже снижаю — теперь основная атмосфера в background */
+.hero-v2::before {
+  background:
+    radial-gradient(ellipse 60% 50% at 85% 15%, rgba(167,139,250,.18) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 60% at 10% 85%, rgba(99,102,241,.15) 0%, transparent 55%) !important;
+  opacity: .8;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    HERO V2 — TRANSLUCENT GLASS CARDS (frosted, dramatic tilts)
    Cards now ~30-35% opaque with strong backdrop-blur — you can see the
    dark purple background through them, exactly like the reference.
